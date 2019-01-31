@@ -23,7 +23,7 @@ def generate_ion_profiles(output, ion_list, nbins = 800, rmax = 300):
 
             nbins_med = 60
             rbins_med = np.linspace(0, rmax, nbins_med)
-            y_median, y_err = ipd.make_profiles(r, col, rbins_med, nbins_med)
+            y_median, y_err = ipd.make_profiles(r_arr, col_arr, rbins_med, nbins_med)
                 
             plot_data = [rbins_med, y_median, y_err]
             for pdata, pname in zip(plot_data, plot_names):
@@ -36,7 +36,7 @@ def generate_ion_profiles(output, ion_list, nbins = 800, rmax = 300):
 ion_list = ['H I', 'O VI', 'Si II', 'Si III', 'Si IV', 'C II', 'C III', 'C IV']
 #ion_list = ['O VI']
 output = 3035
-generate_ion_histograms(output, ion_list)
+generate_ion_profiles(output, ion_list)
 
 
 
