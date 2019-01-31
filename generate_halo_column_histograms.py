@@ -22,7 +22,7 @@ def return_histogram_data(r_arr, cdens_arr, nbins = 800, rmax = 300):
 
 def generate_ion_histograms(output, ion_list, nbins = 800, rmax = 300):
     frb = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_data2.h5'%(output), 'r')
-    plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_plot_data.h5'%(output), 'w')
+    plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_plot_data.h5'%(output), 'a')
 
     bin_name_list = ['low_mass', 'med_mass', 'high_mass', 'dist_1', 'dist_2', 'dist_3', 'dist_4']
     plot_names = ['xbins', 'ybins', 'counts', 'x_median', 'y_median', 'y_err']
@@ -42,6 +42,10 @@ def generate_ion_histograms(output, ion_list, nbins = 800, rmax = 300):
             multiplier = np.arange(num_slices + 1)            
             counts = np.zeros((nbins-1)**2)
 
+            nbins_med = 60
+            rbins_med = np.linspace(0, rmax, nbins_med)
+            median_list = np.zeros(len(rbins_med), num_slices)
+            err_list = np.zeros(len(rbins_med), num_slices)
             for m in range(len(multiplier)-1):
                 print(m)
                 start = multiplier[m] * dlen
@@ -51,15 +55,19 @@ def generate_ion_histograms(output, ion_list, nbins = 800, rmax = 300):
                 xbins, ybins, dcounts = return_histogram_data(r, col)
                 counts += dcounts
 
+                y_median, y_err = ipd.make_profiles(r, col, rbins_med, nbins_med)
+                median_list[m] = y_median
+                err_list[m] = y_err
+
             print('made histogram!')
-            nbins_med = 60
-            rbins = np.linspace(0, rmax, nbins_med) 
-            y_median, y_err = ipd.make_profiles(r_arr, col_arr, rbins, nbins_med)
-            print('made profiles!')
-            
-            temp_median = []
-            temp_err = []
-            plot_data = [xbins, ybins, counts, rbins, y_median, y_err]
+
+            y_median = np.zeros(len(y_median))
+            y_err = np.zeros(len(y_err))
+            for j in range(len(y_median)):
+                y_median[j] = np.median(median_list[j])
+                y_err[j] = np.sqrt(err_list[m]**2)
+
+            plot_data = [xbins, ybins, counts, rbins_med, y_median, y_err]
             for pdata, pname in zip(plot_data, plot_names):
                 dset = '%s_%s_%s'%(ion_out, pname, bin_name)
                 plot_file.create_dataset(dset, data = pdata)
