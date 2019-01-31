@@ -6,26 +6,11 @@ sys.path.append("/nobackup/ibutsky/scripts/plot_help/")
 import ion_plot_definitions as ipd
 
 
-def return_histogram_data(r_arr, cdens_arr, nbins = 800, rmax = 300):
-    # turns the really long 1-d combined arrays of projected radius and column density
-    # into a 2d histogram. Returns xbinx, ybins, and counts.T values in 1d
-    xbins = np.linspace(0, rmax, nbins)
-    ylims = (1e10, 1e16)
-    ybins = 10**np.linspace(np.log10(ylims[0]), np.log10(ylims[1]), nbins)
-    counts, x_edge, y_edge = np.histogram2d(r_arr, cdens_arr, bins=(xbins, ybins))
-    x_bin_center = ((x_edge[1:] + x_edge[:-1]) / 2).reshape(nbins-1,1)
-    # normalize counts in x-space to remove out linear increase in counts with 
-    # radius due to circles of constant impact parameter
-    counts /= x_bin_center 
-    
-    return xbins, ybins, counts.T.ravel()
-
-def generate_ion_histograms(output, ion_list, rmax = 300):
+def combine_halo_column_densities(output, ion_list, rmax = 300):
 
     last = 228  
-    last = 5 # for testing
-    out_file = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_data.h5'%(output), 'a')
-    plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_plot_data.h5'%(output), 'a')
+#    last = 5 # for testing
+    out_file = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_data.h5'%(output), 'w')
     
     halo_props = h5.File('/nobackup/ibutsky/data/romulusC_halo_data_%i'%(output), 'r')
     # ignoring the 0th entry, which is the main cluster halo
@@ -89,47 +74,30 @@ def generate_ion_histograms(output, ion_list, rmax = 300):
                 d2_r = np.concatenate((d2_r, r_arr))
                 d2_c = np.concatenate((d2_c, cdens_arr))
 
-            elif dtc >= 0.5*cluster_rvir and dtc < cluster_rvir:
+            elif dtc >= cluster_rvir and dtc < 2*cluster_rvir:
                 d3_r = np.concatenate((d3_r, r_arr))
                 d3_c = np.concatenate((d3_c, cdens_arr))
 
-            elif dtc >= 1.5*cluster_rvir:
+            elif dtc >= 2*cluster_rvir:
                 d4_r = np.concatenate((d4_r, r_arr))
                 d4_c = np.concatenate((d4_c, cdens_arr))
 
 
-        name_list = ['rbins_low_mass', 'rbins_med_mass', 'rbins_high_mass', 'rbins_dist_1', 'rbins_dist_2', \
-                     'rbins_dist_3', 'rbins_dist_4', 'col_low_mass', 'col_med_mass', 'col_high_mass', \
-                     'col_dist_1', 'col_dist_2', 'col_dist_3', 'col_dist_4']
-        plot_name_list = ['low_mass', 'med_mass', 'high_mass', 'dist_1', 'dist_2', 'dist_3', 'dist_4']
+        name_list = ['low_mass', 'med_mass', 'high_mass', 'dist_1', 'dist_2', 'dist_3', 'dist_4']
+
         radius_list = [lowm_r, midm_r, highm_r, d1_r, d2_r, d3_r, d4_r]
         col_list = [lowm_c, midm_c, highm_c, d1_c, d2_c, d3_c, d4_c]
-        data_list = np.append(radius_list, col_list)
  
         ion_out = ion.replace(" ", "")
-        for n, data in zip(name_list, data_list):
-            dset = "%s_%s" % (ion_out, n)
-            if dset not in out_file.keys():
-                out_file.create_dataset(dset, data=data)
-                out_file.flush()        
-
-
-        for r_arr, col_arr, name in zip(radius_list, col_list, plot_name_list):
-            xbins, ybins, counts = return_histogram_data(r_arr, col_arr)
-            nbins = 50
-            y_median, y_err = ipd.make_profiles(r_arr, col_arr, xbins, nbins)
-
-            plot_data = [xbins, ybins, counts, y_median, y_err]
-            plot_names = ['xbins', 'ybins', 'counts', 'y_median', 'y_err']
-            for pdata, pname in zip(plot_data, plot_names):
-                plot_file.create_dataset('%s_%s_%s'%(ion_out, pname, name), data = pdata)
-                plot_file.flush()
-
-            
-
-
+        for dcol, drad, dname in zip(col_list, radius_list, name_list):
+            dset = "%s_%s" % (ion_out, dname)
+            # if dset not in out_file.keys():
+            out_file.create_dataset("%s_col"%(dset), data=dcol)
+            out_file.create_dataset("%s_rbin"%(dset), data=drad)
+            out_file.flush()        
     
 
 ion_list = ['H I', 'O VI', 'Si II', 'Si III', 'Si IV', 'C II', 'C III', 'C IV']
 output = 3035
-generate_ion_histograms(output, ion_list)
+
+combine_halo_column_densities(output, ion_list)

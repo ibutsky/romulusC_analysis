@@ -6,11 +6,10 @@ sys.path.append("/nobackup/ibutsky/scripts/plot_help/")
 import ion_plot_definitions as ipd
 
 
-def return_histogram_data(r_arr, cdens_arr, nbins = 800, rmax = 300):
+def return_histogram_data(r_arr, cdens_arr, nbins = 800, rmax = 300, ylims=(1e3, 1e17)):
     # turns the really long 1-d combined arrays of projected radius and column density
     # into a 2d histogram. Returns xbinx, ybins, and counts.T values in 1d
     xbins = np.linspace(0, rmax, nbins)
-    ylims = (1e10, 1e16)
     ybins = 10**np.linspace(np.log10(ylims[0]), np.log10(ylims[1]), nbins)
     counts, x_edge, y_edge = np.histogram2d(r_arr, cdens_arr, bins=(xbins, ybins))
     x_bin_center = ((x_edge[1:] + x_edge[:-1]) / 2).reshape(nbins-1,1)
@@ -22,10 +21,10 @@ def return_histogram_data(r_arr, cdens_arr, nbins = 800, rmax = 300):
 
 def generate_ion_histograms(output, ion_list, nbins = 800, rmax = 300):
     frb = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_data2.h5'%(output), 'r')
-    plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_plot_data3.h5'%(output), 'w')
+    plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_histogram_data.h5'%(output), 'w')
 
     bin_name_list = ['low_mass', 'med_mass', 'high_mass', 'dist_1', 'dist_2', 'dist_3', 'dist_4']
-    plot_names = ['xbins', 'ybins', 'counts', 'x_median', 'y_median', 'y_err']
+    plot_names = ['xbins', 'ybins', 'counts']
 
     for i, ion in enumerate(ion_list):
         ion_out = ion.replace(" ", "")
@@ -41,35 +40,21 @@ def generate_ion_histograms(output, ion_list, nbins = 800, rmax = 300):
             multiplier = np.arange(num_slices + 1)            
             counts = np.zeros((nbins-1)**2)
 
-            nbins_med = 60
-            rbins_med = np.linspace(0, rmax, nbins_med)
-            median_list = np.zeros((len(rbins_med), num_slices))
-            err_list = np.zeros((len(rbins_med), num_slices))
             for m in range(len(multiplier)-1):
                 start = multiplier[m] * dlen
                 end = multiplier[m+1] * dlen
                 r = r_arr[start:end]
                 col = col_arr[start:end]
 
-                xbins, ybins, dcounts = return_histogram_data(r, col, nbins=nbins, rmax=rmax)
+                ylims = ipd.return_ylims(ion)
+                xbins, ybins, dcounts = return_histogram_data(r, col, nbins=nbins, rmax=rmax, ylims = ylims)
                 counts += dcounts
- 
-                y_median, y_err = ipd.make_profiles(r, col, rbins_med, nbins_med)
-                for ind in range(len(y_median)):
-                    median_list[ind][m] = y_median[ind]
-                    err_list[ind][m] = y_err[ind]
+                
+            print(counts.max())
 
-            print('made histogram!')
-
-            y_median = np.zeros(len(y_median))
-            y_err = np.zeros(len(y_err))
-            for j in range(len(y_median)):
-                y_median[j] = np.median(median_list[j])
-                y_err[j] = np.sqrt(np.sum(err_list[m]**2))
-
-            plot_data = [xbins, ybins, counts, rbins_med, y_median, y_err]
+            plot_data = [xbins, ybins, counts]
             for pdata, pname in zip(plot_data, plot_names):
-                dset = '%s_%s_%s'%(ion_out, pname, bin_name)
+                dset = '%s_%s_%s'%(ion_out, bin_name, pname)
                 plot_file.create_dataset(dset, data = pdata)
                 plot_file.flush()
 
