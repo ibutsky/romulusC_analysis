@@ -20,7 +20,9 @@ def return_histogram_data(r_arr, cdens_arr, nbins = 800, rmax = 300, ylims=(1e3,
     return xbins, ybins, counts.T.ravel()
 
 def generate_ion_histograms(output, ion_list, nbins = 800, rmax = 300):
-    frb = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_data2.h5'%(output), 'r')
+    ''' Uses stored combined column density and impact parameter arrays to generate 
+    histogram data'''
+    frb = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_data.h5'%(output), 'r')
     plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_histogram_data.h5'%(output), 'w')
 
     bin_name_list = ['low_mass', 'med_mass', 'high_mass', 'dist_1', 'dist_2', 'dist_3', 'dist_4']
@@ -30,8 +32,8 @@ def generate_ion_histograms(output, ion_list, nbins = 800, rmax = 300):
         ion_out = ion.replace(" ", "")
         for bin_name in bin_name_list:
             print(ion, bin_name)
-            r_arr = frb[('%s_rbins_%s'%(ion_out, bin_name))][:]
-            col_arr = frb[('%s_col_%s'%(ion_out, bin_name))][:]
+            r_arr = frb[('%s_%s_rbin'%(ion_out, bin_name))][:]
+            col_arr = frb[('%s_%s_col'%(ion_out, bin_name))][:]
             
             # since the arrays are huge (~90 million entries), we're going to split them up
             # and calculate the counts separately (much faster) and then add them upp

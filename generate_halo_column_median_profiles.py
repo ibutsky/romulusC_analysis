@@ -7,8 +7,8 @@ import ion_plot_definitions as ipd
 
 
 def generate_ion_profiles(output, ion_list, nbins = 800, rmax = 300):
-    frb = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_data2.h5'%(output), 'r')
-    plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_profile_data3.h5'%(output), 'w')
+    frb = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_data.h5'%(output), 'r')
+    plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_profile_data.h5'%(output), 'w')
 
     bin_name_list = ['low_mass', 'med_mass', 'high_mass', 'dist_1', 'dist_2', 'dist_3', 'dist_4']
     plot_names = ['x_median', 'y_median', 'y_err']
@@ -17,12 +17,14 @@ def generate_ion_profiles(output, ion_list, nbins = 800, rmax = 300):
         ion_out = ion.replace(" ", "")
         for bin_name in bin_name_list:
             print(ion, bin_name)
-            r_arr = frb[('%s_rbins_%s'%(ion_out, bin_name))][:]
-            col_arr = frb[('%s_col_%s'%(ion_out, bin_name))][:]
+            r_arr = frb[('%s_%s_rbin'%(ion_out, bin_name))][:]
+            col_arr = frb[('%s_%s_col'%(ion_out, bin_name))][:]
             
 
             nbins_med = 60
             rbins_med = np.linspace(0, rmax, nbins_med)
+#            centered_r_bins = rbins_med + (rmax/nbins_med/2.0)
+
             y_median, y_err = ipd.make_profiles(r_arr, col_arr, rbins_med, nbins_med)
                 
             plot_data = [rbins_med, y_median, y_err]
