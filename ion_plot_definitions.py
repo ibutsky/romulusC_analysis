@@ -1,0 +1,186 @@
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
+
+import numpy as np
+import h5py as h5
+import sys
+import os.path
+
+def return_ylims(ion):
+    if ion == 'H I':
+        ylims = (1e11, 1e21)
+    elif ion == 'O VI':
+        ylims = (1e10, 1e17)
+    elif ion == 'Mg II':
+        ylims = (1e2, 1e17)
+    elif ion == 'C II':
+        ylims = (1e5, 1e19)
+    elif ion == 'C III':
+        ylims = (1e7, 1e17)
+    elif ion == 'C IV':
+        ylims = (1e7, 1e16)
+    elif ion == 'Si II':
+        ylims = (1e2, 1e17)
+    elif ion == 'Si III':
+        ylims = (1e5, 1e16)
+    elif ion == 'Si IV':
+        ylims = (1e5, 1e16)
+    else:
+        ylims = (1e5, 1e20)
+    return ylims 
+
+def return_observational_threshold(ion):
+    ion = ion.replace(" ", "")
+    if ion == 'HI':
+        return np.power(10, 13)
+    elif ion == 'O VI': 
+        return np.power(10, 13.5)
+    elif ion == 'Si II': 
+        return np.power(10, 13) 
+    elif ion == 'Si III': 
+        return np.power(10, 12.8)
+    elif ion == 'Si IV': 
+        return np.power(10, 13.3) 
+    elif ion == 'C II': 
+        return np.power(10, 13.3)
+    elif ion == 'C III':
+        return np.power(10, 13)
+    else:
+        return np.power(10, 13)
+
+
+def return_ion_prefix(ion):
+    if ion == 'H I':
+        field = 'H_p0'
+    elif ion == 'O VI':
+        field = 'O_p5'
+    elif ion == 'Si II':
+        field = 'Si_p1'
+    elif ion == 'Si III':
+        field = 'Si_p2'
+    elif ion == 'Si IV':
+        field = 'Si_p3'
+    elif ion == 'C II':
+        field = 'C_p1'
+    elif ion == 'C III':
+        field = 'C_p2'
+    elif ion == 'C IV':
+        field = 'C_p3'
+    elif ion == 'Mg II':
+        field = 'Mg_p1'
+    return field
+
+def return_field_name(ion, field, full_name = True):
+    ion_prefix = return_ion_prefix(ion)
+    field_name = "%s_%s"%(ion_prefix, field)
+    if full_name:
+        field_name = ('gas', field_name)
+    return field_name
+
+def generate_ion_field_list(ion_list, field, full_name = True):
+    field_name_list = []
+    for ion in ion_list:
+        field_name_list.append(return_field_name(ion, field, full_name))
+    return field_name_list
+                        
+
+def make_profiles(r_arr, cdens_arr, r_bins, n_bins):
+    bin_ids = np.digitize(r_arr, r_bins)
+    median = np.zeros(len(r_bins))
+    std = np.zeros(len(r_bins))
+    for i in np.arange(n_bins):
+        bin_id = i + 1
+        sample = cdens_arr[bin_ids == bin_id]
+        median[i] = np.median(sample)
+        std[i] = np.std(sample)
+        
+    return median, std
+
+def make_covering_fraction_profiles(r_arr, cdens_arr, r_bins, n_bins, threshold):
+    bin_ids = np.digitize(r_arr, r_bins)
+    covering_fraction_profile_data = np.zeros(len(r_bins))
+    for i in np.arange(n_bins):
+        bin_id = i + 1
+        sample = cdens_arr[bin_ids == bin_id]
+        above_threshold = sample[sample > threshold]
+        covering_fraction_profile_data[i] = len(above_threshold) / len(sample)
+    return covering_fraction_profile_data
+
+def make_median_and_cfrac_profiles(r_arr, cdens_arr, r_bins, n_bins, threshold):
+    bin_ids = np.digitize(r_arr, r_bins)
+    median = np.zeros(len(r_bins))
+    std = np.zeros(len(r_bins))
+    covering_fraction_profile_data = np.zeros(len(r_bins))
+    for i in np.arange(n_bins):
+        bin_id = i + 1
+        sample = cdens_arr[bin_ids == bin_id]
+        median[i] = np.median(sample)
+        std[i] = np.std(sample)
+        above_threshold = sample[sample > threshold]
+        if (len(sample)) > 0:
+            covering_fraction_profile_data[i] = len(above_threshold) / len(sample)
+        else:
+            covering_fraction_profile_data[i] = 0
+    return median, std, covering_fraction_profile_data
+
+
+def plot_hist2d(ax, r_arr, cdens_arr, rmax,  ylims, cmap='GnBu', vmin=1, vmax=None):
+    nbins = 60
+    xbins = np.linspace(0, rmax, nbins)
+    ybins = 10**np.linspace(np.log10(ylims[0]), np.log10(ylims[1]), nbins)
+    counts, x_edge, y_edge = np.histogram2d(r_arr, cdens_arr, bins=(xbins, ybins))
+    x_bin_center = ((x_edge[1:] + x_edge[:-1]) / 2).reshape(nbins-1,1)
+    # normalize counts in x-space to remove out linear increase in counts with 
+    # radius due to circles of constant impact parameter
+    counts /= x_bin_center 
+    ax.set_yscale('log')
+    #im = ax.pcolormesh(xbins, ybins, counts.T, vmin=counts.min(), vmax=counts.max(), cmap='magma', norm=LogNorm())
+    print(counts.max())
+    if vmax == None:
+        vmax = counts.max()
+    im = ax.pcolormesh(xbins, ybins, counts.T, vmin=vmin, vmax=vmax, cmap=cmap, norm=LogNorm())
+    return im
+
+def generate_cluster_centered_r(axis, center, rvir):
+    cluster_center = [1747.17816336, 80.1641512, -1805.57513129]
+    res = 800 
+    xstart = center[0] - cluster_center[0] - rvir
+    xend = center[0] - cluster_center[0] + rvir
+    ystart = center[1] - cluster_center[1] - rvir
+    yend = center[1] - cluster_center[1] + rvir
+    zstart = center[2] - cluster_center[2] - rvir
+    zend = center[2] - cluster_center[2] + rvir
+    
+    if axis == 'x':
+        py, pz = np.mgrid[ystart:yend:res*1j, zstart:zend:res*1j]
+        radius = (py**2 + pz**2)**0.5
+    elif axis == 'y':
+        pz, px = np.mgrid[zstart:zend:res*1j, xstart:xend:res*1j]
+        radius = (px**2 + pz**2)**0.5
+    elif axis == 'z':
+        px, py = np.mgrid[xstart:xend:res*1j, zstart:zend:res*1j]
+        radius = (px**2 + py**2)**0.5
+    return radius.ravel()
+        
+
+def load_r_cdens(fname, ion, underscore = False):
+    r_arr = []
+    cdens_arr = []
+
+    frb = h5.File(fname, 'r')
+    for axis in ['x', 'y', 'z']:
+            if underscore:
+                cname = "%s_%s"%(ion, axis)
+            else:
+                cname = "%s %s" % (ion, axis)
+            if cname in frb.keys():
+                r_arr = np.concatenate((r_arr, frb['radius'].value))
+                cdens_arr = np.concatenate((cdens_arr, frb[cname].value))
+    return r_arr, cdens_arr
+
+
+def make_projection(ds, axis, ion_fields, center, width):
+    p = ds.proj(ion_fields, axis, weight_field=None, center=center, method='integrate')
+    return p.to_frb(width, 800, center=center)
