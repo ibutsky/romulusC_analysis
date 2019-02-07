@@ -35,20 +35,22 @@ def return_observational_threshold(ion):
     ion = ion.replace(" ", "")
     if ion == 'HI':
         return np.power(10, 13)
-    elif ion == 'O VI': 
-        return np.power(10, 13.5)
-    elif ion == 'Si II': 
-        return np.power(10, 13) 
-    elif ion == 'Si III': 
-        return np.power(10, 12.8)
-    elif ion == 'Si IV': 
-        return np.power(10, 13.3) 
-    elif ion == 'C II': 
+    elif ion == 'OVI': 
         return np.power(10, 13.3)
-    elif ion == 'C III':
+    elif ion == 'SiII': 
+        return np.power(10, 13) 
+    elif ion == 'SiIII': 
         return np.power(10, 13)
+    elif ion == 'SiIV': 
+        return np.power(10, 13.3) 
+    elif ion == 'CII': 
+        return np.power(10, 13.5)
+    elif ion == 'CIII':
+        return np.power(10, 13)
+    elif ion == 'CIV':
+        return np.power(10,13.3)
     else:
-        return np.power(10, 13)
+        return None
 
 
 def return_ion_prefix(ion):
@@ -86,7 +88,7 @@ def generate_ion_field_list(ion_list, field, full_name = True):
     return field_name_list
                         
 
-def make_profiles(r_arr, cdens_arr, r_bins, n_bins):
+def median_profile(r_arr, cdens_arr, r_bins, n_bins):
     bin_ids = np.digitize(r_arr, r_bins)
     median = np.zeros(len(r_bins))
     std = np.zeros(len(r_bins))
@@ -98,17 +100,25 @@ def make_profiles(r_arr, cdens_arr, r_bins, n_bins):
         
     return median, std
 
-def make_covering_fraction_profiles(r_arr, cdens_arr, r_bins, n_bins, threshold):
+def covering_fraction_profile(ion, r_arr, cdens_arr, r_max = 300, n_bins = 100):
+    r_bins = np.linspace(0, r_max, n_bins)
+    print(r_bins)
+    centered_r_bins = r_bins + (r_max/n_bins/2.0)
+    threshold = return_observational_threshold(ion)
     bin_ids = np.digitize(r_arr, r_bins)
+    print(bin_ids)
     covering_fraction_profile_data = np.zeros(len(r_bins))
     for i in np.arange(n_bins):
         bin_id = i + 1
         sample = cdens_arr[bin_ids == bin_id]
         above_threshold = sample[sample > threshold]
         covering_fraction_profile_data[i] = len(above_threshold) / len(sample)
-    return covering_fraction_profile_data
+    return centered_r_bins, covering_fraction_profile_data
 
-def make_median_and_cfrac_profiles(r_arr, cdens_arr, r_bins, n_bins, threshold):
+def median_and_cfrac_profiles(ion, r_arr, cdens_arr, r_max = 300, n_bins = 100):
+    threshold = return_observational_threshold(ion)
+    r_bins = np.linspace(0, r_max, n_bins)
+    centered_r_bins = r_bins + (r_max/n_bins/2.0)
     bin_ids = np.digitize(r_arr, r_bins)
     median = np.zeros(len(r_bins))
     std = np.zeros(len(r_bins))
@@ -123,11 +133,10 @@ def make_median_and_cfrac_profiles(r_arr, cdens_arr, r_bins, n_bins, threshold):
             covering_fraction_profile_data[i] = len(above_threshold) / len(sample)
         else:
             covering_fraction_profile_data[i] = 0
-    return median, std, covering_fraction_profile_data
+    return centered_r_bins, median, std, covering_fraction_profile_data
 
 
-def plot_hist2d(ax, r_arr, cdens_arr, rmax,  ylims, cmap='GnBu', vmin=1, vmax=None):
-    nbins = 60
+def plot_hist2d(ax, r_arr, cdens_arr, rmax,  ylims, cmap='GnBu', nbins = 400, vmin=1, vmax_factor = 1.0, vmax=None):
     xbins = np.linspace(0, rmax, nbins)
     ybins = 10**np.linspace(np.log10(ylims[0]), np.log10(ylims[1]), nbins)
     counts, x_edge, y_edge = np.histogram2d(r_arr, cdens_arr, bins=(xbins, ybins))
@@ -140,12 +149,11 @@ def plot_hist2d(ax, r_arr, cdens_arr, rmax,  ylims, cmap='GnBu', vmin=1, vmax=No
     print(counts.max())
     if vmax == None:
         vmax = counts.max()
-    im = ax.pcolormesh(xbins, ybins, counts.T, vmin=vmin, vmax=vmax, cmap=cmap, norm=LogNorm())
+    im = ax.pcolormesh(xbins, ybins, counts.T, vmin=vmin, vmax=vmax*vmax_factor, cmap=cmap, norm=LogNorm())
     return im
 
-def generate_cluster_centered_r(axis, center, rvir):
+def generate_cluster_centered_r(axis, center, rvir, res = 800):
     cluster_center = [1747.17816336, 80.1641512, -1805.57513129]
-    res = 800 
     xstart = center[0] - cluster_center[0] - rvir
     xend = center[0] - cluster_center[0] + rvir
     ystart = center[1] - cluster_center[1] - rvir
@@ -165,22 +173,26 @@ def generate_cluster_centered_r(axis, center, rvir):
     return radius.ravel()
         
 
-def load_r_cdens(fname, ion, underscore = False):
+def load_r_cdens(fname, ion, underscore = False, space = True):
     r_arr = []
     cdens_arr = []
 
     frb = h5.File(fname, 'r')
+    if space == False:
+        ion = ion.replace(" ", "")
     for axis in ['x', 'y', 'z']:
             if underscore:
                 cname = "%s_%s"%(ion, axis)
             else:
                 cname = "%s %s" % (ion, axis)
             if cname in frb.keys():
-                r_arr = np.concatenate((r_arr, frb['radius'].value))
-                cdens_arr = np.concatenate((cdens_arr, frb[cname].value))
+                r_arr = np.concatenate((r_arr, frb['radius'][:]))
+                cdens_arr = np.concatenate((cdens_arr, frb[cname][:]))
+            else:
+                print("WARNING: %s not in %s"%(cname, fname))
     return r_arr, cdens_arr
 
 
-def make_projection(ds, axis, ion_fields, center, width):
+def make_projection(ds, axis, ion_fields, center, width, res = 800):
     p = ds.proj(ion_fields, axis, weight_field=None, center=center, method='integrate')
-    return p.to_frb(width, 800, center=center)
+    return p.to_frb(width, res, center=center)

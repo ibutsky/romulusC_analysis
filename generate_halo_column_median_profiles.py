@@ -2,7 +2,7 @@ import numpy as np
 import h5py as h5
 import sys
 
-sys.path.append("/nobackup/ibutsky/scripts/plot_help/")
+#sys.path.append("/nobackup/ibutsky/scripts/plot_help/")
 import ion_plot_definitions as ipd
 
 def generate_ion_profiles(output, ion_list, nbins = 100, rmax = 300):
@@ -22,14 +22,10 @@ def generate_ion_profiles(output, ion_list, nbins = 100, rmax = 300):
             r_arr = frb[('%s_%s_rbin'%(ion_out, bin_name))][:]
             col_arr = frb[('%s_%s_col'%(ion_out, bin_name))][:]
 
-            rbins = np.linspace(0, rmax, nbins)
-            centered_r_bins = rbins + (rmax/nbins/2.0)
-
             # observational threshold of ion in absorption in UV
             # hand-wavey calculation tabulated in ion_plot_definitions
-            threshold = ipd.return_observational_threshold(ion)
-            y_median, y_err, covering_fraction = \
-                    ipd.make_median_and_cfrac_profiles(r_arr, col_arr, rbins, nbins, threshold)
+            centered_r_bins, y_median, y_err, covering_fraction = \
+                    ipd.median_and_cfrac_profiles(ion, r_arr, col_arr, r_max = rmax, n_bins = nbins)
                 
             
             # data to be saved in outfile (hdf5 format) and its name

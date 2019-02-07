@@ -6,13 +6,13 @@ sys.path.append("/nobackup/ibutsky/scripts/plot_help/")
 import ion_plot_definitions as ipd
 
 
-def combine_halo_column_densities(output, ion_list, rmax = 300):
+def combine_halo_column_densities(sim, output, ion_list, rmax = 300):
 
     last = 228  
 #    last = 5 # for testing
-    out_file = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_data.h5'%(output), 'w')
+    out_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data.h5'%(sim, output), 'w')
     
-    halo_props = h5.File('/nobackup/ibutsky/data/romulusC_halo_data_%i'%(output), 'r')
+    halo_props = h5.File('/nobackup/ibutsky/data/%s_halo_data_%i'%(sim, output), 'r')
     # ignoring the 0th entry, which is the main cluster halo
     halo_list = halo_props['halo_id'].value[1:last]
     mstar_list = halo_props['mstar'].value[1:last]
@@ -48,7 +48,7 @@ def combine_halo_column_densities(output, ion_list, rmax = 300):
         for j, halo in enumerate(halo_list):
             print(ion, halo)
 
-            fn = '/nobackupp2/ibutsky/data/romulusC/column_%i_halo%i'%(output, halo)
+            fn = '/nobackupp2/ibutsky/data/%s/column_%i_halo%i'%(sim, output, halo)
             mstar = mstar_list[j]
             dtc = dist_list[j]  # distance to cluster center
             
@@ -98,6 +98,10 @@ def combine_halo_column_densities(output, ion_list, rmax = 300):
     
 
 ion_list = ['H I', 'O VI', 'Si II', 'Si III', 'Si IV', 'C II', 'C III', 'C IV']
-output = 3035
 
-combine_halo_column_densities(output, ion_list)
+sim = sys.argv[1]
+output = int(sys.argv[2])
+#sim =  'romulus25'
+#output = 3035
+
+combine_halo_column_densities(sim, output, ion_list)
