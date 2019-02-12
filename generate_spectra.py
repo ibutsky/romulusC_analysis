@@ -12,7 +12,7 @@ import yt_functions as ytf
 
 def generate_spectra(index_start, index_end, output):
 
-    ds = yt.load('/nobackupp2/ibutsky/romulusC/romulusC.%06d'%(output))
+    ds = yt.load('/nobackupp2/ibutsky/simulations/romulusC/romulusC.%06d'%(output))
     ion_list = ['H I', 'C II', 'C III', 'C IV', 'O VI']
     trident.add_ion_fields(ds, ions=ion_list)
     ds.add_field(("gas", "particle_H_nuclei_density"), function = ytf._H_nuc, \
@@ -22,15 +22,12 @@ def generate_spectra(index_start, index_end, output):
     y_end = ds.domain_right_edge[2]
 
     center = rom.get_romulusC_center(output)
-    center_x = 1747.17816336 
-    center_z = -1805.57513129
-    print(center_x, center_z)
 
     center_x = center[0]
     center_z = center[2]
     print(center_x, center_z)
 
-    ray_id, z_list, x_list = np.loadtxt('/nobackupp2/ibutsky/data/spectra/coordinate_list.dat',\
+    ray_id, x_list, z_list = np.loadtxt('/nobackupp2/ibutsky/data/YalePaper/spectra/coordinate_list.dat',\
                                 skiprows = 1, unpack=True)
 
     outfile = open('/nobackup/ibutsky/data/YalePaper/spectra/romulusC_sightline_%i_extra_data.dat'%(output), 'a')
@@ -71,7 +68,7 @@ def generate_spectra(index_start, index_end, output):
         rho_ave = ray.quantities.weighted_average_quantity(('gas', 'particle_H_nuclei_density'), weight)
         M_tot = ray.quantities.total_quantity(('gas', 'mass')).in_units('Msun')
 
-        outfile.write('%i %e %e %e %e %e %e %e %e \n'%(i, H_col, CII_col, CIII_col, CIV_col, O_col, T_ave, rho_ave, M_tot))
+        outfile.write('%i %e %e %e %e %e %e %e %e %e %e \n'%(i, H_col, CII_col, CIII_col, CIV_col, O_col, T_ave, rho_ave, M_tot, x, z))
         outfile.flush()
                       
 

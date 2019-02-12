@@ -18,7 +18,7 @@ import yt_functions as ytf
 import ion_plot_definitions as ipd
 
 def generate_spectrum_plot_data(index_start, index_end, output):
-    ds = yt.load('/nobackupp2/ibutsky/romulusC/romulusC.%06d'%(output))
+    ds = yt.load('/nobackupp2/ibutsky/simulations/romulusC/romulusC.%06d'%(output))
     ion_list = ['H I', 'C II', 'C III', 'C IV', 'Si II', 'Si III', 'Si IV', 'O VI']
     trident.add_ion_fields(ds, ions=ion_list)
     ds.add_field(("gas", "particle_H_nuclei_density"), function = ytf._H_nuc, \
@@ -33,7 +33,7 @@ def generate_spectrum_plot_data(index_start, index_end, output):
     center_z = center[2]
     print(center_x, center_y, center_z)
 
-    ray_id, z_list, x_list = np.loadtxt('/nobackupp2/ibutsky/data/spectra/coordinate_list.dat',\
+    ray_id, x_list, z_list = np.loadtxt('/nobackupp2/ibutsky/data/YalePaper/spectra/coordinate_list.dat',\
                                 skiprows = 1, unpack=True)
 
     for i in range(index_start, index_end):
@@ -80,8 +80,8 @@ def generate_spectrum_plot_data(index_start, index_end, output):
 #index_end = int(sys.argv[2])
 #output = int(sys.argv[3])
 output = 3035
-index_start = 9
-index_end = 11
+index_start = 11
+index_end = 16
 generate_spectrum_plot_data(index_start, index_end, output)
 
 #num_points = sys.argv[3]

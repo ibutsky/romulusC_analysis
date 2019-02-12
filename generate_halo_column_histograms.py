@@ -19,11 +19,11 @@ def return_histogram_data(r_arr, cdens_arr, nbins = 800, rmax = 300, ylims=(1e3,
     
     return xbins, ybins, counts.T.ravel()
 
-def generate_ion_histograms(output, ion_list, nbins = 800, rmax = 300):
+def generate_ion_histograms(sim, output, ion_list, nbins = 800, rmax = 300):
     ''' Uses stored combined column density and impact parameter arrays to generate 
     histogram data'''
-    frb = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_data.h5'%(output), 'r')
-    plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_histogram_data.h5'%(output), 'w')
+    frb = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data.h5'%(sim, output), 'r')
+    plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_histogram_data.h5'%(sim, output), 'w')
 
     bin_name_list = ['low_mass', 'med_mass', 'high_mass', 'dist_1', 'dist_2', 'dist_3', 'dist_4']
     plot_names = ['xbins', 'ybins', 'counts']
@@ -64,8 +64,10 @@ def generate_ion_histograms(output, ion_list, nbins = 800, rmax = 300):
 #### NEXT STEP: add covering fraction 
 ion_list = ['H I', 'O VI', 'Si II', 'Si III', 'Si IV', 'C II', 'C III', 'C IV']
 #ion_list = ['O VI']
-output = 3035
-generate_ion_histograms(output, ion_list)
+#output = 3035
+sim = sys.argv[1]
+output = int(sys.argv[2])
+generate_ion_histograms(sim, output, ion_list)
 
 
 

@@ -27,12 +27,13 @@ def plot_multipanel(ion_list, plot_type, output, rmax = 3000):
         r_arr, cdens_arr = ipd.load_r_cdens(fn, ion, underscore=True, space=False)
         xbins, cfrac = ipd.covering_fraction_profile(ion, r_arr, cdens_arr, r_max = rmax)
 
-        ax.plot(xbins, cfrac, linewidth = 4, color = palette[i], label = ion)
+        ax.plot(xbins, cfrac, linewidth = 4, label = ion)
         ax.legend()
         #ax.annotate(ion, xy=(0.8*rmax, 0.8), fontsize=20)
 
         ax.set_xlabel('Impact Parameter (kpc)')
-   
+        ax.set_ylabel('Ion Covering Fraction')
+
         fig.tight_layout()
         plt.savefig('/nobackupp2/ibutsky/plots/YalePaper/romulusC.%06d_ion_covering_fraction.png'%(output))
 

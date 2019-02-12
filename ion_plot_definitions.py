@@ -31,6 +31,31 @@ def return_ylims(ion):
         ylims = (1e5, 1e20)
     return ylims 
 
+def column_plot_ylims(ion):
+        ion = ion.replace(" ", "")
+        if ion == 'HI':
+                ylims = (8e12, 1e15)
+        elif ion == 'OVI':
+                ylims = (1e12, 7e14)
+        elif ion == 'MgII':
+                ylims = (1e2, 1e15)
+        elif ion == 'CII':
+                ylims = (8e4, 1e11)
+        elif ion == 'CIII':
+                ylims = (9e7, 1e12)
+        elif ion == 'CIV':
+                ylims = (2e10, 1e13)
+        elif ion == 'SiII':
+                ylims = (1e2, 9e6)
+        elif ion == 'SiIII':
+                ylims = (1e5, 8e11)
+        elif ion == 'SiIV':
+                ylims = (1e7, 9e10)
+        else:
+                ylims = (1e5, 1e15)
+        return ylims
+
+
 def return_observational_threshold(ion):
     ion = ion.replace(" ", "")
     if ion == 'HI':
@@ -50,6 +75,7 @@ def return_observational_threshold(ion):
     elif ion == 'CIV':
         return np.power(10,13.3)
     else:
+        print("WARNING OBSERVATIONAL THRESHOLD NOT SET")
         return None
 
 
@@ -102,11 +128,10 @@ def median_profile(r_arr, cdens_arr, r_bins, n_bins):
 
 def covering_fraction_profile(ion, r_arr, cdens_arr, r_max = 300, n_bins = 100):
     r_bins = np.linspace(0, r_max, n_bins)
-    print(r_bins)
     centered_r_bins = r_bins + (r_max/n_bins/2.0)
     threshold = return_observational_threshold(ion)
+    print("%s observational threshold: %e"%(ion, threshold))
     bin_ids = np.digitize(r_arr, r_bins)
-    print(bin_ids)
     covering_fraction_profile_data = np.zeros(len(r_bins))
     for i in np.arange(n_bins):
         bin_id = i + 1
@@ -117,6 +142,7 @@ def covering_fraction_profile(ion, r_arr, cdens_arr, r_max = 300, n_bins = 100):
 
 def median_and_cfrac_profiles(ion, r_arr, cdens_arr, r_max = 300, n_bins = 100):
     threshold = return_observational_threshold(ion)
+    print("%s observational threshold: %e"%(ion, threshold))
     r_bins = np.linspace(0, r_max, n_bins)
     centered_r_bins = r_bins + (r_max/n_bins/2.0)
     bin_ids = np.digitize(r_arr, r_bins)
@@ -176,8 +202,12 @@ def generate_cluster_centered_r(axis, center, rvir, res = 800):
 def load_r_cdens(fname, ion, underscore = False, space = True):
     r_arr = []
     cdens_arr = []
-
-    frb = h5.File(fname, 'r')
+    if os.path.isfile(fname):
+        frb = h5.File(fname, 'r')
+    else:
+        print("WARNING: %s is not a file"%(fname))
+        sys.stdout.flush()
+        return r_arr, cdens_arr
     if space == False:
         ion = ion.replace(" ", "")
     for axis in ['x', 'y', 'z']:
@@ -190,6 +220,8 @@ def load_r_cdens(fname, ion, underscore = False, space = True):
                 cdens_arr = np.concatenate((cdens_arr, frb[cname][:]))
             else:
                 print("WARNING: %s not in %s"%(cname, fname))
+                sys.stdout.flush()
+
     return r_arr, cdens_arr
 
 

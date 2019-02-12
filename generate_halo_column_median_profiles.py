@@ -10,7 +10,7 @@ def generate_ion_profiles(output, ion_list, nbins = 100, rmax = 300):
         Takes the number output of romulusC and the list of ions and generates an h5 file
         with  the radial bins, median, median error, and covering fraction of that ion'''
     frb = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_data.h5'%(output), 'r')
-    plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_profile_data.h5'%(output), 'w')
+    plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_combined_halo_ion_profile_data2.h5'%(output), 'w')
 
     bin_name_list = ['low_mass', 'med_mass', 'high_mass', 'dist_1', 'dist_2', 'dist_3', 'dist_4']
 

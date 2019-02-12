@@ -46,7 +46,8 @@ def plot_multipanel(ion_list, plot_type, output, nrows = 2, rmax = 3000):
     
         if row == 1:
             ax.set_xlabel('Impact Parameter (kpc)')
-   
+        if col == 0:
+            ax.set_ylabel('Ion Column Density ($\mathrm{cm}^{-2}$)')
         fig.tight_layout()
         plt.savefig('/nobackupp2/ibutsky/plots/YalePaper/romulusC.%06d_ion_column_density.png'%(output))
 

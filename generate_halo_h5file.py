@@ -21,7 +21,7 @@ def generate_halo_column_data(sim, output, ion_list, res = 800):
     ds = yt.load('/nobackupp2/ibutsky/simulations/%s/%s.%06d'%(sim, sim, output))
     trident.add_ion_fields(ds, ions=ion_list)
 
-    halo_props = h5.File('../data/%s_halo_data_%i'%(sim, output), 'r')
+    halo_props = h5.File('/nobackupp2/ibutsky/data/%s_halo_data_%i'%(sim, output), 'r')
     halo_ids = halo_props['halo_id'][:]
 
 
@@ -34,7 +34,7 @@ def generate_halo_column_data(sim, output, ion_list, res = 800):
 
         cdens_file = h5.File('/nobackupp2/ibutsky/data/%s/column_%i_halo%i'%(sim, output, halo_id), 'a') 
     
-        width = yt.YTQuantity(2*radius[i], 'kpc')
+        width = yt.YTQuantity(2*rvir, 'kpc')
         px, py = np.mgrid[-width/2:width/2:res*1j, -width/2:width/2:res*1j]
         radius = (px**2.0 + py**2.0)**0.5
 
