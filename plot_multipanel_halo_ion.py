@@ -19,7 +19,7 @@ import ion_plot_definitions as ipd
 def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type):
 
     plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_histogram_data.h5'%(sim, output), 'r')
-    profile_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_profile_data2.h5'%(sim, output), 'r')
+    profile_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_profile_data.h5'%(sim, output), 'r')
     
     nrows = 2
     ncols = int(len(ion_list) / 2)
@@ -105,5 +105,8 @@ ion_list = ['H I', 'C II', 'C III', 'C IV', 'Si II', 'Si III', 'Si IV', 'O VI']
 
 
 for plot_type in ['cfrac', 'column']:
-    for bin_type in ['mass', 'dist']:
-        multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type)
+    multipanel_ion_plot(sim, output, ion_list, plot_type, 'mass')
+    if sim == 'romulusC':
+        multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist')
+
+        

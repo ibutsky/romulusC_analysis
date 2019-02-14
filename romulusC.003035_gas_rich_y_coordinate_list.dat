@@ -1,0 +1,6 @@
+#note: center x and y are absolute coordinates, plot coordinates are relative 
+#to cluster center in frame of y-projection 
+#id center_x(plot_y),  center_y(plot_x),  width(kpc)
+0 1750 2200  1200
+1 -1800 400  1200
+2 1200 -1600 1200

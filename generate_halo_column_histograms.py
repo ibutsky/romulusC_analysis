@@ -2,7 +2,6 @@ import numpy as np
 import h5py as h5
 import sys
 
-sys.path.append("/nobackup/ibutsky/scripts/plot_help/")
 import ion_plot_definitions as ipd
 
 
@@ -25,7 +24,9 @@ def generate_ion_histograms(sim, output, ion_list, nbins = 800, rmax = 300):
     frb = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data.h5'%(sim, output), 'r')
     plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_histogram_data.h5'%(sim, output), 'w')
 
-    bin_name_list = ['low_mass', 'med_mass', 'high_mass', 'dist_1', 'dist_2', 'dist_3', 'dist_4']
+    bin_name_list = ['low_mass', 'med_mass', 'high_mass']
+    if sim == 'romulusC':
+        bin_name_list = np.append(bin_name_list, ['dist_1', 'dist_2', 'dist_3', 'dist_4'])
     plot_names = ['xbins', 'ybins', 'counts']
 
     for i, ion in enumerate(ion_list):

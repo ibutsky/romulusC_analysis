@@ -15,14 +15,21 @@ sns.set_style("white",{'font.family':'serif', 'axes.grid': True, "ytick.major.si
 sys.path.append("/nobackup/ibutsky/scripts/plot_help/")
 import ion_plot_definitions as ipd
     
-def plot_multipanel(ion_list, plot_type, output, nrows = 2, rmax = 3000):
+def plot_multipanel(ion_list, output, region, nrows = 2, rmax = 3000):
 
     ncols = int((len(ion_list)+1)/2)
     fig, figax = plt.subplots(nrows = nrows, ncols =ncols , figsize = (4.2*ncols, 4*nrows),sharex = True, sharey = False)
 
 #    fn = '/nobackup/ibutsky/data/romulusC/column_%i.h5'%(output)
     sim = 'romulusC'
-    fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data.h5'%(sim, sim, output)
+    if region == 'romulusC':
+        fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data.h5'%(sim, sim, output)
+        rmin = 0
+    else: 
+        fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data_region_%s.h5'%(sim, sim, int(output), region)
+        rmin = 0
+        rmax = 1200 ###### HARD-CODED FOR NOW
+
     for i, ion in enumerate(ion_list):
         row = int(i/ncols)
         col = int(i - ncols*row)
@@ -35,9 +42,10 @@ def plot_multipanel(ion_list, plot_type, output, nrows = 2, rmax = 3000):
             ax = figax[row][col]            
 
         ylims = ipd.return_ylims(ion)
-        r_arr, cdens_arr = ipd.load_r_cdens(fn, ion, underscore = True, space = False)
-        if plot_type == 'cdens':
-          im =  ipd.plot_hist2d(ax, r_arr, cdens_arr, rmax,  ylims, vmin = 1e-4, vmax_factor = 0.1,  nbins = 800)
+        r_arr, cdens_arr = ipd.load_r_cdens(fn, ion, underscore = True, space = False, rname = 'px')
+        r_arr = np.add(r_arr, 600)
+        print(min(r_arr), max(r_arr))
+        im =  ipd.plot_hist2d(ax, r_arr, cdens_arr, rmax,  ylims, vmin = 1e-4, vmax_factor = 0.1,  nbins = 800, rmin = rmin)
             
 
         # annotate ion labels for plot
@@ -49,12 +57,16 @@ def plot_multipanel(ion_list, plot_type, output, nrows = 2, rmax = 3000):
         if col == 0:
             ax.set_ylabel('Ion Column Density ($\mathrm{cm}^{-2}$)')
         fig.tight_layout()
-        plt.savefig('/nobackupp2/ibutsky/plots/YalePaper/romulusC.%06d_ion_column_density.png'%(output))
+        if region == 'romulusC':
+            plt.savefig('/nobackupp2/ibutsky/plots/YalePaper/romulusC.%06d_ion_column_density.png'%(output))
+        else:
+            plt.savefig('/nobackupp2/ibutsky/plots/YalePaper/romulusC.%06d_ion_column_density_region_%s.png'%(output, region))
 
 
 ion_list = ['H I', 'C II', 'C III', 'C IV', 'Si II', 'Si III', 'Si IV', 'O VI']
 
 plot_type = 'cdens'
-output = int(sys.argv[1])
-
-plot_multipanel(ion_list, plot_type, output)
+region = sys.argv[1]
+output = int(sys.argv[2])
+print(output)
+plot_multipanel(ion_list, output, region)
