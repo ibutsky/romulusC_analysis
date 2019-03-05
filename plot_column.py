@@ -15,20 +15,30 @@ sns.set_style("white",{'font.family':'serif', 'axes.grid': True, "ytick.major.si
 sys.path.append("/nobackup/ibutsky/scripts/plot_help/")
 import ion_plot_definitions as ipd
     
-def plot_multipanel(ion_list, output, region, nrows = 2, rmax = 3000):
+def plot_multipanel(ion_list, output, region, rmax = 3000):
+    
+    if len(ion_list) <= 4:
+        nrows = 1
+        ncols = len(ion_list)
+    else: 
+        nrows = 2
+        ncols = int((len(ion_list)+1)/2)
 
-    ncols = int((len(ion_list)+1)/2)
     fig, figax = plt.subplots(nrows = nrows, ncols =ncols , figsize = (4.2*ncols, 4*nrows),sharex = True, sharey = False)
 
 #    fn = '/nobackup/ibutsky/data/romulusC/column_%i.h5'%(output)
     sim = 'romulusC'
     if region == 'romulusC':
         fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data.h5'%(sim, sim, output)
+        test = h5.File(fn, 'r')
+        print(list(test.keys()))
         rmin = 0
+        rname = 'radius'
     else: 
         fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data_region_%s.h5'%(sim, sim, int(output), region)
         rmin = 0
         rmax = 1200 ###### HARD-CODED FOR NOW
+        rname = 'px'
 
     for i, ion in enumerate(ion_list):
         row = int(i/ncols)
@@ -42,8 +52,10 @@ def plot_multipanel(ion_list, output, region, nrows = 2, rmax = 3000):
             ax = figax[row][col]            
 
         ylims = ipd.return_ylims(ion)
-        r_arr, cdens_arr = ipd.load_r_cdens(fn, ion, underscore = True, space = False, rname = 'px')
-        r_arr = np.add(r_arr, 600)
+        r_arr, cdens_arr = ipd.load_r_cdens(fn, ion, underscore = True, space = False, rname = rname)
+
+        if region != 'romulusC':
+            r_arr = np.add(r_arr, 600)
         print(min(r_arr), max(r_arr))
         im =  ipd.plot_hist2d(ax, r_arr, cdens_arr, rmax,  ylims, vmin = 1e-4, vmax_factor = 0.1,  nbins = 800, rmin = rmin)
             
@@ -65,6 +77,7 @@ def plot_multipanel(ion_list, output, region, nrows = 2, rmax = 3000):
 
 ion_list = ['H I', 'C II', 'C III', 'C IV', 'Si II', 'Si III', 'Si IV', 'O VI']
 
+ion_list = ['H I', 'C IV', 'O VI']
 plot_type = 'cdens'
 region = sys.argv[1]
 output = int(sys.argv[2])

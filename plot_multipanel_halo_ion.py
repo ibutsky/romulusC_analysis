@@ -21,8 +21,13 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type):
     plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_histogram_data.h5'%(sim, output), 'r')
     profile_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_profile_data.h5'%(sim, output), 'r')
     
-    nrows = 2
-    ncols = int(len(ion_list) / 2)
+    if len(ion_list) < 4:
+        nrows = 1
+        ncols = len(ion_list)
+    else:
+        nrows = 2
+        ncols = int((len(ion_list) / nrows))
+
     if plot_type == 'cfrac':
         sharey = True
         ylabel = 'Ion Covering Fraction'
@@ -52,14 +57,17 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type):
                        '$ 2 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 3 \mathrm{R}_{\mathrm{vir}}$']
         linestyles = ['solid', 'dashed', 'dashdot', 'dotted']
         
-    fig, figax = plt.subplots(nrows = 2, ncols = 4, figsize=(3.4*ncols, 3*nrows), sharex = True, sharey = sharey)
+    fig, figax = plt.subplots(nrows = nrows, ncols = ncols, figsize=(3.4*ncols, 3*nrows), sharex = True, sharey = sharey)
     
     for i, ion_name in enumerate(ion_list):
         ion = ion_name.replace(" ", "")
         row = int(i/ncols)
         col = int(i - ncols*row)
-        ax = figax[row][col]
-        if row == 1:
+        if nrows > 1:
+            ax = figax[row][col]
+        else:
+            ax = figax[col]
+        if row == nrows-1:
             ax.set_xlabel('Impact Parameter (kpc)')
         if col == 0:
             ax.set_ylabel(ylabel)
@@ -102,7 +110,7 @@ sim = sys.argv[1]
 output = int(sys.argv[2])
 
 ion_list = ['H I', 'C II', 'C III', 'C IV', 'Si II', 'Si III', 'Si IV', 'O VI']
-
+ion_list = ['H I', 'C IV', 'O VI']
 
 for plot_type in ['cfrac', 'column']:
     multipanel_ion_plot(sim, output, ion_list, plot_type, 'mass')

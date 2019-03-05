@@ -23,7 +23,7 @@ def plot_multipanel(ion_list, output, region, rmax = 3000):
         fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data.h5'%(sim, sim, output)
     else:
         fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data_region_%s.h5'%(sim, sim, output, region)
-        rmax = 1200 # TEMPORARY HARD-CODE
+#        rmax = 1200 # TEMPORARY HARD-CODE
     palette = sns.color_palette("cubehelix", len(ion_list))
 
     for i, ion in enumerate(ion_list):

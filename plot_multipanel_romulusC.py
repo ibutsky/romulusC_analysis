@@ -23,10 +23,10 @@ plt.rcParams.update(params)
 
 field_list = [('gas', 'density'), ('Gas', 'Temperature'), ('Gas', 'metallicity2'), \
               ('gas', 'xray_intensity_0.5_7.0_keV'), ('gas', 'O_p5_number_density'), \
-              ('gas', 'C_p2_number_density')]
+              ('gas', 'H_p0_number_density')]
 cmap_list = ['magma', 'afmhot', 'Blues_r','bone',  'dusk', 'purple_mm']
-#zlim_list = [(1e-30, 1e-25), (1e5, 1e8), (5e-3, 5), (1e-21, 1e-15), (1e13, 1e15), (3e12, 1e17)] 
-zlim_list = [(1e-30, 1e-25), (1e5, 1e8), (5e-3, 5), (1e-21, 1e-15), (1e13, 1e15), (3e12, 1e15)]
+zlim_list = [(1e-30, 1e-25), (1e5, 1e8), (5e-3, 5), (1e-21, 1e-15), (1e13, 1e15), (3e12, 1e17)] 
+#zlim_list = [(1e-30, 1e-25), (1e5, 1e8), (5e-3, 5), (1e-21, 1e-15), (1e13, 1e15), (3e12, 1e15)]
 
 cbar_title_list =[r'$\mathrm{Density}\ (\mathrm{g\ cm^{-3}})$', \
                   r'$\mathrm{Temperature}\ (\mathrm{K})$', \
@@ -38,7 +38,7 @@ cbar_title_list =[r'$\mathrm{Density}\ (\mathrm{g\ cm^{-3}})$', \
 
 # load in simulation data and add ion fields
 
-frb = h5.File('/nobackup/ibutsky/data/YalePaper/multipanel_romulusC_%i_data'%(output), 'r')
+frb = h5.File('/nobackup/ibutsky/data/YalePaper/multipanel_romulusC_%i_plot_data'%(output), 'r')
 print(list(frb.keys()))
 #initiate figure and axes
 orient = 'horizontal'

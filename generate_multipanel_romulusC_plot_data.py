@@ -35,9 +35,9 @@ weight_field = [('gas', 'density'), ('gas', 'density'), ('gas', 'density'), \
 
 # load in simulation data and add ion fields
 halo_props = h5.File('/nobackup/ibutsky/data/romulusC_halo_data_%i'%(output), 'r')
-plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/multipanel_romulusC_%i_data'%(output), 'a')
+plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/multipanel_romulusC_%i_plot_data'%(output), 'a')
 centers = halo_props['center'].value
-ds = yt.load('/nobackup/ibutsky/romulusC/romulusC.%06d'%(output))
+ds = yt.load('/nobackup/ibutsky/simulations/romulusC/romulusC.%06d'%(output))
 trident.add_ion_fields(ds, ions = ['O VI', 'H I', 'C III', 'O VII', 'O VIII'])
 ds.add_field(('Gas', 'metallicity2'), function = _metallicity2, units = 'Zsun', particle_type = True)
 
@@ -48,7 +48,7 @@ cen = (centers[0] / ds.length_unit).d
 # set up projection plots for fields that are weighted and unweighted
 for i in range(len(field_list)):
     proj = yt.ProjectionPlot(ds, 'y', field_list[i], weight_field = weight_field[i], center = cen)
-    proj_frb =  proj.data_source.to_frb((5, 'Mpc'), 800)
+    proj_frb =  proj.data_source.to_frb((5, 'Mpc'), 1600)
 
     dset = field_list[i][1]
     if dset not in plot_data.keys():

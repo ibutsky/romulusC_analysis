@@ -22,15 +22,13 @@ def generate_column_data(sim, output, ion_list, width, res = 800, cluster_center
     
     trident.add_ion_fields(ds, ions=ion_list)
 
-    cdens_file = h5.File('/nobackupp2/ibutsky/data/%s/%s.%06d_column_data.h5'%(sim, sim, output), 'a')
-    center_kpc = rom_help.get_romulus_center(sim, output)
-    rom_center = (center_kpc / ds.length_unit).d
-    
     # "regular" column density measured as impact parameter from cluster center
     if cluster_center:
         cdens_file = h5.File('/nobackupp2/ibutsky/data/%s/%s.%06d_column_data.h5'%(sim, sim, output), 'a')
-        center = rom_center
+        print(list(cdens_file.keys()))
+        center = rom_help.get_romulus_yt_center(sim, output, ds)
         axis_list = ['x', 'y', 'z']
+        print('using cluster center')
 
     else:
         cdens_file = h5.File('/nobackupp2/ibutsky/data/%s/%s.%06d_column_data_special_regions.h5'%(sim, sim, output), 'a')
@@ -68,6 +66,7 @@ def generate_column_data(sim, output, ion_list, width, res = 800, cluster_center
 sim =  sys.argv[1]
 output = int(sys.argv[2])
 ion_list = ['H I', 'O VI', 'Si II', 'Si III', 'Si IV', 'C II', 'C III', 'C IV']
+ion_list = ['H I', 'O VI', 'C IV']
 width = 6000
 
 #output_list = [3035, 3360, 3697]

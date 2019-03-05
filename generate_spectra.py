@@ -10,7 +10,7 @@ sys.path.append("/nobackup/ibutsky/scripts/plot_help/")
 import romulusC_analysis as rom
 import yt_functions as ytf
 
-def generate_spectra(index_start, index_end, output):
+def generate_spectra(index_start, index_end, output, sn_list = [10]):
 
     ds = yt.load('/nobackupp2/ibutsky/simulations/romulusC/romulusC.%06d'%(output))
     ion_list = ['H I', 'C II', 'C III', 'C IV', 'O VI']
@@ -48,13 +48,14 @@ def generate_spectra(index_start, index_end, output):
                                       data_filename='/nobackup/ibutsky/data/YalePaper/spectra/ray_%i_%i.h5'%(output, i))
                 
         ad = ray.all_data()
-        for choice in[130, 160]:
-            instrument = 'COS-G'+str(choice)+'M'
-            sg = trident.SpectrumGenerator(instrument)
-            sg.make_spectrum(ray, lines= 'all')
-            sg.apply_lsf()
-            sg.add_gaussian_noise(10)
-            sg.save_spectrum('/nobackup/ibutsky/data/YalePaper/spectra/romulusC_sightline_%i_%s_%i.fits'%(output, choice, i), format = 'FITS')
+        for sn in sn_list:
+            for choice in[130, 160]:
+                instrument = 'COS-G'+str(choice)+'M'
+                sg = trident.SpectrumGenerator(instrument)
+                sg.make_spectrum(ray, lines= 'all')
+                sg.apply_lsf()
+                sg.add_gaussian_noise(sn)
+                sg.save_spectrum('/nobackup/ibutsky/data/YalePaper/spectra/romulusC_sightline_%i_%s_sn%i_%i.fits'%(output, choice, sn, i), format = 'FITS')
 
         H_col = (ad[('gas', 'dl')] * ad[('gas', 'H_number_density')]).sum()
         CII_col = (ad[('gas', 'dl')] * ad[('gas', 'C_p1_number_density')]).sum()
@@ -77,7 +78,9 @@ index_start = int(sys.argv[1])
 index_end = int(sys.argv[2])
 output = int(sys.argv[3])
 
-generate_spectra(index_start, index_end, output)
+sn_list = [12, 13, 15, 17, 20]
+sn_list = [50]
+generate_spectra(index_start, index_end, output, sn_list = sn_list)
 
 #num_points = sys.argv[3]
 

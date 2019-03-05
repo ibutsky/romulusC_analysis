@@ -26,6 +26,7 @@ cluster_z = cluster_center[2]
 
 
 # load sightline properties
+# really "ray_z" and "ray_x" are in plot coordinates, not the coordinates of the simulation
 ray_id_list, ray_z_list, ray_x_list = np.loadtxt('coordinate_list.dat', \
                                     skiprows = 1, unpack=True)
 

@@ -144,7 +144,7 @@ def covering_fraction_profile(ion, r_arr, cdens_arr, r_max = 300, n_bins = 100, 
 def median_and_cfrac_profiles(ion, r_arr, cdens_arr, r_max = 300, n_bins = 100, threshold = None):
     if threshold == None:
         threshold = return_observational_threshold(ion)
-        print("%s observational threshold: %e"%(ion, threshold))
+    print("%s observational threshold: %e"%(ion, threshold))
     r_bins = np.linspace(0, r_max, n_bins)
     centered_r_bins = r_bins + (r_max/n_bins/2.0)
     bin_ids = np.digitize(r_arr, r_bins)
