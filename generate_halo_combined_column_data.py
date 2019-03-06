@@ -6,20 +6,23 @@ import os
 import ion_plot_definitions as ipd
 
 
-def combine_halo_column_densities(sim, output, ion_list, rmax = 300):
+def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None):
 
-    last = 228  
-#    last = 5 # for testing
-    out_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data.h5'%(sim, output), 'w')
+    if mask == 'high_mass':
+        out_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data_high_mass.h5'%(sim, output), 'w')
+    else:
+        out_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data.h5'%(sim, output), 'a')
     
     halo_props = h5.File('/nobackup/ibutsky/data/%s_halo_data_%i'%(sim, output), 'r')
     # ignoring the 0th entry, which is the main cluster halo
-    halo_list = halo_props['halo_id'].value[1:last]
-    mstar_list = halo_props['mstar'].value[1:last]
-    dist_list = halo_props['dist_to_cluster'].value[1:last]
+    halo_list = halo_props['halo_id'].value
+    mstar_list = halo_props['mstar'].value
+    dist_list = halo_props['dist_to_cluster'].value
     cluster_rvir = halo_props['rvir'].value[0]
 
     halo_mask = (mstar_list > 1e9) & (mstar_list < 1e12) 
+    if mask == 'high_mass':
+        halo_mask = (mstar_list >= 1e10) & (mstar_list <= 1e12)
     if sim == 'romulusC':
         halo_mask = halo_mask & (dist_list < 3.0 * cluster_rvir)
     halo_list = halo_list[halo_mask]
@@ -116,7 +119,8 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300):
 
 ion_list = ['H I', 'O VI', 'Si II', 'Si III', 'Si IV', 'C II', 'C III', 'C IV']
 
+ion_list = ['H I', 'O VI', 'C IV']
 sim = sys.argv[1]
 output = int(sys.argv[2])
 
-combine_halo_column_densities(sim, output, ion_list)
+combine_halo_column_densities(sim, output, ion_list, mask = 'high_mass')
