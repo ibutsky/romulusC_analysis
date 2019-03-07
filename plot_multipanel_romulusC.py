@@ -25,10 +25,10 @@ field_list = [('gas', 'density'), ('Gas', 'Temperature'), ('Gas', 'metallicity2'
               ('gas', 'xray_intensity_0.5_7.0_keV'), ('gas', 'O_p5_number_density'), \
               ('gas', 'H_p0_number_density')]
 cmap_list = ['magma', 'afmhot', 'Blues_r','bone',  'dusk', 'purple_mm']
-cmap_list = ['magma', 'afmhot', 'YlGnBu','bone',  'dusk', 'purple_mm']
+#cmap_list = ['magma', 'afmhot', 'YlGnBu','bone',  'dusk', 'purple_mm']
 
 zlim_list = [(1e-30, 1e-25), (1e5, 1e8), (5e-3, 5), (1e-21, 1e-15), (1e13, 1e15), (3e12, 1e17)] 
-zlim_list = [(1e-30, 1e-25), (1e5, 1e8), (1e-3, 1), (1e-21, 1e-15), (1e13, 1e15), (3e12, 1e17)]
+#zlim_list = [(1e-30, 1e-25), (1e5, 1e8), (1e-3, 1), (1e-21, 1e-15), (1e13, 1e15), (3e12, 1e17)]
 
 
 cbar_title_list =[r'$\mathrm{Density}\ (\mathrm{g\ cm^{-3}})$', \
