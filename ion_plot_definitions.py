@@ -34,7 +34,7 @@ def return_ylims(ion):
 def column_plot_ylims(ion):
         ion = ion.replace(" ", "")
         if ion == 'HI':
-                ylims = (8e12, 1e15)
+                ylims = (3e12, 1e15)
         elif ion == 'OVI':
                 ylims = (1e12, 7e14)
         elif ion == 'MgII':
@@ -230,3 +230,22 @@ def load_r_cdens(fname, ion, underscore = False, space = True, rname = 'radius')
 def make_projection(ds, axis, ion_fields, center, width, res = 800):
     p = ds.proj(ion_fields, axis, weight_field=None, center=center, method='integrate')
     return p.to_frb(width, res, center=center)
+
+
+def add_cluster_observations(ax, ion, color = 'black', zorder = 10):
+    ion = ion.replace(' ', '')
+    datafile = '/nobackup/ibutsky/data/YalePaper/burchett_observations.dat'
+    if ion == 'HI':
+        columns = (1, 8, 9)
+    elif ion == 'OVI':
+        columns = (1, 10, 11)
+    impact, col, colerr = np.loadtxt(datafile, unpack=True, skiprows=1, usecols=columns, delimiter = '|')
+    col = np.power(10, col)
+
+#    lowlim = (colerr == -99.0)
+    uplim =  (abs(colerr) ==  99.0)
+    normal = (abs(colerr) < 99.0)
+
+    ax.scatter(impact[normal], col[normal], marker = 's', zorder = zorder, c = color, linewidths = 0.5, edgecolors = 'black')
+    ax.errorbar(impact[normal],col[normal], colerr[normal],zorder= zorder,color = color)
+    ax.scatter(impact[uplim],  col[uplim],  marker = 'v', zorder = zorder, c = color, linewidths = 0.5, edgecolors = 'black')

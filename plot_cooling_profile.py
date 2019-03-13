@@ -36,6 +36,9 @@ num = np.pi * rbins**(3./2.)
 denom = np.sqrt(2*G*mass_enc)
 tff = num / denom
 
+g = G*mass_enc / rbins**2
+tff = np.sqrt(2.*rbins / g)
+
 
 yfield = ('gas', 'primordial_cooling_time')
 pc = yt.ProfilePlot(sp, xfield, yfield, weight_field = ('Gas', 'Mass'), n_bins = 128)

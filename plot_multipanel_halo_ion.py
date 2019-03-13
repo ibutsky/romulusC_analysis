@@ -93,15 +93,18 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type):
 
             ax.set_ylim(ipd.column_plot_ylims(ion))
             max_counts = counts.max()
+            #### warning: reshape counts are hard-coded
             counts = counts.reshape(799, 799)
             ax.pcolormesh(xbins, ybins, counts, vmin=1e-3, vmax = 0.9*max_counts, cmap='GnBu', norm=LogNorm())
+            ipd.add_cluster_observations(ax, ion, color = 'orange')
+
         elif plot_type == 'cfrac':
             if row == 0 and col == 0:
                 ax.legend()
             ax.annotate(ion_name, xy=(220, 0.9), fontsize=18)
 
         fig.tight_layout()
-        plt.savefig('../../plots/YalePaper/%s.%06d_multipanel_%s_halo_%s.png'%(sim, output, plot_type, bin_type), dpi = 300)
+        plt.savefig('%s_%06d_multipanel_%s_halo_%s.png'%(sim, output, plot_type, bin_type), dpi = 300)
         
         
 
@@ -109,10 +112,15 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type):
 sim = sys.argv[1]
 output = int(sys.argv[2])
 
+plot_type_list = ['cfrac', 'column']
+plot_type_list = ['column']
+
 ion_list = ['H I', 'C II', 'C III', 'C IV', 'Si II', 'Si III', 'Si IV', 'O VI']
 ion_list = ['H I', 'C IV', 'O VI']
+ion_list = ['H I', 'O VI']
 
-for plot_type in ['cfrac', 'column']:
+
+for plot_type in plot_type_list:
     multipanel_ion_plot(sim, output, ion_list, plot_type, 'mass')
     if sim == 'romulusC':
         multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist')
