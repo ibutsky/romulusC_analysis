@@ -8,8 +8,8 @@ import yt_functions as ytf
 import ion_plot_definitions as ipd
 import romulus_analysis_helper as rom_help
 
-#output = int(sys.argv[1])
-output = 3035
+output = int(sys.argv[1])
+#output = 
 
 ion_list = ['H I']
 ds = ytf.load_romulusC(output, ions = ion_list)

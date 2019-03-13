@@ -19,7 +19,7 @@ output = int(sys.argv[1])
 params = {"text.color" : "white",                                                                                    
           "xtick.color" : "white",                                                                                   
           "ytick.color" : "white"}                                                                                   
-plt.rcParams.update(params) 
+#plt.rcParams.update(params) 
 
 field_list = [('gas', 'density'), ('Gas', 'Temperature'), ('Gas', 'metallicity2'), \
               ('gas', 'xray_intensity_0.5_7.0_keV'), ('gas', 'O_p5_number_density'), \
@@ -35,9 +35,15 @@ cbar_title_list =[r'$\mathrm{Density}\ (\mathrm{g\ cm^{-3}})$', \
                   r'$\mathrm{Temperature}\ (\mathrm{K})$', \
                   r'$\mathrm{Metallicity\ } (\mathrm{Z_{\odot}})$',\
                   r'$\mathrm{X-ray\ Intensity (0.5 - 7.0 keV)}\ (\frac{\mathrm{erg}}{\mathrm{arcsec}^2\mathrm{\ cm}^2 \mathrm{\ s}})$', \
-                  r'$\mathrm{O\ VI\ Column Density}\ (\mathrm{cm^{-2}})$', \
-                  r'$\mathrm{H\ I\ Column Density}\ (\mathrm{cm^{-2}})$']
+                  r'$\mathrm{O\ VI\ Column\ Density}\ (\mathrm{cm^{-2}})$', \
+                  r'$\mathrm{H\ I\ Column\ Density}\ (\mathrm{cm^{-2}})$']
 
+
+
+field_list = [('gas', 'H_p0_number_density')]
+cmap_list = ['kelp']
+zlim_list = [(1e11, 1e16)]
+cbar_title_list = [r'$\mathrm{H\ I\ Column\ Density}\ (\mathrm{cm^{-2}})$']
 
 # load in simulation data and add ion fields
 
@@ -45,8 +51,12 @@ frb = h5.File('/nobackup/ibutsky/data/YalePaper/multipanel_romulusC_%i_plot_data
 print(list(frb.keys()))
 #initiate figure and axes
 orient = 'horizontal'
-nrows = 2
-ncols = 3
+#nrows = 2
+#ncols = 3
+
+nrows = int(1+len(field_list)/3)
+ncols = int(len(field_list)/nrows)
+print(nrows, ncols)
 fig, axes, colorbars = get_multi_plot(ncols, nrows, colorbar=None, bw = 4)
 
 for i in range(nrows*ncols):
@@ -64,8 +74,9 @@ for i in range(nrows*ncols):
 
     cbax = inset_axes(axes[row][col], width = "90%", height = "3%", loc = 9)
     cbar = fig.colorbar(im, cax=cbax, orientation = 'horizontal')
-    cbar.set_label(cbar_title_list[i], color = 'white')
+    cbar.set_label(cbar_title_list[i], color = 'black')
 
 
 # And now we're done!
-fig.savefig("multipanel_plot_romulusC_%i.png"%(output))
+#fig.savefig("multipanel_plot_romulusC_%i.png"%(output))
+fig.savefig("romulusC_HI.png", dpi = 300)

@@ -15,6 +15,6 @@ def get_romulus_yt_center(sim, output, ds):
     return yt_center
 
 def get_romulus_rvir(sim, output):
-    halo_props = load_romulusC_halo_props(sim, output)
+    halo_props = load_romulus_halo_props(sim, output)
     rvirs = halo_props['rvir'].value
     return rvirs[0]

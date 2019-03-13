@@ -104,7 +104,7 @@ def add_thermal_fields(ds):
     ds.add_field(('gas', 'metal_cooling_time'),function = _metal_cooling_time, \
              display_name = 'Metal Cooling Time', particle_type = True, units = 's')
     ds.add_field(('gas', 'cooling_freefall_ratio'), function = _cooling_freefall_ratio, \
-                 display_name = '$\\t_{cool} / t_{ff}$', particle_type = True, units = '')
+                 display_name = '$t_{cool} / t_{ff}$', particle_type = True, units = '')
     
 #    ds.add_field(('gas', 'pressure'), function=_Pressure)
 

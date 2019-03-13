@@ -52,8 +52,21 @@ y = tcool / tff
 plt.plot(rbins.in_units('kpc'), y)
 plt.yscale('log')
 plt.xlabel('Spherical Radius (kpc)')
-plt.ylabel(r'$\t_{cool} / t_{ff}$')
+plt.ylabel('$ t_{cool} / t_{ff}$')
 #plot = yt.ProfilePlot.from_profiles(pc.profiles[0])
-plt.savefig('cooling_profile_%i.png'%(output))
+plt.savefig('cooling_profile_%i.png'%(output), dpi = 300)
+plt.clf()
+
+plt.plot(rbins.in_units('kpc'), tff.in_units('yr'))
+plt.yscale('log')
+plt.xlabel('Spherical Radius (kpc)')
+plt.ylabel('Free Fall Time (yr)')
+plt.savefig('freefall_time_profile_%i.png'%(output), dpi = 300)
+plt.clf()
 
 
+plt.plot(rbins.in_units('kpc'), tcool.in_units('yr'))
+plt.yscale('log')
+plt.xlabel('Spherical Radius (kpc)')
+plt.ylabel('Primordial Cooling Time (yr)')
+plt.savefig('cooling_time_profile_%i.png'%(output), dpi = 300)
