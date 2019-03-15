@@ -32,9 +32,10 @@ rvir = rom_help.get_romulus_rvir('romulusC', output)
 sp = ds.sphere(cen, (3.*rvir, 'kpc'))
 icm = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1)"])
 
-icm_cool = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')] <= 1e4)"])
-icm_warm = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')] > 1e4) & (obj[('gas', 'temperature')] <= 1e6)"])
-icm_hot = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')] > 1e6)"])
+icm_cold = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')] <= 1e4)"])
+icm_cool = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')]  > 1e4) & (obj[('gas', 'temperature')] <= 1e5)"])
+icm_warm = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')]  > 1e5) & (obj[('gas', 'temperature')] <= 1e6)"])
+icm_hot  = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')]  > 1e6)"])
 
 #x_cool, y_cool = make_mass_profile(icm_cool)
 #x_warm, y_warm = make_mass_profile(icm_warm)
@@ -43,17 +44,19 @@ icm_hot = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (o
 xfield = ('gas', 'spherical_position_radius')
 yfield = ('Gas', 'Mass')
 
+x_cold = icm_cold[xfield].in_units('kpc')
 x_cool = icm_cool[xfield].in_units('kpc')
 x_warm = icm_warm[xfield].in_units('kpc')
-x_hot = icm_hot[xfield].in_units('kpc')
+x_hot  = icm_hot[ xfield].in_units('kpc')
 
+y_cold = icm_cold[yfield].in_units('Msun')
 y_cool = icm_cool[yfield].in_units('Msun')
 y_warm = icm_warm[yfield].in_units('Msun')
-y_hot = icm_hot[yfield].in_units('Msun')
+y_hot  = icm_hot[ yfield].in_units('Msun')
 
 
-dset_list = ['rbins_cold', 'rbins_warm', 'rbins_hot', 'mass_cold', 'mass_warm', 'mass_hot']
-data_list = [x_cool, x_warm, x_hot, y_cool, y_warm, y_hot]
+dset_list = ['rbins_cold', 'rbins_cool',  'rbins_warm', 'rbins_hot', 'mass_cold', 'mass_cool', 'mass_warm', 'mass_hot']
+data_list = [x_cold, x_cool, x_warm, x_hot, y_cold, y_cool, y_warm, y_hot]
 outfile = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_gas_temperature_profile_data'%(output), 'w')
 for dset, data in zip(dset_list, data_list):
     if dset not in outfile.keys():
