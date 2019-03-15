@@ -19,16 +19,16 @@ output = int(sys.argv[1])
 params = {"text.color" : "white",                                                                                    
           "xtick.color" : "white",                                                                                   
           "ytick.color" : "white"}                                                                                   
-#plt.rcParams.update(params) 
+plt.rcParams.update(params) 
 
 field_list = [('gas', 'density'), ('Gas', 'Temperature'), ('Gas', 'metallicity2'), \
               ('gas', 'xray_intensity_0.5_7.0_keV'), ('gas', 'O_p5_number_density'), \
               ('gas', 'H_p0_number_density')]
-cmap_list = ['magma', 'afmhot', 'Blues_r','bone',  'dusk', 'purple_mm']
-#cmap_list = ['magma', 'afmhot', 'YlGnBu','bone',  'dusk', 'purple_mm']
+#cmap_list = ['magma', 'afmhot', 'Blues_r','bone',  'dusk', 'purple_mm']
+cmap_list = ['magma', 'afmhot', 'BrBG_r','bone',  'dusk', 'purple_mm']
 
-zlim_list = [(1e-30, 1e-25), (1e5, 1e8), (5e-3, 5), (1e-21, 1e-15), (1e13, 1e15), (3e12, 1e17)] 
-#zlim_list = [(1e-30, 1e-25), (1e5, 1e8), (1e-3, 1), (1e-21, 1e-15), (1e13, 1e15), (3e12, 1e17)]
+#zlim_list = [(1e-30, 1e-25), (1e5, 1e8), (5e-3, 5), (1e-21, 1e-15), (1e13, 1e15), (3e12, 1e17)] 
+zlim_list = [(1e-30, 1e-25), (1e5, 1e8), (2e-3, 2), (1e-21, 1e-15), (1e13, 1e15), (3e12, 1e17)]
 
 
 cbar_title_list =[r'$\mathrm{Density}\ (\mathrm{g\ cm^{-3}})$', \
@@ -40,10 +40,10 @@ cbar_title_list =[r'$\mathrm{Density}\ (\mathrm{g\ cm^{-3}})$', \
 
 
 
-field_list = [('gas', 'H_p0_number_density')]
-cmap_list = ['kelp']
-zlim_list = [(1e11, 1e16)]
-cbar_title_list = [r'$\mathrm{H\ I\ Column\ Density}\ (\mathrm{cm^{-2}})$']
+#field_list = [('gas', 'H_p0_number_density')]
+#cmap_list = ['kelp']
+#zlim_list = [(1e11, 1e16)]
+#cbar_title_list = [r'$\mathrm{H\ I\ Column\ Density}\ (\mathrm{cm^{-2}})$']
 
 # load in simulation data and add ion fields
 
@@ -54,7 +54,7 @@ orient = 'horizontal'
 #nrows = 2
 #ncols = 3
 
-nrows = int(1+len(field_list)/3)
+nrows = int(len(field_list)/3)
 ncols = int(len(field_list)/nrows)
 print(nrows, ncols)
 fig, axes, colorbars = get_multi_plot(ncols, nrows, colorbar=None, bw = 4)
@@ -74,9 +74,9 @@ for i in range(nrows*ncols):
 
     cbax = inset_axes(axes[row][col], width = "90%", height = "3%", loc = 9)
     cbar = fig.colorbar(im, cax=cbax, orientation = 'horizontal')
-    cbar.set_label(cbar_title_list[i], color = 'black')
+    cbar.set_label(cbar_title_list[i], color = 'white')
 
 
 # And now we're done!
-#fig.savefig("multipanel_plot_romulusC_%i.png"%(output))
-fig.savefig("romulusC_HI.png", dpi = 300)
+fig.savefig("multipanel_plot_romulusC_%i.png"%(output))
+#fig.savefig("romulusC_HI.png", dpi = 300)

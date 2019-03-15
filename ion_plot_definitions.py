@@ -249,3 +249,42 @@ def add_cluster_observations(ax, ion, color = 'black', zorder = 10):
     ax.scatter(impact[normal], col[normal], marker = 's', zorder = zorder, c = color, linewidths = 0.5, edgecolors = 'black')
     ax.errorbar(impact[normal],col[normal], colerr[normal],zorder= zorder,color = color)
     ax.scatter(impact[uplim],  col[uplim],  marker = 'v', zorder = zorder, c = color, linewidths = 0.5, edgecolors = 'black')
+
+
+def digitize(xarr, yarr, xmin = 0, xmax = None, nbins = 20):
+    if xmax == None:
+        xmax = np.max(xarr)
+    
+    x_bins = np.linspace(xmin, xmax, nbins)
+    print()
+    bin_ids = np.digitize(xarr, x_bins)
+    y_bins = np.zeros(len(x_bins))
+    
+    for i in np.arange(nbins):
+        bin_id = i
+        sample = yarr[bin_ids == bin_id]
+        y_bins[i] = np.sum(sample)
+        
+    return x_bins, y_bins
+
+def interleave(x, trim):
+    if trim == 0:
+        c = np.vstack((x, x)).reshape((-1,), order = 'F')
+        return c[1:]
+    else:
+        a = x[:-trim]
+        b = x[trim:]
+        c = np.vstack((a,b)).reshape((-1,),order='F')
+        c = np.insert(c, 0, x[0])
+        return c
+    
+def normalize_digitized_arrays(array_list):
+    nbins = len(array_list[0])
+    print(nbins)
+    for i in np.arange(nbins):
+        temp_sum = 0
+        for array in array_list:
+            temp_sum += array[i]
+        for array in array_list:
+            if temp_sum != 0:
+                array[i] /= temp_sum

@@ -34,7 +34,7 @@ mass_enc = profile[yfield]
 G = YTQuantity(6.67e-8, 'cm**3/g/s**2')
 num = np.pi * rbins**(3./2.)
 denom = np.sqrt(2*G*mass_enc)
-tff = num / denom
+tff2 = num / denom
 
 g = G*mass_enc / rbins**2
 tff = np.sqrt(2.*rbins / g)
@@ -60,7 +60,9 @@ plt.ylabel('$ t_{cool} / t_{ff}$')
 plt.savefig('cooling_profile_%i.png'%(output), dpi = 300)
 plt.clf()
 
-plt.plot(rbins.in_units('kpc'), tff.in_units('yr'))
+plt.plot(rbins.in_units('kpc'), tff.in_units('yr'), label = 'tff = sqrt(2r/g)')
+plt.plot(rbins.in_units('kpc'), tff2.in_units('yr'), label = 'tff = wiki')
+plt.legend()
 plt.yscale('log')
 plt.xlabel('Spherical Radius (kpc)')
 plt.ylabel('Free Fall Time (yr)')

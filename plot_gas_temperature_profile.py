@@ -6,7 +6,9 @@ import sys
 
 import numpy as np
 import romulus_analysis_helper as rom_help
+import ion_plot_definitions as ipd
 import seaborn as sns
+
 
 output = int(sys.argv[1])
 rvir = rom_help.get_romulus_rvir('romulusC', output)
@@ -14,26 +16,30 @@ rvir = rom_help.get_romulus_rvir('romulusC', output)
 dset_list = ['rbins_cold', 'rbins_warm', 'rbins_hot', 'mass_cold', 'mass_warm', 'mass_hot']
 plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_gas_temperature_profile_data'%(output), 'r')
 
-x_cool = np.array(plot_data['rbins_cold'][:])
-x_warm = np.array(plot_data['rbins_warm'][:])
-x_hot  = np.array(plot_data['rbins_hot' ][:])
+x_cool = np.array(plot_data['rbins_cold'][:]) / rvir
+x_warm = np.array(plot_data['rbins_warm'][:]) / rvir
+x_hot  = np.array(plot_data['rbins_hot' ][:]) / rvir
 
 y_cool = np.array(plot_data['mass_cold'][:])
 y_warm = np.array(plot_data['mass_warm'][:])
 y_hot  = np.array(plot_data['mass_hot' ][:])
 
-print(x_cool, x_warm, x_hot)
 
-total = np.sum([y_cool, y_warm, y_hot], axis =0)
+xmax = 3.
+x_cool_bins, y_cool_bins = ipd.digitize(x_cool, y_cool, xmax = xmax)
+x_warm_bins, y_warm_bins = ipd.digitize(x_warm, y_warm, xmax = xmax)
+x_hot_bins, y_hot_bins = ipd.digitize(x_hot, y_hot, xmax = xmax)
 
-fig, ax = plt.subplots(1, 1, figsize=(4, 4))
-ax.plot(x_hot / rvir, y_hot / total, color = 'firebrick', label = 'Hot')
-ax.plot(x_warm / rvir, y_warm / total, color = 'goldenrod', linestyle = 'dashed', label = 'Warm')
-ax.plot(x_cool / rvir, y_cool / total, color = 'steelblue', linestyle = 'dotted', label = 'Cold')
-ax.legend()
+ipd.normalize_digitized_arrays([y_cool_bins, y_warm_bins, y_hot_bins])
+
+fig, ax = plt.subplots(1, 1, figsize=(5, 4))
+ax.plot(ipd.interleave(x_hot_bins, 1), ipd.interleave(y_hot_bins, 0), color = 'firebrick',                       label = 'Hot Gas')
+ax.plot(ipd.interleave(x_warm_bins, 1), ipd.interleave(y_warm_bins, 0), color = 'goldenrod', linestyle = 'dashed', label = 'Warm Gas')
+ax.plot(ipd.interleave(x_cool_bins,  1), ipd.interleave(y_cool_bins,  0), color = 'steelblue', linestyle = 'dotted', label = 'Cold Gas')
+ax.legend(loc = 6)
 
 #plt.xlabel('Spherical Radius (kpc)')
-ax.set_xlim(0.1, 3)
+ax.set_xlim(0.05, 3)
 ax.set_ylim(0, 1.1)
 ax.set_xlabel('R / R$_{200}$')
 ax.set_ylabel('Gas Mass Fraction')

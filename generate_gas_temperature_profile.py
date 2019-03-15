@@ -16,7 +16,7 @@ import romulus_analysis_helper as rom_help
 def make_mass_profile(ad):
     xfield = ('gas', 'spherical_position_radius')
     yfield = ('Gas', 'Mass')
-    p = yt.ProfilePlot(ad, xfield, yfield, weight_field = None, x_log = False, y_log = False, nbins = 16)
+    p = yt.ProfilePlot(ad, xfield, yfield, weight_field = None,  x_log = False, n_bins = 16)
     p.set_unit(xfield, 'kpc')
     p.set_unit(yfield, 'Msun')
     profile = p.profiles[0]
@@ -36,9 +36,21 @@ icm_cool = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (
 icm_warm = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')] > 1e4) & (obj[('gas', 'temperature')] <= 1e6)"])
 icm_hot = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')] > 1e6)"])
 
-x_cool, y_cool = make_mass_profile(icm_cool)
-x_warm, y_warm = make_mass_profile(icm_warm)
-x_hot, y_hot = make_mass_profile(icm_hot)
+#x_cool, y_cool = make_mass_profile(icm_cool)
+#x_warm, y_warm = make_mass_profile(icm_warm)
+#x_hot, y_hot = make_mass_profile(icm_hot)
+
+xfield = ('gas', 'spherical_position_radius')
+yfield = ('Gas', 'Mass')
+
+x_cool = icm_cool[xfield].in_units('kpc')
+x_warm = icm_warm[xfield].in_units('kpc')
+x_hot = icm_hot[xfield].in_units('kpc')
+
+y_cool = icm_cool[yfield].in_units('Msun')
+y_warm = icm_warm[yfield].in_units('Msun')
+y_hot = icm_hot[yfield].in_units('Msun')
+
 
 dset_list = ['rbins_cold', 'rbins_warm', 'rbins_hot', 'mass_cold', 'mass_warm', 'mass_hot']
 data_list = [x_cool, x_warm, x_hot, y_cool, y_warm, y_hot]
