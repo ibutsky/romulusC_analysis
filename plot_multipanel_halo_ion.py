@@ -104,7 +104,7 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type):
             ax.annotate(ion_name, xy=(220, 0.9), fontsize=18)
 
         fig.tight_layout()
-        plt.savefig('%s_%i_multipanel_%s_halo_%s.png'%(sim, output, plot_type, bin_type), dpi = 300)
+        plt.savefig('%s_%06d_multipanel_%s_halo_%s.png'%(sim, output, plot_type, bin_type), dpi = 300)
         
         
 

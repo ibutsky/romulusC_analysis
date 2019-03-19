@@ -51,8 +51,8 @@ ion_list = ['H I', 'O VI', 'C IV']
 #output = 3035
 sim = sys.argv[1]
 output = int(sys.argv[2])
-#generate_ion_profiles(sim, output, ion_list, mask = 'high_mass')
-generate_ion_profiles(sim, output, ion_list)
+generate_ion_profiles(sim, output, ion_list, mask = 'high_mass')
+#generate_ion_profiles(sim, output, ion_list)
 
 
 

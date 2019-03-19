@@ -42,7 +42,7 @@ data_max = int(data_center + ratio * img_width / 2.)
 
 print(rmin, rmax, data_min, data_max)
 field = ('gas', 'O_p5_number_density')
-cmap = 'magma'
+cmap = 'dusk'
 
 #zlim_list = [(1e-30, 1e-25), (1e5, 1e8), (5e-3, 5), (1e-21, 1e-15), (1e13, 1e15), (3e12, 1e17)] 
 #zlim_list = [(1e-30, 1e-25), (1e5, 1e8), (5e-3, 5), (1e-21, 1e-15), (1e13, 1e15), (3e12, 1e15)]

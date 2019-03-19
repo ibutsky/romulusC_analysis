@@ -22,6 +22,8 @@ def plot_multipanel(output, ion_list, threshold_list, label_list = None, rmax = 
     fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data.h5'%(sim, sim, output)
     
     palette = sns.cubehelix_palette(len(threshold_list)+2, start=.5, rot=-.75, reverse=True)
+    palette = sns.cubehelix_palette(len(threshold_list)+2, reverse=True)
+    palette = sns.cubehelix_palette(len(threshold_list)+2, start=2, rot=0, dark=0, light = 0.95)
     palette = palette[1:-1]
 
     if label_list == None:
@@ -47,7 +49,7 @@ def plot_multipanel(output, ion_list, threshold_list, label_list = None, rmax = 
     ax.set_ylim(0, 1.15)
 
     fig.tight_layout()
-    plt.savefig('/nobackupp2/ibutsky/plots/YalePaper/romulusC.%06d_covering_fraction_threshold.png'%(output), dpi = 300)
+    plt.savefig('romulusC_%06d_covering_fraction_threshold.png'%(output), dpi = 300)
       
 
 
