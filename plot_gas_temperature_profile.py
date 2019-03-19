@@ -36,15 +36,22 @@ x_hot_bins,  y_hot_bins  = ipd.digitize(x_hot,  y_hot,  xmax = xmax)
 ipd.normalize_digitized_arrays([y_cold_bins, y_cool_bins, y_warm_bins, y_hot_bins])
 
 fig, ax = plt.subplots(1, 1, figsize=(5, 4))
-ax.plot(ipd.interleave(x_hot_bins,  1), ipd.interleave(y_hot_bins,  0), color = 'firebrick',                       label = 'Hot Gas')
-ax.plot(ipd.interleave(x_warm_bins, 1), ipd.interleave(y_warm_bins, 0), color = 'goldenrod', linestyle = 'dashed', label = 'Warm Gas')
-ax.plot(ipd.interleave(x_cool_bins, 1), ipd.interleave(y_cool_bins, 0), color = 'seagreen', linestyle = 'dashdot', label = 'Cool Gas')
-ax.plot(ipd.interleave(x_cold_bins, 1), ipd.interleave(y_cold_bins, 0), color = 'steelblue', linestyle = 'dotted', label = 'Cold Gas') 
+lw = 3
+ax.plot(ipd.interleave(x_hot_bins,  1), ipd.interleave(y_hot_bins,  0), color = 'firebrick',\
+        linewidth = lw,                        label = 'Hot Gas')
+ax.plot(ipd.interleave(x_warm_bins, 1), ipd.interleave(y_warm_bins, 0), color = 'goldenrod',\
+        linewidth = lw, linestyle = 'dashed',  label = 'Warm Gas')
+ax.plot(ipd.interleave(x_cool_bins, 1), ipd.interleave(y_cool_bins, 0), color = 'seagreen', \
+        linewidth = lw, linestyle = 'dashdot', label = 'Cool Gas')
+ax.plot(ipd.interleave(x_cold_bins, 1), ipd.interleave(y_cold_bins, 0), color = 'steelblue',\
+        linewidth = lw, linestyle = 'dotted',  label = 'Cold Gas') 
 ax.legend(loc = 6)
 
 #plt.xlabel('Spherical Radius (kpc)')
 ax.set_xlim(0.05, 3)
-ax.set_ylim(0, 1.1)
+#ax.set_ylim(0, 1.1)
+ax.set_yscale('log')
+ax.set_ylim(1e-2, 2)
 ax.set_xlabel('R / R$_{200}$')
 ax.set_ylabel('Gas Mass Fraction')
 fig.tight_layout()

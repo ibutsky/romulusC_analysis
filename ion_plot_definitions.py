@@ -61,7 +61,7 @@ def return_observational_threshold(ion):
     if ion == 'HI':
         return np.power(10, 13)
     elif ion == 'OVI': 
-        return np.power(10, 13.1)
+        return np.power(10, 13.3)
     elif ion == 'SiII': 
         return np.power(10, 13) 
     elif ion == 'SiIII': 
@@ -288,3 +288,19 @@ def normalize_digitized_arrays(array_list):
         for array in array_list:
             if temp_sum != 0:
                 array[i] /= temp_sum
+
+
+def crop_imshow(image, x1, x2, y1, y2):
+    """                                                                             
+    Return the cropped image at the x1, x2, y1, y2 coordinates                      
+    """
+    if x2 == -1:
+        x2=image.shape[1]-1
+    if y2 == -1:
+        y2=image.shape[0]-1
+
+    mask = np.zeros(image.shape)
+    mask[y1:y2+1, x1:x2+1]=1
+    m = mask>0
+
+    return image[m].reshape((y2+1-y1, x2+1-x1))
