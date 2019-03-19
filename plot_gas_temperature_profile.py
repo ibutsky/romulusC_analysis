@@ -9,6 +9,9 @@ import romulus_analysis_helper as rom_help
 import ion_plot_definitions as ipd
 import seaborn as sns
 
+sns.set_style("white",{'font.family':'serif', 'axes.grid': True, "ytick.major.size": 0.1,
+                "ytick.minor.size": 0.05,
+                'grid.linestyle': '--'})
 
 output = int(sys.argv[1])
 rvir = rom_help.get_romulus_rvir('romulusC', output)
@@ -53,7 +56,7 @@ ax.set_xlim(0.05, 3)
 ax.set_yscale('log')
 ax.set_ylim(1e-2, 2)
 fs = 14
-ax.set_xlabel('$\mathrm{R\ /\ R}_{200}$', fontsize = fs)
-ax.set_ylabel('$\mathrm{Gas\ Mass\ Fraction}$', fontsize = fs)
+ax.set_xlabel('$\mathrm{R\ /\ R}_{200}$')#, fontsize = fs)
+ax.set_ylabel('$\mathrm{Gas\ Mass\ Fraction}$')#, fontsize = fs)
 fig.tight_layout()
 plt.savefig('temperature_mass_profile_%i.png'%(output), dpi = 300)
