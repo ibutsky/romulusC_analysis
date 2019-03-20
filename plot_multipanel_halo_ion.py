@@ -14,8 +14,6 @@ sns.set_style("white",{'font.family':'serif', 'axes.grid': True, "ytick.major.si
 
 import ion_plot_definitions as ipd
 
-
-
 def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type):
 
     plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_histogram_data.h5'%(sim, output), 'r')
@@ -98,7 +96,12 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type):
             #### warning: reshape counts are hard-coded
             counts = counts.reshape(799, 799)
             ax.pcolormesh(xbins, ybins, counts, vmin=1e-1, vmax = 0.9*max_counts, cmap='binary', norm=LogNorm())
-            ipd.add_cluster_observations(ax, ion, color = 'orange')
+            if sim == 'romulusC':
+                ipd.add_cluster_observations(ax, ion, color = 'orange')
+            elif sim == 'romulus25':
+                ipd.plot_cos_data(ax, ion_name, color = 'orange')
+                ylims = ipd.column_romulus25_ylims(ion)
+                ax.set_ylim(ylims)
 
         elif plot_type == 'cfrac':
             if row == 0 and col == 0:

@@ -31,6 +31,16 @@ def return_ylims(ion):
         ylims = (1e5, 1e20)
     return ylims 
 
+def column_romulus25_ylims(ion):
+    ion = ion.replace(" ", "")
+    if ion == 'HI':
+        ylims = (1e13, 1e17)
+    elif ion == 'CIV':
+        ylims = (1e11, 1e15)
+    elif ion == 'OVI':
+        ylims = (1e13, 1e16)
+    return ylims
+
 def column_plot_ylims(ion):
         ion = ion.replace(" ", "")
         if ion == 'HI':
@@ -304,3 +314,64 @@ def crop_imshow(image, x1, x2, y1, y2):
     m = mask>0
 
     return image[m].reshape((y2+1-y1, x2+1-x1))
+
+
+def plot_cos_data(ax, ion, zorder = 10, color = 'black'):
+# loading in Jessica Werk's data                                                                                          
+
+    outfile = open('/nobackup/ibutsky/data/werk2013.dat', 'r')
+    lines = outfile.readlines()
+
+    impact = []
+    ions = []
+    quality = []
+    logN = []
+    logNerr = []
+    limits = []
+
+    for i in range(len(lines)):
+        line = lines[i].split()
+        len_line = len(line)
+
+        impact.append(int(line[2]))
+        ions.append(line[3]+' '+line[4])
+        quality.append(int(line[12]))
+        if len(line) > 13:
+            if line[-2] == '<' or line[-2] == '>':
+                logN.append(float(line[-1]))
+                limits.append(line[-2])
+                logNerr.append(0.0)
+
+            else:
+                logN.append(float(line[-2]))
+                logNerr.append(float(line[-1]))
+                limits.append(-1)
+        else:
+            if line[-3] == '<' or line[-3] == '>':
+                logN.append(float(line[-2]))
+                limits.append(line[-3])
+                logNerr.append(0.0)
+            else:
+                logN.append(float(line[-3]))
+                limits.append(-1)
+                logNerr.append(float(line[-2]))
+
+    ions = np.array(ions)
+    impact = np.array(impact)
+    quality = np.array(quality)
+    logN = np.array(logN)
+    Nion = np.power(10, logN)
+    logNerr = np.array(logNerr)
+    Nerr = np.power(10, logNerr)
+    limits = np.array(limits)
+
+    ion_mask = (ions == ion) & (logNerr > 0)
+    ion_up_mask = (ions == ion) & (limits == '<')
+    ion_low_mask = (ions == ion) & (limits == '>')
+    
+    ax.scatter(impact[ion_mask], Nion[ion_mask], marker = 's', c = color, zorder = zorder, \
+               linewidths = 0.5, edgecolors = 'black')
+    ax.scatter(impact[ion_up_mask], Nion[ion_up_mask], marker = 'v', c = color, zorder = zorder, \
+               linewidths = 0.5, edgecolors = 'black')
+    ax.scatter(impact[ion_low_mask], Nion[ion_low_mask], marker = '^', c = color, zorder = zorder, \
+               linewidths = 0.5, edgecolors = 'black')
