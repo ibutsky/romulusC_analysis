@@ -42,6 +42,8 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type):
         ylabel = 'Ion Column Density ($\mathrm{cm}^{-2}$)'
         yfield = 'median_col'
         colors = ['black', 'black', 'black', 'black']
+        palette = sns.cubehelix_palette(5, start=.5, rot=-.75, reverse = True)
+        colors = [palette[0], palette[1], palette[2], palette[3]]
         linewidth = 2.5
 
         
@@ -95,7 +97,7 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type):
             max_counts = counts.max()
             #### warning: reshape counts are hard-coded
             counts = counts.reshape(799, 799)
-            ax.pcolormesh(xbins, ybins, counts, vmin=1e-3, vmax = 0.9*max_counts, cmap='GnBu', norm=LogNorm())
+            ax.pcolormesh(xbins, ybins, counts, vmin=1e-1, vmax = 0.9*max_counts, cmap='binary', norm=LogNorm())
             ipd.add_cluster_observations(ax, ion, color = 'orange')
 
         elif plot_type == 'cfrac':
@@ -114,11 +116,11 @@ output = int(sys.argv[2])
 
 plot_type_list = ['cfrac', 'column']
 plot_type_list = ['column']
-plot_type_list = ['cfrac']
+#plot_type_list = ['cfrac']
 
 ion_list = ['H I', 'C II', 'C III', 'C IV', 'Si II', 'Si III', 'Si IV', 'O VI']
 ion_list = ['H I', 'C IV', 'O VI']
-#ion_list = ['H I', 'O VI']
+ion_list = ['H I', 'O VI']
 
 
 for plot_type in plot_type_list:

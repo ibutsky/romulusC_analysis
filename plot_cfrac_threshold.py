@@ -22,8 +22,10 @@ def plot_multipanel(output, ion_list, threshold_list, label_list = None, rmax = 
     fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data.h5'%(sim, sim, output)
     
     palette = sns.cubehelix_palette(len(threshold_list)+2, start=.5, rot=-.75, reverse=True)
-    palette = sns.cubehelix_palette(len(threshold_list)+2, reverse=True)
-    palette = sns.cubehelix_palette(len(threshold_list)+2, start=2, rot=0, dark=0, light = 0.95)
+    palette = sns.cubehelix_palette(len(threshold_list)+2, reverse=True) #pink
+    palette = sns.cubehelix_palette(len(threshold_list)+2, start=2, rot=0, dark=0, light = 0.95) #green
+    palette = sns.cubehelix_palette(len(threshold_list)+2, start=2.8, rot=-.1) #blue
+
     palette = palette[1:-1]
 
     if label_list == None:

@@ -55,8 +55,8 @@ ax.set_xlim(0.05, 3)
 #ax.set_ylim(0, 1.1)
 ax.set_yscale('log')
 ax.set_ylim(1e-2, 2)
-fs = 14
-ax.set_xlabel('$\mathrm{R\ /\ R}_{200}$')#, fontsize = fs)
-ax.set_ylabel('$\mathrm{Gas\ Mass\ Fraction}$')#, fontsize = fs)
+fs = 16
+ax.set_xlabel('$\mathrm{R\ /\ R}_{200}$', fontsize = fs)
+ax.set_ylabel('$\mathrm{Gas\ Mass\ Fraction}$', fontsize = fs)
 fig.tight_layout()
 plt.savefig('temperature_mass_profile_%i.png'%(output), dpi = 300)
