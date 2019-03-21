@@ -111,7 +111,9 @@ xlim = (1e-8, 1e2)
 ylim = (1e3, 5e9)
 zlim = (1e-3, 5)
 cmap = 'BrBG_r'
-
+cmap = 'cubehelix'
+cmap = 'gist_earth'
+#cmap = 'cividis'
 fig, ax, im, cbar = plot_phase(xfield, yfield, zfield, xlabel = xlabel, ylabel = ylabel, xlim = xlim, \
                      ylim = ylim, zlim = zlim, cbar_label = cbar_label,  cmap = cmap)
 
