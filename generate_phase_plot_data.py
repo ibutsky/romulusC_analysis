@@ -24,12 +24,13 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, weight_field = ('Ga
     
 
     sp = ds.sphere(cen, (3.*rvir, 'kpc'))
-    sp = sp.cut_region(["obj[('gas', 'metallicity')] > 0"]) # getting weird bugs with some value of -10^-324
+#    sp = sp.cut_region(["obj[('gas', 'metallicity')] > 0"]) # getting weird bugs with some value of -10^-324
 
     ph = yt.PhasePlot(sp, xfield, yfield, zfield, weight_field = weight_field, \
                       fractional = fractional, x_bins = xbins, y_bins = ybins)
     
-    for field in [xfield, yfield]:
+    for field in [xfield, yfield, zfield]:
+        print(field)
         ph.set_log(field, ytf.preferred_log(field))
         ph.set_unit(field, ytf.preferred_unit(field))
 
@@ -38,9 +39,9 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, weight_field = ('Ga
     if xlim:
         ph.set_xlim(xlim[0], xlim[1])
     profile = ph.profile
-
-    outfile = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_phase_data_%s_%s_%s_3.h5'\
-                      %(output, xfield[1], yfield[1], zfield[1]), 'a')
+    ph.save()
+    outfile = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_phase_data_%s_%s_%s.h5'\
+                      %(output, xfield[1], yfield[1], zfield[1]), 'w')
 
     outfile.create_dataset(xfield[1], data = profile.x)
     outfile.create_dataset(yfield[1], data = profile.y)
@@ -56,10 +57,19 @@ output = int(sys.argv[1])
 xfield = ('gas', 'spherical_position_radius')
 yfield = ('gas', 'metallicity')
 zfield = ('gas', 'mass')
-
 weight_field = None
 fractional = True
-nbins = 256
 ylim = (1e-5, 15)
+
+xfield = ('gas', 'particle_H_nuclei_density')
+yfield = ('gas', 'temperature')
+zfield = ('gas', 'metallicity')
+weight_field = ('Gas', 'Mass')
+fractional = False
+xlim = (5e-9, 5e2)
+ylim = (5e2, 1e10)
+
+
+nbins = 256
 generate_phase_plot_data(output, xfield, yfield, zfield, weight_field = weight_field, \
-                         fractional = fractional, xbins = nbins, ybins = nbins, ylim = ylim)
+                         fractional = fractional, xbins = nbins, ybins = nbins, xlim = xlim, ylim = ylim)
