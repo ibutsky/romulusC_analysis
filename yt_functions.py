@@ -127,7 +127,7 @@ def preferred_unit(field):
         unit = 'g/cm**3'
         if fname.__contains_('nuclei'):
             unit = 'cm**-3'
-    elif fname.__contains__('metallicitiy'):
+    elif fname.__contains__('metallicity'):
         unit = 'Zsun'
     return unit
 

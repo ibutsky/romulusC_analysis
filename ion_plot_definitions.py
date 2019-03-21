@@ -141,7 +141,7 @@ def covering_fraction_profile(ion, r_arr, cdens_arr, r_max = 300, n_bins = 100, 
     centered_r_bins = r_bins + (r_max/n_bins/2.0)
     if threshold == None:
         threshold = return_observational_threshold(ion)
-        print("%s observational threshold: %e"%(ion, threshold))
+    print("%s observational threshold: %e"%(ion, threshold))
     bin_ids = np.digitize(r_arr, r_bins)
     covering_fraction_profile_data = np.zeros(len(r_bins))
     for i in np.arange(n_bins):

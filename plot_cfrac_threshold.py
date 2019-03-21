@@ -27,18 +27,19 @@ def plot_multipanel(output, ion_list, threshold_list, label_list = None, rmax = 
     palette = sns.cubehelix_palette(len(threshold_list)+2, start=2.8, rot=-.1) #blue
 
     palette = palette[1:-1]
-
+    joe = h5.File('cfrac_threshold.h5', 'w')
     if label_list == None:
         label_list = threshold_list
     for j, ion in enumerate(ion_list):
         ax = figax[j]
         r_arr, cdens_arr = ipd.load_r_cdens(fn, ion, underscore=True, space=False)
         for i, threshold in enumerate(threshold_list):
-            #xbins, cfrac = ipd.covering_fraction_profile(ion, r_arr, cdens_arr, r_max = rmax, threshold=threshold)
-            xbins, y_median, y_err, cfrac = \
-                    ipd.median_and_cfrac_profiles(ion, r_arr, cdens_arr, r_max = rmax, threshold=threshold)
+            xbins, cfrac = ipd.covering_fraction_profile(ion, r_arr, cdens_arr, r_max = rmax, threshold=threshold)
             ax.plot(xbins, cfrac, linewidth = 4, color = palette[i], label = label_list[i])
-            #label = "N$_{\mathrm{thres}}$ = %s $\mathrm{cm}^{-2}$"%(label_list[i]))
+            base_name = '%s_N%s_'%(ion.replace(' ', ''), label_list[i])
+            joe.create_dataset(base_name+'rbins', data = xbins)
+            joe.create_dataset(base_name+'covering_fraction', data = cfrac)
+            joe.flush()
             
         ax.annotate(ion, xy=(2350, 0.98), fontsize = 18)
         ax.set_xlabel('Impact Parameter (kpc)')
