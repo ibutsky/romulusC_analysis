@@ -12,7 +12,7 @@ def _metal_mass(field, data):
 import romulus_analysis_helper as rom
 import yt_functions as ytf
 
-def generate_phase_plot_data(output, xfield, yfield, zfield, weight_field = ('Gas', 'Mass'), \
+def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, weight_field = ('Gas', 'Mass'), \
                              xbins = 128, ybins = 128, fractional = False, xlim = None, ylim = None):
     sim = 'romulusC'
     ds = yt.load('/nobackup/ibutsky/simulations/romulusC/romulusC.%06d'%(output))
@@ -24,6 +24,17 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, weight_field = ('Ga
     
 
     sp = ds.sphere(cen, (3.*rvir, 'kpc'))
+
+    if icm_cut == 'cold':
+        icm_cold = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')] <= 1e4)"])
+    elif icm_cut == 'cool':
+        icm_cool = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')]  > 1e4) & (obj[('gas', 'temperature')] <= 1e5)"])
+    elif icm_cut == 'warm':
+        icm_warm = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')]  > 1e5) & (obj[('gas', 'temperature')] <= 1e6)"])
+    elif icm_cut == 'hot':
+        icm_hot  = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')]  > 1e6)"])
+
+
 #    sp = sp.cut_region(["obj[('gas', 'metallicity')] > 0"]) # getting weird bugs with some value of -10^-324
 
     ph = yt.PhasePlot(sp, xfield, yfield, zfield, weight_field = weight_field, \
@@ -40,8 +51,9 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, weight_field = ('Ga
         ph.set_xlim(xlim[0], xlim[1])
     profile = ph.profile
     ph.save()
-    outfile = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_phase_data_%s_%s_%s.h5'\
-                      %(output, xfield[1], yfield[1], zfield[1]), 'w')
+    
+    outfile = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_phase_data_%s_%s_%s_%s.h5'\
+                      %(output, xfield[1], yfield[1], zfield[1], icm_cut), 'w')
 
     outfile.create_dataset(xfield[1], data = profile.x)
     outfile.create_dataset(yfield[1], data = profile.y)
@@ -53,6 +65,7 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, weight_field = ('Ga
 
 
 output = int(sys.argv[1])
+icm_cut = sys.argv[2]
 
 xfield = ('gas', 'spherical_position_radius')
 yfield = ('gas', 'metallicity')
@@ -71,5 +84,5 @@ ylim = (5e2, 1e10)
 
 
 nbins = 256
-generate_phase_plot_data(output, xfield, yfield, zfield, weight_field = weight_field, \
+generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = icm_cut, weight_field = weight_field, \
                          fractional = fractional, xbins = nbins, ybins = nbins, xlim = xlim, ylim = ylim)
