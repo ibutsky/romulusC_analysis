@@ -24,12 +24,13 @@ def plot_box(ax, xmin, xmax, ymin, ymax, color = 'black', linestyle = 'dashed'):
     ax.plot([xmax, xmax], [ymin, ymax], color = color, linestyle = linestyle)
 
 
-def plot_phase(xfield, yfield, zfield, xlabel = None, ylabel = None, xlim = None, ylim = None, zlim = None, \
-               cmap = 'viridis', xscale = 'log', yscale = 'log', cbar_label = None, fig = None, ax = None):
+def plot_phase(xfield, yfield, zfield, profile = False, xlabel = None, ylabel = None, \
+               xlim = None, ylim = None, zlim = None, cmap = 'viridis', xscale = 'log',\
+               yscale = 'log', cbar_label = None, fig = None, ax = None):
     output = 3035
     plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_phase_data_%s_%s_%s.h5'\
                     %(output, xfield, yfield, zfield), 'r')
-
+    
     x = plot_data[xfield].value
     y = plot_data[yfield].value
     z = plot_data[zfield].value
@@ -38,11 +39,6 @@ def plot_phase(xfield, yfield, zfield, xlabel = None, ylabel = None, xlim = None
     px, py = np.mgrid[x.min():x.max():res*1j, y.min():y.max():res*1j]
     zravel = z.T.ravel()
     xravel = px.ravel()
-
-#    xbins, med, err = ipd.phase_median_profile(x, y, z, nbins = 100)
-#    xbins = x
-    xbins, med = ipd.phase_median_frequency_profile(x, y, z)
-    print(xbins, med)
 
     print(z.min(), z.max())
     
@@ -71,7 +67,15 @@ def plot_phase(xfield, yfield, zfield, xlabel = None, ylabel = None, xlim = None
     #cbax = inset_axes(ax, width = "90%", height = "3%", loc = 'lower center')
     
     im = ax.pcolormesh(x, y, z.T, norm = LogNorm(), cmap = cmap, vmin = zlim[0], vmax = zlim[1])
-    ax.plot(xbins[:-1], med, color = 'black', linestyle= 'dashed')
+    if profile:
+        xbins, med, avg, lowlim, uplim = ipd.phase_median_frequency_profile(x, y, z)
+
+        ax.plot(xbins, med, color = 'black', linestyle= 'dashed')
+        ax.fill_between(xbins, lowlim, uplim, color = 'black', alpha = 0.5)
+
+#        ax.plot(xbins, med + std)
+ #       ax.plot(xbins, med - std)
+
     cbar = fig.colorbar(im, ax = ax, orientation = 'vertical', pad = 0)
     if cbar_label == None:
         cbar.set_label(zfield)
@@ -88,7 +92,6 @@ def plot_phase(xfield, yfield, zfield, xlabel = None, ylabel = None, xlim = None
 
 
 
-
 # metallicity vs spherical radius plot
 xfield = 'spherical_position_radius'
 yfield = 'metallicity'
@@ -101,10 +104,11 @@ ylim = (5e-4, 6)
 zlim = (3e-6, 1e-3)
 cmap = 'bone_r'
 xscale = 'linear'
+profile = True
 
 
 
-fig, ax, im, cbar = plot_phase(xfield, yfield, zfield, xlabel = xlabel, ylabel = ylabel, xlim = xlim, \
+fig, ax, im, cbar = plot_phase(xfield, yfield, zfield, profile = profile, xlabel = xlabel, ylabel = ylabel, xlim = xlim, \
                      ylim = ylim, zlim = zlim, cbar_label = cbar_label, xscale = xscale, cmap = cmap)
 plt.savefig('metallicity_radius.png', dpi = 300)
 
