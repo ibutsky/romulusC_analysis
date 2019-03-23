@@ -415,7 +415,8 @@ def plot_box(ax, xmin, xmax, ymin, ymax, color = 'black', linestyle = 'dashed'):
     ax.plot([xmax, xmax], [ymin, ymax], color = color, linestyle = linestyle)
 
 
-def plot_phase(xfield, yfield, zfield, profile = False, profile_color = 'black', profile_alpha = 0.3,\
+def plot_phase(xfield, yfield, zfield, do_pcolormesh = True, profile = False, profile_color = 'black', profile_alpha = 0.3,\
+               profile_label = None, profile_linestyle = 'dashed', \
                xlabel = None, ylabel = None, xlim = None, ylim = None, zlim = None, nbins = 50,\
                cmap = 'viridis', xscale = 'log', yscale = 'log', show_cbar = True, cbar_label = None, \
                fig = None, ax = None, output = 3035, data_cut = ''):
@@ -457,20 +458,23 @@ def plot_phase(xfield, yfield, zfield, profile = False, profile_color = 'black',
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
 
-    im = ax.pcolormesh(x, y, z.T, norm = LogNorm(), cmap = cmap, vmin = zlim[0], vmax = zlim[1])
-    if profile:
-        append_median_profile(ax, x, y, z, color = profile_color, alpha = profile_alpha, nbins = nbins)
+    if do_pcolormesh:
+        im = ax.pcolormesh(x, y, z.T, norm = LogNorm(), cmap = cmap, vmin = zlim[0], vmax = zlim[1])
 
-    if show_cbar:
-        cbar = fig.colorbar(im, ax = ax, orientation = 'vertical', pad = 0)
-        if cbar_label == None:
-            cbar.set_label(zfield)
-        else:
-            cbar.set_label(cbar_label)
-    #cbax.xaxis.set_ticks_position('top')          
-    #cbax.xaxis.set_label_position('top')    
-    if zlim == None:
-        zlim = (z.min(), z.max())
+        if show_cbar:
+            cbar = fig.colorbar(im, ax = ax, orientation = 'vertical', pad = 0)
+            if cbar_label == None:
+                cbar.set_label(zfield)
+            else:
+                cbar.set_label(cbar_label)
+    else:
+        im = None
+        cbar = None
+
+    if profile:
+        append_median_profile(ax, x, y, z, color = profile_color, alpha = profile_alpha, linestyle = profile_linestyle, \
+                              label = profile_label, nbins = nbins)
+
     fig.tight_layout()
     return fig, ax, im, cbar
 
