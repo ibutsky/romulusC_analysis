@@ -38,8 +38,8 @@ data_list = ['_hot', '_warm', '_cool', '_cold']
 #data_list = ['', '', '', '']
 cmap_list = ['firebrick', 'goldenrod', 'seagreen', 'steelblue']
 title_list = ['$\mathrm{Hot\ Gas}$', '$\mathrm{Warm\ Gas}$', '$\mathrm{Cool\ Gas}$', '$\mathrm{Cold\ Gas}$'] 
-nbins = [50, 50, 50, 25]
-zlim = (1e-7, 1e-3)
+nbins = [50, 25, 25, 25]
+#zlim = (1e-7, 1e-3)
 for i, data_cut in enumerate(data_list):
     row = int(i/2)
     col = i - 2*row
