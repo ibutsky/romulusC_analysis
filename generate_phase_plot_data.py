@@ -24,20 +24,24 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
     
 
     sp = ds.sphere(cen, (3.*rvir, 'kpc'))
+    icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] < 0.1)"
+    if yfield[1] == 'metallicity':
+        icm_mask = icm_mask + " & (obj[('gas', 'metallicity')] > 0)"
+    
 
     if icm_cut == 'cold':
-        icm_cold = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')] <= 1e4)"])
+        icm_mask += "& (obj[('gas', 'temperature')] <= 1e4)"
     elif icm_cut == 'cool':
-        icm_cool = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')]  > 1e4) & (obj[('gas', 'temperature')] <= 1e5)"])
+        icm_mask += "& (obj[('gas', 'temperature')]  > 1e4) & (obj[('gas', 'temperature')] <= 1e5)"
     elif icm_cut == 'warm':
-        icm_warm = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')]  > 1e5) & (obj[('gas', 'temperature')] <= 1e6)"])
+        icm_mask += "& (obj[('gas', 'temperature')]  > 1e5) & (obj[('gas', 'temperature')] <= 1e6)"
     elif icm_cut == 'hot':
-        icm_hot  = sp.cut_region(["(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')]  > 1e6)"])
+        icm_mask += "& (obj[('gas', 'temperature')] > 1e6)"
 
 
-#    sp = sp.cut_region(["obj[('gas', 'metallicity')] > 0"]) # getting weird bugs with some value of -10^-324
+    icm = sp.cut_region(icm_mask)
 
-    ph = yt.PhasePlot(sp, xfield, yfield, zfield, weight_field = weight_field, \
+    ph = yt.PhasePlot(icm, xfield, yfield, zfield, weight_field = weight_field, \
                       fractional = fractional, x_bins = xbins, y_bins = ybins)
     
     for field in [xfield, yfield, zfield]:
@@ -72,17 +76,18 @@ yfield = ('gas', 'metallicity')
 zfield = ('gas', 'mass')
 weight_field = None
 fractional = True
+xlim = (0, 3100)
 ylim = (1e-5, 15)
 
-xfield = ('gas', 'particle_H_nuclei_density')
-yfield = ('gas', 'temperature')
-zfield = ('gas', 'metallicity')
-weight_field = ('Gas', 'Mass')
-fractional = False
-xlim = (5e-9, 5e2)
-ylim = (5e2, 1e10)
+#xfield = ('gas', 'particle_H_nuclei_density')
+#yfield = ('gas', 'temperature')
+#zfield = ('gas', 'metallicity')
+#weight_field = ('Gas', 'Mass')
+#fractional = False
+#xlim = (5e-9, 5e2)
+#ylim = (5e2, 1e10)
 
 
 nbins = 256
 generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = icm_cut, weight_field = weight_field, \
-                         fractional = fractional, xbins = nbins, ybins = nbins, xlim = xlim, ylim = ylim)
+                         fractional = fractional, xbins = nbins, ybins = nbins, ylim = ylim, xlim = xlim)

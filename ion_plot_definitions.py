@@ -123,14 +123,14 @@ def generate_ion_field_list(ion_list, field, full_name = True):
         field_name_list.append(return_field_name(ion, field, full_name))
     return field_name_list
                         
-def phase_median_frequency_profile(x, y, z, confidence = 0.682, xmin = None, xmax = None, nbins = 50):
+def phase_median_frequency_profile(x, y, z, confidence = 0.682, xmin = None, xmax = None, nbins = 50, centered = True):
     if xmin == None:
         xmin = x.min()
     if xmax == None:
         xmax = x.max()
 
     xbins           = np.linspace(xmin, xmax, nbins+1)
-    centered_x_bins = (xbins + (xmax/nbins/2.0))[:-1]
+    centered_x_bins = (xbins + (xmax/nbins/2.0))
     median          = np.zeros(nbins)
     avg             = np.zeros(nbins) 
     lowlim          = np.zeros(nbins)
@@ -148,8 +148,9 @@ def phase_median_frequency_profile(x, y, z, confidence = 0.682, xmin = None, xma
             avg[i]    = np.average(y, weights = sample)
             lowlim[i] = y[low_array[0]]
             uplim[i]  = y[up_array[0]]
-
-    return centered_x_bins, median, avg, lowlim, uplim
+    if centered:
+        xbins = centered_x_bins
+    return xbins[:-1], median, avg, lowlim, uplim
 
     
 
@@ -405,3 +406,105 @@ def plot_cos_data(ax, ion, zorder = 10, color = 'black'):
                linewidths = 0.5, edgecolors = 'black')
     ax.scatter(impact[ion_low_mask], Nion[ion_low_mask], marker = '^', c = color, zorder = zorder, \
                linewidths = 0.5, edgecolors = 'black')
+
+
+def plot_box(ax, xmin, xmax, ymin, ymax, color = 'black', linestyle = 'dashed'):
+    ax.plot([xmin, xmax], [ymin, ymin], color = color, linestyle = linestyle)
+    ax.plot([xmin, xmax], [ymax, ymax], color = color, linestyle = linestyle)
+    ax.plot([xmin, xmin], [ymin, ymax], color = color, linestyle = linestyle)
+    ax.plot([xmax, xmax], [ymin, ymax], color = color, linestyle = linestyle)
+
+
+def plot_phase(xfield, yfield, zfield, profile = False, profile_color = 'black', profile_alpha = 0.3,\
+               xlabel = None, ylabel = None, xlim = None, ylim = None, zlim = None, nbins = 50,\
+               cmap = 'viridis', xscale = 'log', yscale = 'log', show_cbar = True, cbar_label = None, \
+               fig = None, ax = None, output = 3035, data_cut = ''):
+
+    plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_phase_data_%s_%s_%s%s.h5'\
+                        %(output, xfield, yfield, zfield, data_cut), 'r')
+
+    x = plot_data[xfield].value
+    y = plot_data[yfield].value
+    z = plot_data[zfield].value
+
+    res = 256
+    px, py = np.mgrid[x.min():x.max():res*1j, y.min():y.max():res*1j]
+    zravel = z.T.ravel()
+    xravel = px.ravel()
+
+    print(z.min(), z.max())
+
+    if fig == None:
+        fig, ax = plt.subplots(ncols = 1, nrows = 1, figsize=(6, 5))
+
+    if xlabel == None:
+        ax.set_xlabel(xfield)
+    else:
+        ax.set_xlabel(xlabel)
+
+    if ylabel == None:
+        ax.set_ylabel(yfield)
+    else:
+        ax.set_ylabel(ylabel)
+
+    if xlim:
+        ax.set_xlim(xlim[0], xlim[1])
+    if ylim:
+        ax.set_ylim(ylim[0], ylim[1])
+    if zlim == None:
+        zlim = (z.min(), z.max())
+
+    ax.set_xscale(xscale)
+    ax.set_yscale(yscale)
+
+    im = ax.pcolormesh(x, y, z.T, norm = LogNorm(), cmap = cmap, vmin = zlim[0], vmax = zlim[1])
+    if profile:
+        append_median_profile(ax, x, y, z, color = profile_color, alpha = profile_alpha, nbins = nbins)
+
+    if show_cbar:
+        cbar = fig.colorbar(im, ax = ax, orientation = 'vertical', pad = 0)
+        if cbar_label == None:
+            cbar.set_label(zfield)
+        else:
+            cbar.set_label(cbar_label)
+    #cbax.xaxis.set_ticks_position('top')          
+    #cbax.xaxis.set_label_position('top')    
+    if zlim == None:
+        zlim = (z.min(), z.max())
+    fig.tight_layout()
+    return fig, ax, im, cbar
+
+
+
+def append_median_profile(ax, x, y, z, color = 'black', fill_color = None, linestyle = 'dashed', label = None,\
+                          alpha = 0.3, confidence = 0.682, xmin = None, xmax = None, nbins = 50, centered = True):
+    xbins, med, avg, lowlim, uplim = phase_median_frequency_profile(x, y, z, centered = centered,\
+                            confidence = confidence, xmin = xmin, xmax = xmax, nbins = nbins)
+    if fill_color == None:
+        fill_color = color
+    ax.plot(xbins, med, color = color, linestyle = linestyle, label = label)
+    ax.fill_between(xbins, lowlim, uplim, color = fill_color, alpha = alpha, zorder = 10)
+
+
+def annotate_ion_name(ax, ion_name, fontsize = 18, x_factor = 0.85, y_factor = 0.88, color = 'black'):
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+    
+    if ion_name.replace(' ', '') == 'OVI':
+        x_factor *= 0.95
+
+    if ax.get_xscale() == 'log':
+        log_xrange = np.log10(xlim[1]) - np.log10(xlim[0])
+        x = np.power(10, np.log10(xlim[0]) + x_factor*log_xrange)
+    else:
+        x_range = xlim[1] - xlim[0]
+        x = xlim[0] + x_factor * x_range
+
+    if ax.get_yscale() == 'log':
+        log_yrange = np.log10(ylim[1]) - np.log10(ylim[0])
+        y = np.power(10, np.log10(ylim[0]) + y_factor*log_yrange)
+    else:
+        y_range = ylim[1] - ylim[0]
+        y = ylim[0] + y_factor * y_range
+
+    ax.annotate(ion_name, xy = (x,y), fontsize = fontsize, color = color)
