@@ -1,0 +1,29 @@
+# data from table 5 of Urban et al 2017
+# note: coma cluster values are from Simionescu et al 2013
+# cluster  r/r200  rerr  z/zsun zerr
+AWM7	   0.285   0.015 0.386	0.035
+AWM7	   0.32	   0.02	 0.261	0.043
+AWM7	   0.37	   0.03	 0.404	0.071
+HydraA	   0.30	   0.06	 0.268	0.055
+HydraA	   0.42	   0.06	 0.243	0.072
+HydraA	   0.54	   0.06	 0.361	0.115
+A262	   0.28	   0.02	 0.370
+A133
+A133
+A133
+A2204
+A2204
+A1795
+A1795
+A1795
+A2029
+A2029
+A2142
+A2142
+A1689
+Coma
+Coma
+Coma
+Coma
+Coma
+Coma
