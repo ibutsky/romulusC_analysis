@@ -38,7 +38,7 @@ halo_props = h5.File('/nobackup/ibutsky/data/romulusC_halo_data_%i'%(output), 'r
 plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/multipanel_romulusC_%i_plot_data'%(output), 'a')
 centers = halo_props['center'].value
 ds = yt.load('/nobackup/ibutsky/simulations/romulusC/romulusC.%06d'%(output))
-trident.add_ion_fields(ds, ions = ['O VI', 'H I', 'C III', 'O VII', 'O VIII'])
+trident.add_ion_fields(ds, ions = ['O VI', 'H I'])#, 'C III', 'O VII', 'O VIII'])
 ds.add_field(('Gas', 'metallicity2'), function = _metallicity2, units = 'Zsun', particle_type = True)
 
 xray_fields = yt.add_xray_emissivity_field(ds, 0.5, 7.0, redshift=ds.current_redshift, \

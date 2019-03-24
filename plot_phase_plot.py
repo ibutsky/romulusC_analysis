@@ -41,7 +41,12 @@ def plot_metallicity_radius(append_temperature_profiles = False):
         title_list = ['$\mathrm{Hot\ Gas}$', '$\mathrm{Warm\ Gas}$', '$\mathrm{Cool\ Gas}$', '$\mathrm{Cold\ Gas}$']
         linestyle_list = ['solid', 'dashed', 'dashdot', 'dotted']
         nbins = [50, 25, 25, 25]
-#        zlim = (1e-8, 1e-3)
+
+        data_list = ['_xray', '_uv']
+        cmap_list = ['firebrick', 'seagreen']
+        title_list = ['$\mathrm{X}$-$\mathrm{ray}$', '$\mathrm{UV}$']
+        liestyle_list = ['dashed', 'dotted']
+        nbins = [25, 25]
         for i, data_cut in enumerate(data_list):
             cmap = sns.dark_palette(cmap_list[i], as_cmap = True)
             ffig, aax, im, cbar = ipd.plot_phase(xfield, yfield, zfield, fig = fig, ax = ax,do_pcolormesh = False, \

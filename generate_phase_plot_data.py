@@ -24,7 +24,14 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
     
 
     sp = ds.sphere(cen, (3.*rvir, 'kpc'))
-    icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] < 0.1)"
+
+    
+    #icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] < 0.1)"
+    if icm_cut == 'xray':
+        icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] > 1e-4) & (obj[('gas', 'temperature')] > 2e6)"
+    elif icm_cut == 'uv':
+        icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] > 1e-6) & (obj[('gas', 'particle_H_nuclei_density')] > 1e-2)"
+        icm_mask += "& (obj[('gas', 'temperature')] > 1e4) & (obj[('gas', 'temperature')] < 1e6)"
     if yfield[1] == 'metallicity':
         icm_mask = icm_mask + " & (obj[('gas', 'metallicity')] > 0)"
     

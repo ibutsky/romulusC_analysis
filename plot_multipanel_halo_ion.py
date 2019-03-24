@@ -58,7 +58,7 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
                        '$ 2 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 3 \mathrm{R}_{\mathrm{vir}}$']
         linestyles = ['solid', 'dashed', 'dashdot', 'dotted']
         
-    fig, figax = plt.subplots(nrows = nrows, ncols = ncols, figsize=(5*ncols, 4.8*nrows), sharex = True, sharey = sharey)
+    fig, figax = plt.subplots(nrows = nrows, ncols = ncols, figsize=(4.5*ncols, 4.3*nrows), sharex = True, sharey = sharey)
     
     for i, ion_name in enumerate(ion_list):
         ion = ion_name.replace(" ", "")
@@ -78,9 +78,9 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
         for pbin, pline, plabel, color in zip(plot_bins, linestyles, plot_labels, colors):
             profile_bins = profile_data['%s_%s_rbins'%(ion, pbin)][:]
             profile = profile_data['%s_%s_%s'%(ion, pbin, yfield)][:]
-
-#x            ax.plot(profile_bins, profile, color = color, linestyle = pline, linewidth = linewidth, label = plabel)
-            
+            if plot_type == 'cfrac':
+                ax.plot(profile_bins, profile, color = color, linestyle = pline, linewidth = linewidth, label = plabel)
+                
             if plot_type == 'column':
                 xbins = plot_data['%s_%s_xbins'%(ion, pbin)][:]
                 ybins = plot_data['%s_%s_ybins'%(ion, pbin)][:]
@@ -88,7 +88,7 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
                 counts += ion_counts
                 ion_counts = ion_counts.reshape(799, 799)
                 ipd.append_median_profile(ax, xbins[:-1], ybins[:-1], ion_counts.T, color = color, linestyle = pline, \
-                                          label = plabel, alpha = 0.3, xmin = 0, xmax = 300, centered = False)
+                                          label = plabel, alpha = 0.3, xmin = 0, xmax = 300, centered = True)
 
             
         if plot_type == 'column':
@@ -107,13 +107,15 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
             elif col == 0 and row == 0:
                 ax.legend(loc = 'upper center')
             if sim == 'romulusC':
-                ipd.add_cluster_observations(ax, ion, color = 'orange')
+                if ion == 'HI' or ion == 'OVI':
+                    ipd.add_cluster_observations(ax, ion, color = 'orange')
             elif sim == 'romulus25':
                 ipd.plot_cos_data(ax, ion_name, color = 'orange')
                 ylims = ipd.column_romulus25_ylims(ion)
                 ax.set_ylim(ylims)
 
         elif plot_type == 'cfrac':
+            sns.set_style('ticks', {'axes.grid': True})
             if row == 0 and col == 0:
                 ax.legend()
 #            ax.annotate(ion_name, xy=(220, 0.9), fontsize=18)
@@ -128,12 +130,12 @@ sim = sys.argv[1]
 output = int(sys.argv[2])
 
 plot_type_list = ['cfrac', 'column']
-plot_type_list = ['column']
+#plot_type_list = ['column']
 #plot_type_list = ['cfrac']
 
 ion_list = ['H I', 'C II', 'C III', 'C IV', 'Si II', 'Si III', 'Si IV', 'O VI']
 ion_list = ['H I', 'C IV', 'O VI']
-ion_list = ['H I', 'O VI']
+ion_list = ['H I', 'C IV', 'O VI']
 
 
 for plot_type in plot_type_list:

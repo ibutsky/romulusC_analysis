@@ -9,7 +9,8 @@ import romulus_analysis_helper as rom
 
 
 sim = 'romulusC'
-output= 3035
+#output= 3035
+output = int(sys.argv[1])
 field = ('gas', 'H_number_density')
 
 plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/white_paper_plot_data', 'a')

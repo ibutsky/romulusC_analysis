@@ -41,12 +41,14 @@ def plot_multipanel(ion_list, output, region, rmax = 3000):
 
         fig.tight_layout()
         if region == 'romulusC':
-            plt.savefig('/nobackupp2/ibutsky/plots/YalePaper/romulusC.%06d_ion_covering_fraction.png'%(output))
+            plt.savefig('romulusC.%06d_ion_covering_fraction.png'%(output))
         else:
-            plt.savefig('/nobackupp2/ibutsky/plots/YalePaper/romulusC.%06d_ion_covering_fraction_region_%s.png'%(output, region))
+            plt.savefig('romulusC.%06d_ion_covering_fraction_region_%s.png'%(output, region))
 
 
 ion_list = ['H I', 'C II', 'C III', 'C IV', 'Si II', 'Si III', 'Si IV', 'O VI']
+
+ion_list = ['H I', 'C IV', 'O VI']
 
 region = sys.argv[1]
 output = int(sys.argv[2])
