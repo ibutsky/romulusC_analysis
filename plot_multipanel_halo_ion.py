@@ -58,7 +58,7 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
                        '$ 2 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 3 \mathrm{R}_{\mathrm{vir}}$']
         linestyles = ['solid', 'dashed', 'dashdot', 'dotted']
         
-    fig, figax = plt.subplots(nrows = nrows, ncols = ncols, figsize=(4.5*ncols, 4.3*nrows), sharex = True, sharey = sharey)
+    fig, figax = plt.subplots(nrows = nrows, ncols = ncols, figsize=(3.5*ncols, 3.2*nrows), sharex = True, sharey = sharey)
     
     for i, ion_name in enumerate(ion_list):
         ion = ion_name.replace(" ", "")
@@ -115,11 +115,17 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
                 ax.set_ylim(ylims)
 
         elif plot_type == 'cfrac':
+            ax.set_ylim(0, 1.05)
             sns.set_style('ticks', {'axes.grid': True})
             if row == 0 and col == 0:
                 ax.legend()
-#            ax.annotate(ion_name, xy=(220, 0.9), fontsize=18)
-        ipd.annotate_ion_name(ax, ion_name)
+
+        # location of annotataed ion name in units of width of plot
+        x_factor= 0.85
+        y_factor = 0.85
+        if plot_type == 'cfrac' and ion == 'HI':
+            y_factor = 0.15
+        ipd.annotate_ion_name(ax, ion_name, x_factor = x_factor, y_factor = y_factor)
         fig.tight_layout()
         plt.savefig('%s_%06d_multipanel_%s_halo_%s.png'%(sim, output, plot_type, bin_type), dpi = 300)
         

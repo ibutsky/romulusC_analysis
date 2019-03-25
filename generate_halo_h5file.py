@@ -53,7 +53,7 @@ def generate_halo_column_data(sim, output, ion_list, res = 800):
                 cdens_file.create_dataset("radius", data = radius.ravel())
 
 
-            for axis in ['x']:#, 'y', 'z']:
+            for axis in ['x', 'y', 'z']:
                 for j, ion in enumerate(ion_list):
                     dset = "%s_%s" % (ion, axis)
                     if dset not in cdens_file.keys():
@@ -66,6 +66,8 @@ def generate_halo_column_data(sim, output, ion_list, res = 800):
 sim =  sys.argv[1]
 output = int(sys.argv[2])
 ion_list = ['H I', 'O VI', 'Si II', 'Si III', 'Si IV', 'C II', 'C III', 'C IV']
+ion_list = ['H I', 'O VI', 'C IV']
+
 
 generate_halo_column_data(sim, output, ion_list)
 

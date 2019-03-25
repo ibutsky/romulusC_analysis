@@ -11,7 +11,7 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
     if mask == 'high_mass':
         out_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data_high_mass.h5'%(sim, output), 'w')
     else:
-        out_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data.h5'%(sim, output), 'a')
+        out_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data.h5'%(sim, output), 'w')
     
     halo_props = h5.File('/nobackup/ibutsky/data/%s_halo_data_%i'%(sim, output), 'r')
     # ignoring the 0th entry, which is the main cluster halo
@@ -80,7 +80,6 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
                 num_high += 1
                 
             if sim == 'romulusC':
-
                 if dtc < 0.5*cluster_rvir:
                     d1_r = np.concatenate((d1_r, r_arr))
                     d1_c = np.concatenate((d1_c, cdens_arr))
@@ -123,4 +122,4 @@ ion_list = ['H I', 'O VI', 'C IV']
 sim = sys.argv[1]
 output = int(sys.argv[2])
 
-combine_halo_column_densities(sim, output, ion_list, mask = 'high_mass')
+combine_halo_column_densities(sim, output, ion_list)#, mask = 'high_mass')

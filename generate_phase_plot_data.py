@@ -24,14 +24,15 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
     
 
     sp = ds.sphere(cen, (3.*rvir, 'kpc'))
-
-    
-    #icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] < 0.1)"
-    if icm_cut == 'xray':
+    if icm_cut in ['cold', 'cool', 'warm', 'hot']:
+        icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] < 0.1)"
+    elif icm_cut == 'xray':
         icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] > 1e-4) & (obj[('gas', 'temperature')] > 2e6)"
     elif icm_cut == 'uv':
         icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] > 1e-6) & (obj[('gas', 'particle_H_nuclei_density')] > 1e-2)"
         icm_mask += "& (obj[('gas', 'temperature')] > 1e4) & (obj[('gas', 'temperature')] < 1e6)"
+    
+
     if yfield[1] == 'metallicity':
         icm_mask = icm_mask + " & (obj[('gas', 'metallicity')] > 0)"
     
@@ -45,8 +46,10 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
     elif icm_cut == 'hot':
         icm_mask += "& (obj[('gas', 'temperature')] > 1e6)"
 
-
-    icm = sp.cut_region(icm_mask)
+    if icm_mask == None:
+        icm = sp
+    else:
+        icm = sp.cut_region(icm_mask)
 
     ph = yt.PhasePlot(icm, xfield, yfield, zfield, weight_field = weight_field, \
                       fractional = fractional, x_bins = xbins, y_bins = ybins)
@@ -63,6 +66,8 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
     profile = ph.profile
     ph.save()
     
+    if icm_cut == None:
+        icm_cut = ''
     outfile = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_phase_data_%s_%s_%s_%s.h5'\
                       %(output, xfield[1], yfield[1], zfield[1], icm_cut), 'w')
 
@@ -77,6 +82,8 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
 
 output = int(sys.argv[1])
 icm_cut = sys.argv[2]
+#print(icm_cut)
+#icm_cut = None
 
 xfield = ('gas', 'spherical_position_radius')
 yfield = ('gas', 'metallicity')

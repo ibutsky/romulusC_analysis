@@ -275,7 +275,7 @@ def make_projection(ds, axis, ion_fields, center, width, res = 800):
 
 def add_cluster_observations(ax, ion, color = 'black', zorder = 10):
     ion = ion.replace(' ', '')
-    datafile = '/nobackup/ibutsky/data/YalePaper/burchett_observations.dat'
+    datafile = 'data/burchett_observations.dat'
     if ion == 'HI':
         columns = (1, 8, 9)
     elif ion == 'OVI':
@@ -290,6 +290,18 @@ def add_cluster_observations(ax, ion, color = 'black', zorder = 10):
     ax.scatter(impact[normal], col[normal], marker = 's', zorder = zorder, c = color, linewidths = 0.5, edgecolors = 'black')
     ax.errorbar(impact[normal],col[normal], colerr[normal],zorder= zorder,color = color)
     ax.scatter(impact[uplim],  col[uplim],  marker = 'v', zorder = zorder, c = color, linewidths = 0.5, edgecolors = 'black')
+
+def add_cluster_metallicity_observations(ax, color = 'black', zorder = 10, rvir = 1):
+    datafile = 'data/urban_metallicity.dat'
+    r_ratio, r_200, r_err, z, zerr = np.loadtxt(datafile, unpack=True, skiprows = 4, usecols = (1, 2, 3, 4, 5))
+    if rvir == 1:
+        r = r_ratio * r_200 * 1000.
+        r_err *= r_200 * 1000.
+    else:
+        r = r_ratio * rvir
+        r_err *= rvir
+    ax.scatter(r, z, marker = 's', s = 25, c = color, linewidths = 0.5, edgecolors = 'black', zorder = zorder)
+    ax.errorbar(r, z, xerr = r_err, yerr = zerr, color = 'black', linewidth = 0.5, linestyle = '')
 
 
 def digitize(xarr, yarr, xmin = 0, xmax = None, nbins = 20):
@@ -493,8 +505,8 @@ def append_median_profile(ax, x, y, z, color = 'black', fill_color = None, lines
 def annotate_ion_name(ax, ion_name, fontsize = 18, x_factor = 0.85, y_factor = 0.88, color = 'black'):
     xlim = ax.get_xlim()
     ylim = ax.get_ylim()
-    
-    if ion_name.replace(' ', '') == 'OVI':
+    ion = ion_name.replace(' ', '')
+    if ion  == 'OVI' or ion == 'CIV':
         x_factor *= 0.95
 
     if ax.get_xscale() == 'log':

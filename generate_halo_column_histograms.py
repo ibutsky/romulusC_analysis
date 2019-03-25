@@ -64,6 +64,7 @@ def generate_ion_histograms(sim, output, ion_list, nbins = 800, rmax = 300):
                 
 #### NEXT STEP: add covering fraction 
 ion_list = ['H I', 'O VI', 'Si II', 'Si III', 'Si IV', 'C II', 'C III', 'C IV']
+ion_list = ['H I', 'O VI', 'C IV']
 #ion_list = ['O VI']
 #output = 3035
 sim = sys.argv[1]
