@@ -9,6 +9,15 @@ def _H_nuc(field, data):
 def _metal_mass(field, data):
     return data[('Gas', 'metallicity')] * data[('Gas', 'Mass')].in_units('Msun')
 
+def _metallicity2(field, data):
+    return data[('gas', 'metallicity')].in_units('Zsun')
+
+def _xray_luminosity2(field, data):
+    return data[('gas', 'xray_luminosity_0.5_7.0_keV')]
+
+def _xray_intensity2(field, data):
+    return data[('gas', 'xray_intensity_0.5_7.0_keV')]
+
 import romulus_analysis_helper as rom
 import yt_functions as ytf
 
@@ -19,6 +28,18 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
     ds.add_field(("gas", "particle_H_nuclei_density"), function = _H_nuc, \
              particle_type = True, force_override = True, units = "cm**(-3)")
 
+
+    #if weight_field:
+#    if icm_cut == 'xray' or weight_field[1] == 'xray_emissivity_0.5_7.0_keV':
+    ds.add_field(('Gas', 'metallicity2'), function = _metallicity2, units = 'Zsun', particle_type = True)
+    xray_fields = yt.add_xray_emissivity_field(ds, 0.5, 7.0, redshift=ds.current_redshift, \
+                    cosmology=ds.cosmology, metallicity=("Gas", "metallicity2"), table_type='cloudy')
+
+    ds.add_field(('gas', 'xray_luminosity'), function = _xray_luminosity2, particle_type = True)
+    ds.add_field(('gas', 'xray_intensity'), function = _xray_intensity2, particle_type = True)
+
+    print(xray_fields)
+
     cen = rom.get_romulus_yt_center(sim, output, ds)
     rvir = rom.get_romulus_rvir(sim, output)
     
@@ -27,7 +48,8 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
     if icm_cut in ['cold', 'cool', 'warm', 'hot']:
         icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] < 0.1)"
     elif icm_cut == 'xray':
-        icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] > 1e-4) & (obj[('gas', 'temperature')] > 2e6)"
+        #icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] > 1e-4) & (obj[('gas', 'temperature')] > 2e6)"
+        icm_mask = "(obj[('gas', 'x_ray_emissivity_0.5_7.0_keV')] >"
     elif icm_cut == 'uv':
         icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] > 1e-6) & (obj[('gas', 'particle_H_nuclei_density')] > 1e-2)"
         icm_mask += "& (obj[('gas', 'temperature')] > 1e4) & (obj[('gas', 'temperature')] < 1e6)"
@@ -66,10 +88,13 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
     profile = ph.profile
     ph.save()
     
-    if icm_cut == None:
-        icm_cut = ''
-    outfile = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_phase_data_%s_%s_%s_%s.h5'\
-                      %(output, xfield[1], yfield[1], zfield[1], icm_cut), 'w')
+    outfile_name = '/nobackup/ibutsky/data/YalePaper/romulusC.%06d_phase_data_%s_%s_%s'\
+                   %(output, xfield[1], yfield[1], zfield[1])
+    if weight_field:
+        outfile_name += '_%s'%(weight_field[1])
+    if icm_cut:
+        outfile_name += '_%s'%(icm_cut)
+    outfile = h5.File(outfile_name+'.h5', 'w')
 
     outfile.create_dataset(xfield[1], data = profile.x)
     outfile.create_dataset(yfield[1], data = profile.y)
@@ -93,14 +118,19 @@ fractional = True
 xlim = (0, 3100)
 ylim = (1e-5, 15)
 
-#xfield = ('gas', 'particle_H_nuclei_density')
-#yfield = ('gas', 'temperature')
-#zfield = ('gas', 'metallicity')
-#weight_field = ('Gas', 'Mass')
-#fractional = False
-#xlim = (5e-9, 5e2)
-#ylim = (5e2, 1e10)
 
+#weight_field = ('gas', 'xray_emissivity_0.5_7.0_keV')
+
+xfield = ('gas', 'particle_H_nuclei_density')
+yfield = ('gas', 'temperature')
+#zfield = ('gas', 'metallicity')
+zfield = ('gas', 'xray_luminosity_0.5_7.0_keV')
+zfield = ('gas', 'xray_intensity')
+weight_field = ('Gas', 'Mass')
+fractional = False
+xlim = (5e-9, 5e2)
+ylim = (5e2, 1e10)
+icm_cut = None
 
 nbins = 256
 generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = icm_cut, weight_field = weight_field, \

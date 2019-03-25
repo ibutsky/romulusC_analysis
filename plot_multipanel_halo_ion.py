@@ -15,7 +15,16 @@ sns.set_style('ticks')#, {'font.family':'serif'})
 
 import ion_plot_definitions as ipd
 
-def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh = False):
+def load_combined_counts(ion, output_list, plot_bin, sim = 'romulusC'):
+    counts = np.zeros(799*799)
+    for output in output_list:
+        plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_histogram_data.h5'%(sim, output), 'r')
+        counts += plot_data['%s_%s_counts'%(ion, plot_bin)][:]
+    return counts.reshape(799, 799)
+
+
+def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh = False, \
+                        combine = False, combined_output_list = []):
 
     plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_histogram_data.h5'%(sim, output), 'r')
     profile_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_profile_data.h5'%(sim, output), 'r')
@@ -87,8 +96,13 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
                 ion_counts = plot_data['%s_%s_counts'%(ion, pbin)][:]
                 counts += ion_counts
                 ion_counts = ion_counts.reshape(799, 799)
+                ion_counts = load_combined_counts(ion, np.append(combined_output_list, output), pbin)
+                if pbin == 'dist_4':
+                    bin_max = 250
+                else: 
+                    bin_max = 300
                 ipd.append_median_profile(ax, xbins[:-1], ybins[:-1], ion_counts.T, color = color, linestyle = pline, \
-                                          label = plabel, alpha = 0.3, xmin = 0, xmax = 300, centered = True)
+                                          label = plabel, alpha = 0.3, xmin = 0, xmax = bin_max, centered = True)
 
             
         if plot_type == 'column':
@@ -147,6 +161,6 @@ ion_list = ['H I', 'C IV', 'O VI']
 for plot_type in plot_type_list:
     multipanel_ion_plot(sim, output, ion_list, plot_type, 'mass')
     if sim == 'romulusC':
-        multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist')
+        multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = True, combined_output_list = [3697])
 
         

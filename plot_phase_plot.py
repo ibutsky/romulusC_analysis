@@ -10,7 +10,7 @@ import ion_plot_definitions as ipd
 import romulus_analysis_helper as rom
 
 
-def plot_metallicity_radius(append_temperature_profiles = False, output = 3035, append_observations = False):
+def plot_metallicity_radius(append_temperature_profiles = False, output = 3035, append_observations = False, weight_field = None):
     # metallicity vs spherical radius plot
     xfield = 'spherical_position_radius'
     yfield = 'metallicity'
@@ -21,14 +21,16 @@ def plot_metallicity_radius(append_temperature_profiles = False, output = 3035, 
     xlim = (0, 3000)
     ylim = (5e-4, 6)
     zlim = (3e-6, 1e-3)
+    zlim = (7e-6, 1e-3)
     cmap = 'bone_r'
-    cmap = 'binary'
-
+#    cmap = 'binary'
+    nbins = 25
     profile_color = matplotlib.cm.get_cmap(cmap)(0.75)
     xscale = 'linear'
     profile = True
 
-    fig, ax, im, cbar = ipd.plot_phase(xfield, yfield, zfield, output = output, profile = profile, profile_color = profile_color, \
+    fig, ax, im, cbar = ipd.plot_phase(xfield, yfield, zfield, output = output, weight_field = weight_field, 
+                                       profile = profile, profile_color = profile_color, nbins = nbins,\
                                xlabel = xlabel, ylabel = ylabel, xlim = xlim, ylim = ylim, zlim = zlim, \
                                cbar_label = cbar_label, xscale = xscale, cmap = cmap)
 
@@ -37,21 +39,22 @@ def plot_metallicity_radius(append_temperature_profiles = False, output = 3035, 
         ipd.add_cluster_metallicity_observations(ax, color = 'orange', rvir = rvir)
 
     if append_temperature_profiles:
-        data_list = ['_hot', '_warm', '_cool', '_cold']
+        data_list = ['hot', 'warm', 'cool', 'cold']
+        weight_field = None
         #data_list = ['', '', '', '']                                                                                                                                        
         cmap_list = ['firebrick', 'goldenrod', 'seagreen', 'steelblue']
         title_list = ['$\mathrm{Hot\ Gas}$', '$\mathrm{Warm\ Gas}$', '$\mathrm{Cool\ Gas}$', '$\mathrm{Cold\ Gas}$']
         linestyle_list = ['solid', 'dashed', 'dashdot', 'dotted']
         nbins = [50, 25, 25, 25]
 
-#        data_list = ['_xray', '_uv']
+#        data_list = ['xray', 'uv']
 #        cmap_list = ['firebrick', 'seagreen']
 #        title_list = ['$\mathrm{X}$-$\mathrm{ray}$', '$\mathrm{UV}$']
 #        linestyle_list = ['dashed', 'dotted']
 #        nbins = [25, 25]
         for i, data_cut in enumerate(data_list):
             cmap = sns.dark_palette(cmap_list[i], as_cmap = True)
-            ffig, aax, im, cbar = ipd.plot_phase(xfield, yfield, zfield, output = output, \
+            ffig, aax, im, cbar = ipd.plot_phase(xfield, yfield, zfield, output = output, weight_field = weight_field, \
                                                  fig = fig, ax = ax,do_pcolormesh = False, \
                                                  profile = True, profile_linestyle = linestyle_list[i], \
                                                  profile_color = cmap_list[i], profile_label = title_list[i],\
@@ -94,5 +97,8 @@ def plot_metallicity_density(output = 3035):
 
 
 output = int(sys.argv[1])
-plot_metallicity_radius(append_temperature_profiles = True, output = output, append_observations = True)
+weight_field = 'xray_emissivity_0.5_7.0_keV'
+plot_metallicity_radius(append_temperature_profiles = False, output = output, append_observations = True, weight_field = weight_field)
+
+#plot_metallicity_radius(append_temperature_profiles = False, output = output, append_observations = True)
 #plot_metallicity_density(output = output)

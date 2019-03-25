@@ -8,15 +8,13 @@ import sys
 from matplotlib.colors import LogNorm
 
 import seaborn as sns
-sns.set_style("white",{'font.family':'serif', 'axes.grid': True, "ytick.major.size": 0.1,
-                "ytick.minor.size": 0.05,
-                'grid.linestyle': '--'})
+sns.set_style("ticks",{'axes.grid': True, })
 
 import ion_plot_definitions as ipd
     
 def plot_multipanel(output, ion_list, threshold_list, label_list = None, rmax = 3000):
     ncols = len(ion_list)
-    fig, figax = plt.subplots(nrows = 1, ncols = ncols, figsize = (3.4*ncols, 3), sharex=True, sharey=True)
+    fig, figax = plt.subplots(nrows = 1, ncols = ncols, figsize = (4*ncols, 3.8), sharex=True, sharey=True)
     #    fn = '/nobackup/ibutsky/data/romulusC/column_%i.h5'%(output)
     sim = 'romulusC'
     fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data.h5'%(sim, sim, output)
@@ -32,6 +30,8 @@ def plot_multipanel(output, ion_list, threshold_list, label_list = None, rmax = 
         label_list = threshold_list
     for j, ion in enumerate(ion_list):
         ax = figax[j]
+        ax.set_xlim(0, rmax-10)
+        ax.set_ylim(0, 1.15)
         r_arr, cdens_arr = ipd.load_r_cdens(fn, ion, underscore=True, space=False)
         for i, threshold in enumerate(threshold_list):
             xbins, cfrac = ipd.covering_fraction_profile(ion, r_arr, cdens_arr, r_max = rmax, threshold=threshold)
@@ -41,15 +41,12 @@ def plot_multipanel(output, ion_list, threshold_list, label_list = None, rmax = 
             joe.create_dataset(base_name+'covering_fraction', data = cfrac)
             joe.flush()
             
-        ax.annotate(ion, xy=(2350, 0.98), fontsize = 18)
+        ipd.annotate_ion_name(ax, ion, x_factor = 0.8, y_factor = 0.9)
         ax.set_xlabel('Impact Parameter (kpc)')
         if j == 0:
             ax.set_ylabel('Ion Covering Fraction')
         elif j == 1:
             ax.legend(loc = 2, ncol = 2, title = "N$_{\mathrm{thres}}$ ($\mathrm{cm}^{-2}$)", fontsize = 10)
-
-    ax.set_xlim(0, rmax-10)
-    ax.set_ylim(0, 1.15)
 
     fig.tight_layout()
     plt.savefig('romulusC_%06d_covering_fraction_threshold.png'%(output), dpi = 300)

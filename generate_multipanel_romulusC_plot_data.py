@@ -26,7 +26,7 @@ field_list = [('gas', 'density'), ('Gas', 'Temperature'), ('Gas', 'metallicity2'
               ('gas', 'xray_intensity_0.5_7.0_keV'), ('gas', 'O_p5_number_density'), \
               ('gas', 'H_p0_number_density')]
 
-
+#('gas', 'xray_intensity_0.5_7.0_keV')
 #field_list = [('Gas', 'metallicity2'), ('gas', 'xray_intensity_0.5_7.0_keV')]
 #field_list = [('gas', 'C_p2_number_density')]
 #field_list = [('gas', 'O_p6_number_density'), ('gas', 'O_p7_number_density')]
@@ -41,17 +41,20 @@ ds = yt.load('/nobackup/ibutsky/simulations/romulusC/romulusC.%06d'%(output))
 trident.add_ion_fields(ds, ions = ['O VI', 'H I'])#, 'C III', 'O VII', 'O VIII'])
 ds.add_field(('Gas', 'metallicity2'), function = _metallicity2, units = 'Zsun', particle_type = True)
 
-xray_fields = yt.add_xray_emissivity_field(ds, 0.5, 7.0, redshift=ds.current_redshift, \
+if output == 4096:
+    redshift = 0.01
+else:
+    ds.current_redshift
+xray_fields = yt.add_xray_emissivity_field(ds, 0.5, 7.0, redshift=redshift, \
             cosmology=ds.cosmology, metallicity=("Gas", "metallicity2"), table_type='cloudy')
 cen = (centers[0] / ds.length_unit).d
 
 # set up projection plots for fields that are weighted and unweighted
 for i in range(len(field_list)):
-    proj = yt.ProjectionPlot(ds, 'y', field_list[i], weight_field = weight_field[i], center = cen)
-    proj_frb =  proj.data_source.to_frb((5, 'Mpc'), 1600)
-
     dset = field_list[i][1]
     if dset not in plot_data.keys():
+        proj = yt.ProjectionPlot(ds, 'y', field_list[i], weight_field = weight_field[i], center = cen)
+        proj_frb =  proj.data_source.to_frb((5, 'Mpc'), 1600)
         plot_data.create_dataset(dset, data = np.array(proj_frb[field_list[i]]))
         plot_data.flush()
 

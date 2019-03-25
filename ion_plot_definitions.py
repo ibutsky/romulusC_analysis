@@ -428,13 +428,19 @@ def plot_box(ax, xmin, xmax, ymin, ymax, color = 'black', linestyle = 'dashed'):
 
 
 def plot_phase(xfield, yfield, zfield, do_pcolormesh = True, profile = False, profile_color = 'black', profile_alpha = 0.3,\
-               profile_label = None, profile_linestyle = 'dashed', \
+               profile_label = None, profile_linestyle = 'dashed', weight_field = None,\
                xlabel = None, ylabel = None, xlim = None, ylim = None, zlim = None, nbins = 50,\
                cmap = 'viridis', xscale = 'log', yscale = 'log', show_cbar = True, cbar_label = None, \
                fig = None, ax = None, output = 3035, data_cut = ''):
 
-    plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC.%06d_phase_data_%s_%s_%s%s.h5'\
-                        %(output, xfield, yfield, zfield, data_cut), 'r')
+
+    infile = '/nobackup/ibutsky/data/YalePaper/romulusC.%06d_phase_data_%s_%s_%s' %(output, xfield, yfield, zfield)
+    if weight_field:
+        infile += '_%s'%(weight_field)
+    if data_cut:
+        infile += '_%s'%(data_cut)
+    print(infile)
+    plot_data = h5.File(infile+'.h5', 'r')
 
     x = plot_data[xfield].value
     y = plot_data[yfield].value
