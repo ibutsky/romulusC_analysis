@@ -33,7 +33,7 @@ def generate_halo_column_data(sim, output, ion_list, res = 800):
         center = (halo_center / ds.length_unit).d
 ######################### TEMPORARY IF STATEMENT ######################
         
-        if mstar > 1e9 and mstar < 3e9:
+        if mstar > 1e9 and halo_id >0:
             print(i, halo_id, mstar)
             sys.stdout.flush()
 

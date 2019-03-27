@@ -427,13 +427,7 @@ def plot_box(ax, xmin, xmax, ymin, ymax, color = 'black', linestyle = 'dashed'):
     ax.plot([xmax, xmax], [ymin, ymax], color = color, linestyle = linestyle)
 
 
-def plot_phase(xfield, yfield, zfield, do_pcolormesh = True, profile = False, profile_color = 'black', profile_alpha = 0.3,\
-               profile_label = None, profile_linestyle = 'dashed', weight_field = None,\
-               xlabel = None, ylabel = None, xlim = None, ylim = None, zlim = None, nbins = 50,\
-               cmap = 'viridis', xscale = 'log', yscale = 'log', show_cbar = True, cbar_label = None, \
-               fig = None, ax = None, output = 3035, data_cut = ''):
-
-
+def load_phase_data(xfield, yfield, zfield, output = 3035, weight_field = None, data_cut = None):
     infile = '/nobackup/ibutsky/data/YalePaper/romulusC.%06d_phase_data_%s_%s_%s' %(output, xfield, yfield, zfield)
     if weight_field:
         infile += '_%s'%(weight_field)
@@ -446,10 +440,16 @@ def plot_phase(xfield, yfield, zfield, do_pcolormesh = True, profile = False, pr
     y = plot_data[yfield].value
     z = plot_data[zfield].value
 
-    res = 256
-    px, py = np.mgrid[x.min():x.max():res*1j, y.min():y.max():res*1j]
-    zravel = z.T.ravel()
-    xravel = px.ravel()
+    return x, y, z
+
+def plot_phase(xfield, yfield, zfield, do_pcolormesh = True, profile = False, profile_color = 'black', profile_alpha = 0.3,\
+               profile_label = None, profile_linestyle = 'dashed', weight_field = None,\
+               xlabel = None, ylabel = None, xlim = None, ylim = None, zlim = None, nbins = 50,\
+               cmap = 'viridis', xscale = 'log', yscale = 'log', show_cbar = True, cbar_label = None, \
+               fig = None, ax = None, output = 3035, data_cut = ''):
+
+
+    x, y, z = load_phase_data(xfield, yfield, zfield, output = output, weight_field = weight_field, data_cut =  data_cut)
 
     print(z.min(), z.max())
 
