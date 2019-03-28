@@ -509,7 +509,8 @@ def append_median_profile(ax, x, y, z, color = 'black', fill_color = None, lines
     if use_average:
         ybins = avg
     ax.plot(xbins, ybins, color = color, linestyle = linestyle, label = label)
-    ax.fill_between(xbins, lowlim, uplim, color = fill_color, alpha = alpha, zorder = 10)
+    if use_average == False:
+        ax.fill_between(xbins, lowlim, uplim, color = fill_color, alpha = alpha, zorder = 10)
 
 
 def annotate_ion_name(ax, ion_name, fontsize = 18, x_factor = 0.85, y_factor = 0.88, color = 'black'):

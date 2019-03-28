@@ -100,7 +100,7 @@ weight_field = None
 data_cut = None
 
 plot_metallicity_radius(append_profiles = True, output = output, append_observations = True, \
-                        weight_field = weight_field, data_cut = data_cut, use_average_profile = True)
+                        weight_field = weight_field, data_cut = data_cut, use_average_profile = False)
 
 #plot_metallicity_radius(append_profiles = False, output = output, append_observations = True, \
  #                       data_cut = 'hot_icm2', profile = True)
