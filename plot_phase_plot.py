@@ -9,66 +9,42 @@ import yt
 import ion_plot_definitions as ipd
 import romulus_analysis_helper as rom
 
-
-def plot_metallicity_radius(append_profiles = False, output = 3035, append_observations = False, weight_field = None, data_cut = None):
+def plot_metallicity_radius(append_profiles = False, output = 3035, append_observations = False, weight_field = None, data_cut = None, profile = False):
     # metallicity vs spherical radius plot
     xfield = 'spherical_position_radius'
     yfield = 'metallicity'
     zfield = 'mass'
+#    zfield = 'xray_emissivity'
     xlabel = '$\mathrm{Radius\ (kpc)}$'
     ylabel = '$\mathrm{Metallicity}\ (Z_{\odot})$'
     cbar_label = '$\mathrm{Relative\ Frequency}$'
     xlim = (0, 3000)
     ylim = (5e-4, 6)
     zlim = (3e-6, 1e-3)
-    #zlim = (7e-6, 1e-3)
-   # cmap = 'bone_r'
+ #   zlim = (1e-10, 1e-3)
     cmap = 'binary'
     nbins = 25
     profile_color = matplotlib.cm.get_cmap(cmap)(0.75)
     xscale = 'linear'
-    profile = True
     profile_label = 'All Mass'
 
     fig, ax, im, cbar = ipd.plot_phase(xfield, yfield, zfield, output = output, weight_field = weight_field, 
-                                       profile = profile, profile_label = profile_label, profile_color = profile_color, nbins = nbins,\
+                                       profile = profile, profile_label = profile_label, \
+                                       profile_color = profile_color, nbins = nbins,\
                                xlabel = xlabel, ylabel = ylabel, xlim = xlim, ylim = ylim, zlim = zlim, \
                                        cbar_label = cbar_label, xscale = xscale, cmap = cmap, data_cut = data_cut)
 
     if append_observations:
         rvir = rom.get_romulus_rvir('romulusC', output)
-        ipd.add_cluster_metallicity_observations(ax, color = 'orange', rvir = rvir)
+        ipd.add_cluster_metallicity_observations(ax, color = 'firebrick', rvir = rvir)
 
     if append_profiles:
-        data_list = ['hot', 'coolwarm']# 'warm', 'cool', 'cold']
-        weight_field = None
-
-        
-
-        cmap_list = ['firebrick', 'seagreen']
-#        cmap_list = ['firebrick', 'goldenrod', 'seagreen', 'steelblue']
+        data_list = ['hot', 'warm', 'cool', 'cold']
+        cmap_list = ['firebrick', 'goldenrod', 'seagreen', 'steelblue']
         title_list = ['$\mathrm{Hot\ Gas}$', '$\mathrm{Warm\ Gas}$', '$\mathrm{Cool\ Gas}$', '$\mathrm{Cold\ Gas}$']
-        title_list = ['$\mathrm{Hot\ Gas}$', '$\mathrm{Cool\ and\ Warm\ Gas}$']
         linestyle_list = ['solid', 'dashed', 'dashdot', 'dotted']
-        linestyle_list = ['dashed', 'dotted']
-        nbins = [25, 25, 25, 25]
+        nbins = [20, 20, 20, 20]
 
-        data_list = ['icm']
-        title_list = ['ICM']
-#        data_list = [None, None]
-
-#        data_list = ['xray', 'uv']
-#        cmap_list = ['firebrick', 'seagreen']
-#        title_list = ['$\mathrm{X}$-$\mathrm{ray}$', '$\mathrm{UV}$']
-#        linestyle_list = ['dashed', 'dotted']
-#        nbins = [25, 25]
-
-#        data_list = ['']
-#        weight_field = 'xray_emissivity_0.5_7.0_keV'
-#        cmap_list = ['goldenrod']
-#        linestyle_list = ['dashed']
-#        title_list = ['X-ray emissivity weighted median metallicity']
-#        nbins = [25]
         for i, data_cut in enumerate(data_list):
             cmap = sns.dark_palette(cmap_list[i], as_cmap = True)
             ffig, aax, im, cbar = ipd.plot_phase(xfield, yfield, zfield, output = output, weight_field = weight_field, \
@@ -88,7 +64,7 @@ def plot_metallicity_density(output = 3035):
     xfield = 'particle_H_nuclei_density'
     yfield = 'temperature'
     zfield = 'metallicity'
-    zfield = 'xray_intensity'
+#    zfield = 'xray_intensity'
     xlabel = '$\mathrm{n}_{\mathrm{H}}\ (\mathrm{cm}^{-3})$'
     ylabel = '$\mathrm{Temperature\ (K)}$'
     cbar_label = '$\mathrm{Metallicity}\ (Z_{\odot})$'
@@ -118,12 +94,12 @@ def plot_metallicity_density(output = 3035):
 
 
 output = int(sys.argv[1])
-weight_field = 'xray_emissivity_0.5_7.0_keV'
 weight_field = None
-weight_field = 'mass'
 data_cut = None
-plot_metallicity_radius(append_profiles = False, output = output, append_observations = True, \
+
+plot_metallicity_radius(append_profiles = True, output = output, append_observations = True, \
                         weight_field = weight_field, data_cut = data_cut)
 
-#plot_metallicity_radius(append_profiles = False, output = output, append_observations = True)
+#plot_metallicity_radius(append_profiles = False, output = output, append_observations = True, \
+ #                       data_cut = 'hot_icm2', profile = True)
 #plot_metallicity_density(output = output)

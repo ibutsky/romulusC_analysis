@@ -54,15 +54,21 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
         icm_mask = "& (obj[('gas', 'temperature')] > 1e4) & (obj[('gas', 'temperature')] < 1e6)"
 
     elif icm_cut == 'cold':
-        icm_mask = "(obj[('gas', 'temperature')] <= 1e4)"
+        icm_mask = "(obj[('gas', 'temperature')] < 1e4)"
     elif icm_cut == 'cool':
-        icm_mask = " (obj[('gas', 'temperature')]  > 1e4) & (obj[('gas', 'temperature')] <= 1e5)"
+        icm_mask = " (obj[('gas', 'temperature')]  >= 1e4) & (obj[('gas', 'temperature')] < 1e5)"
     elif icm_cut == 'coolwarm':
         icm_mask = "(obj[('gas', 'temperature')]  >= 1e4) & (obj[('gas', 'temperature')] <= 1e6)"
     elif icm_cut == 'warm':
-        icm_mask = "(obj[('gas', 'temperature')]  > 1e5) & (obj[('gas', 'temperature')] <= 1e6)"
+        icm_mask = "(obj[('gas', 'temperature')]  >= 1e5) & (obj[('gas', 'temperature')] < 1e6)"
     elif icm_cut == 'hot':
-        icm_mask = "(obj[('gas', 'temperature')] > 1e6)"
+        icm_mask = "(obj[('gas', 'temperature')] >= 1e6)"
+    elif icm_cut == 'hot_icm':
+        icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')] >= 1e6)"
+    elif icm_cut == 'hot_icm2':
+        icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] < 0.01) & (obj[('gas', 'temperature')] >= 1e6)"
+
+
     
     if yfield[1] == 'metallicity':
         if icm_mask:
@@ -81,11 +87,11 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
     
     for field in [xfield, yfield, zfield]:
         print(field)
-        if field[1] != 'xray_intensity':
+        if field[1] != 'xray_emissivity':
             ph.set_log(field, ytf.preferred_log(field))
             ph.set_unit(field, ytf.preferred_unit(field))
 
-    if ylim and field != 'xray_intensity':
+    if ylim:
         ph.set_ylim(ylim[0], ylim[1])
     if xlim:
         ph.set_xlim(xlim[0], xlim[1])
@@ -111,12 +117,17 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
 
 output = int(sys.argv[1])
 icm_cut = sys.argv[2]
-#print(icm_cut)
-icm_cut = None
+
+if icm_cut == 'None':
+    icm_cut = None
+#icm_cut = None
+#icm_cut = 'hot_icm2'
+
 
 xfield = ('gas', 'spherical_position_radius')
 yfield = ('gas', 'metallicity')
 zfield = ('gas', 'mass')
+#zfield = ('gas', 'xray_emissivity')
 weight_field = None
 fractional = True
 xlim = (0, 3100)
