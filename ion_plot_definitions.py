@@ -443,7 +443,7 @@ def load_phase_data(xfield, yfield, zfield, output = 3035, weight_field = None, 
     return x, y, z
 
 def plot_phase(xfield, yfield, zfield, do_pcolormesh = True, profile = False, profile_color = 'black', profile_alpha = 0.3,\
-               profile_label = None, profile_linestyle = 'dashed', weight_field = None,\
+               profile_label = None, profile_linestyle = 'dashed', weight_field = None, use_average_profile = False, \
                xlabel = None, ylabel = None, xlim = None, ylim = None, zlim = None, nbins = 50,\
                cmap = 'viridis', xscale = 'log', yscale = 'log', show_cbar = True, cbar_label = None, \
                fig = None, ax = None, output = 3035, data_cut = ''):
@@ -491,20 +491,24 @@ def plot_phase(xfield, yfield, zfield, do_pcolormesh = True, profile = False, pr
 
     if profile:
         append_median_profile(ax, x, y, z, color = profile_color, alpha = profile_alpha, linestyle = profile_linestyle, \
-                              label = profile_label, nbins = nbins)
+                              label = profile_label, use_average = use_average_profile, nbins = nbins)
 
     fig.tight_layout()
     return fig, ax, im, cbar
 
 
 
-def append_median_profile(ax, x, y, z, color = 'black', fill_color = None, linestyle = 'dashed', label = None,\
-                          alpha = 0.3, confidence = 0.682, xmin = None, xmax = None, nbins = 50, centered = True):
+def append_median_profile(ax, x, y, z, color = 'black', fill_color = None, linestyle = 'dashed', \
+                              label = None, use_average = False, alpha = 0.3, confidence = 0.682,\
+                              xmin = None, xmax = None, nbins = 50, centered = True):
     xbins, med, avg, lowlim, uplim = phase_median_frequency_profile(x, y, z, centered = centered,\
                             confidence = confidence, xmin = xmin, xmax = xmax, nbins = nbins)
     if fill_color == None:
         fill_color = color
-    ax.plot(xbins, med, color = color, linestyle = linestyle, label = label)
+    ybins = med
+    if use_average:
+        ybins = avg
+    ax.plot(xbins, ybins, color = color, linestyle = linestyle, label = label)
     ax.fill_between(xbins, lowlim, uplim, color = fill_color, alpha = alpha, zorder = 10)
 
 

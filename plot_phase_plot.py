@@ -9,7 +9,8 @@ import yt
 import ion_plot_definitions as ipd
 import romulus_analysis_helper as rom
 
-def plot_metallicity_radius(append_profiles = False, output = 3035, append_observations = False, weight_field = None, data_cut = None, profile = False):
+def plot_metallicity_radius(append_profiles = False, output = 3035, append_observations = False, use_average_profile = False, \
+                                weight_field = None, data_cut = None, profile = False):
     # metallicity vs spherical radius plot
     xfield = 'spherical_position_radius'
     yfield = 'metallicity'
@@ -48,7 +49,8 @@ def plot_metallicity_radius(append_profiles = False, output = 3035, append_obser
         for i, data_cut in enumerate(data_list):
             cmap = sns.dark_palette(cmap_list[i], as_cmap = True)
             ffig, aax, im, cbar = ipd.plot_phase(xfield, yfield, zfield, output = output, weight_field = weight_field, \
-                                                 fig = fig, ax = ax,do_pcolormesh = False, \
+                                                 fig = fig, ax = ax, do_pcolormesh = False, \
+                                                 use_average_profile = use_average_profile,\
                                                  profile = True, profile_linestyle = linestyle_list[i], \
                                                  profile_color = cmap_list[i], profile_label = title_list[i],\
                                xlabel = xlabel, ylabel = ylabel, xlim = xlim, ylim = ylim, zlim = zlim, nbins = nbins[i],\
@@ -98,7 +100,7 @@ weight_field = None
 data_cut = None
 
 plot_metallicity_radius(append_profiles = True, output = output, append_observations = True, \
-                        weight_field = weight_field, data_cut = data_cut)
+                        weight_field = weight_field, data_cut = data_cut, use_average_profile = True)
 
 #plot_metallicity_radius(append_profiles = False, output = output, append_observations = True, \
  #                       data_cut = 'hot_icm2', profile = True)
