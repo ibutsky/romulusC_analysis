@@ -9,9 +9,7 @@ import romulus_analysis_helper as rom_help
 import ion_plot_definitions as ipd
 import seaborn as sns
 
-sns.set_style("white",{'font.family':'serif', 'axes.grid': True, "ytick.major.size": 0.1,
-                "ytick.minor.size": 0.05,
-                'grid.linestyle': '--'})
+sns.set_style("ticks",{'axes.grid': True, 'grid.linestyle': '--'})
 
 output = int(sys.argv[1])
 rvir = rom_help.get_romulus_rvir('romulusC', output)

@@ -11,7 +11,7 @@ import seaborn as sns
 #sns.set_style("white",{'font.family':'serif', 'axes.grid': True, "ytick.major.size": 0.1,
  #               "ytick.minor.size": 0.05,
   #              'grid.linestyle': '--'})
-sns.set_style('ticks')#, {'font.family':'serif'})
+sns.set_style("ticks",{'axes.grid': True, 'grid.linestyle': '--'})
 
 import ion_plot_definitions as ipd
 

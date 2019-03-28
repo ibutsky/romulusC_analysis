@@ -8,7 +8,7 @@ import sys
 from matplotlib.colors import LogNorm
 
 import seaborn as sns
-sns.set_style("ticks",{'axes.grid': True, })
+sns.set_style("ticks",{'axes.grid': True, 'grid.linestyle': '--'})
 
 import ion_plot_definitions as ipd
     

@@ -69,11 +69,12 @@ for i, ray_id in enumerate(ray_list):
     col = i - ncols*row 
     print(row,col)
     img_data = np.array(frb['ray_%i_%s'%(ray_id, field[1])])
-    img_data = ipd.crop_imshow(img_data, data_min, data_max, data_min, data_max)
+#    img_data = ipd.crop_imshow(img_data, data_min, data_max, data_min, data_max)
     ax = axes[row][col]
-        
+    # note: the extent call makes the units of the plot 0 to 1200 (physical) instead of 0 to 1600 (number of pixels)
     im = ax.imshow(img_data, origin = 'lower', norm = LogNorm(),vmin = zlims[0], vmax = zlims[1], \
                    extent = [rmin, rmax, rmin, rmax], zorder = 1)
+    ax.scatter(600, 600, marker = '+', s = 200, c = 'white', zorder = 10)
     im.set_cmap(cmap)
     
     ax.xaxis.set_visible(False)
@@ -87,6 +88,7 @@ for i, ray_id in enumerate(ray_list):
         ax.annotate('', xy = (1000, 100),xycoords = 'data',  xytext=(1100, 100), textcoords='data', \
                     arrowprops=dict(arrowstyle="-", connectionstyle = "arc3", linewidth = 3, edgecolor = "white", facecolor = "white"))
         ax.annotate('100 kpc', xy=(970, 130))
+
 
 # And now we're done!
 fig.savefig("multipanel_plot_romulusC_%i_sightlines.png"%(output))

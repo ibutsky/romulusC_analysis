@@ -27,7 +27,7 @@ cluster_z = cluster_center[2]
 
 # load sightline properties
 # really "ray_z" and "ray_x" are in plot coordinates, not the coordinates of the simulation
-ray_id_list, ray_z_list, ray_x_list = np.loadtxt('coordinate_list.dat', \
+ray_id_list, ray_z_list, ray_x_list = np.loadtxt('data/coordinate_list.dat', \
                                     skiprows = 1, unpack=True)
 
 dx = ray_x_list[5]*0.1
@@ -36,19 +36,20 @@ print(dx, dz)
 
 zfield = ('gas', 'O_p5_number_density')
 p = yt.ProjectionPlot(ds, 'y', zfield, weight_field = None, \
-                      width = (6000, 'kpc'), center = cluster_center)
+                      width = (6000, 'kpc'), center = cluster_center, fontsize = 16)
 
 
 
 p.set_cmap(zfield, 'dusk')
-p.set_zlim(zfield, 7e12, 1e15)
-#p.hide_axes()
+p.set_colorbar_label(zfield, '$\mathrm{O\ VI\ Column\ Density\ (cm}^{-2})$')
+p.set_zlim(zfield, 1e12, 1e15)
+p.hide_axes()
+p.annotate_scale()
 
+#mass_bins = [[1e9, 3.16228e9], [3.16228e9, 1e10], [1e10, 1e15], [1e9, 1e15]]
+#labels = ['low_mass', 'medium_mass', 'high_mass', 'all']
 
-mass_bins = [[1e9, 3.16228e9], [3.16228e9, 1e10], [1e10, 1e15], [1e9, 1e15]]
-labels = ['low_mass', 'medium_mass', 'high_mass', 'all']
-
-mass_bins = [[1e7, 1e15]]
+mass_bins = [[1e9, 1e15]]
 labels = ['all']
 
 
@@ -59,15 +60,14 @@ for mass_range, label in zip(mass_bins, labels):
     for ray_id, plot_x, plot_z in zip(ray_id_list, ray_x_list, ray_z_list):
         p.annotate_marker((plot_x,plot_z), marker = '*', coord_system = 'plot', \
                       plot_args={'color':'darkseagreen', 's':500, 'zorder':10, 'edgecolor':'black'})
-        p.annotate_text((plot_x+dx, plot_z+dx), "%i"%(ray_id), coord_system = 'plot', \
-                        text_args={'color':'red', 'zorder':11})
+#        p.annotate_text((plot_x+dx, plot_z+dx), "%i"%(ray_id), coord_system = 'plot', \
+ #                       text_args={'color':'red', 'zorder':11})
     # annotate galaxy halos
     mask = (mstars > mass_range[0]) & (mstars < mass_range[1])
     for center, rvir in zip(centers[mask], rvirs[mask]):
         yt_cen = (center / ds.length_unit).d
         p.annotate_sphere(yt_cen, radius = (rvir, 'kpc'), circle_args={'color':'white', 'zorder':1})
-    p.save('/nobackup/ibutsky/plots/YalePaper/romulusC.%06d_projection_OVI_sightlines_halos_%s_2.png'%(output, label))
-
-    p.annotate_clear()
+        p.save('romulusC_%06d_projection_OVI_sightlines_halos_%s.png'%(output, label))
+        p.annotate_clear()
 
 

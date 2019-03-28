@@ -77,6 +77,11 @@ for i in range(nrows*ncols):
     cbar.set_label(cbar_title_list[i], color = 'white')
 
 
+w = 500 * 1600. / 5000.
+axes[1][0].annotate('', xy = (1200, 100),xycoords = 'data',  xytext=(1200+w, 100), textcoords='data', \
+                    arrowprops=dict(arrowstyle="-", connectionstyle = "arc3", linewidth = 3, \
+                    edgecolor = "white", facecolor = "white"))
+axes[1][0].annotate('500 kpc', xy=(1170, 150))
 # And now we're done!
 fig.savefig("multipanel_plot_romulusC_%i.png"%(output))
 #fig.savefig("romulusC_HI.png", dpi = 300)
