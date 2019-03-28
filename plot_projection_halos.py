@@ -36,7 +36,7 @@ print(dx, dz)
 
 zfield = ('gas', 'O_p5_number_density')
 p = yt.ProjectionPlot(ds, 'y', zfield, weight_field = None, \
-                      width = (6000, 'kpc'), center = cluster_center, fontsize = 16)
+                      width = (6000, 'kpc'), center = cluster_center, fontsize = 18)
 
 
 
@@ -67,7 +67,7 @@ for mass_range, label in zip(mass_bins, labels):
     for center, rvir in zip(centers[mask], rvirs[mask]):
         yt_cen = (center / ds.length_unit).d
         p.annotate_sphere(yt_cen, radius = (rvir, 'kpc'), circle_args={'color':'white', 'zorder':1})
-        p.save('romulusC_%06d_projection_OVI_sightlines_halos_%s.png'%(output, label))
-        p.annotate_clear()
+    p.save('romulusC_%06d_projection_OVI_sightlines_halos_%s.png'%(output, label))
+    p.annotate_clear()
 
 
