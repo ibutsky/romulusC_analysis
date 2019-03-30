@@ -14,10 +14,12 @@ import ion_plot_definitions as ipd
 
 
 
-def multipanel_ion_plot(ion_list, plot_type, bin_type):
+def multipanel_ion_plot(output, ion_list, plot_type, bin_type):
 
-    romC_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_profile_data_high_mass.h5'%('romulusC', 3035), 'r')
+    romC_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_profile_data_high_mass.h5'%('romulusC', output), 'r')
     rom25_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_profile_data_high_mass.h5'%('romulus25', 6069), 'r')
+#    romC_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_profile_data.h5'%('romulusC', output), 'r')
+#    rom25_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_profile_data.h5'%('romulus25', 6069), 'r')
     
     if len(ion_list) <= 4:
         nrows = 1
@@ -70,7 +72,7 @@ def multipanel_ion_plot(ion_list, plot_type, bin_type):
         if col == 0:
             ax.set_ylabel(ylabel)
         ax.set_xlim(0, 299)
-        
+        ax.set_ylim(-0.8, 0.15)
         counts = np.zeros(799**2)
         for pbin, pline, plabel, color in zip(plot_bins, linestyles, plot_labels, colors):
             romC_bins = romC_data['%s_%s_rbins'%(ion, pbin)][:]
@@ -87,21 +89,13 @@ def multipanel_ion_plot(ion_list, plot_type, bin_type):
                 diff_profile = romC_profile - rom25_profile
             ax.plot(romC_bins, diff_profile, color = color, linestyle = pline, linewidth = linewidth, label = plabel)
             
- #       if plot_type == 'column':
-#            ax.set_yscale('symlog')
-            #ylims = ipd.column_plot_ylims(ion)
-            #log_yrange = np.log10(ylims[1]) - np.log10(ylims[0])
-            #ax.annotate(ion_name, xy=(220, np.power(10, np.log10(ylims[0]) + 0.85*log_yrange)), fontsize=18)
 
-           # ax.set_ylim(ipd.column_plot_ylims(ion))
-           
-        if plot_type == 'cfrac':
-            ax.annotate(ion_name, xy=(220, 0.05), fontsize=18)
-            ax.set_ylim(-0.8, 0.15)
-        if row == 0 and col == 1:
-            ax.legend()
+        ipd.annotate_ion_name(ax, ion_name, y_factor = 0.15)
+
+        if row == 0 and col == 0:
+            ax.legend(loc = 'lower left')
         fig.tight_layout()
-        plt.savefig('romulus_compare_ion_%s.png'%(plot_type), dpi = 300)
+        plt.savefig('romulusC_%06d_compare_ion_%s.png'%(output, plot_type), dpi = 300)
         
         
 
@@ -112,7 +106,8 @@ ion_list = ['H I', 'C IV', 'O VI']
 
 plot_type = 'cfrac'
 bin_type = 'dist'
-multipanel_ion_plot(ion_list, plot_type, bin_type)
+output = int(sys.argv[1])
+multipanel_ion_plot(output, ion_list, plot_type, bin_type)
 
 
         

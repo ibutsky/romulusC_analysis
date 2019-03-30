@@ -20,6 +20,7 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
     dist_list = halo_props['dist_to_cluster'].value
     cluster_rvir = halo_props['rvir'].value[0]
 
+
     halo_mask = (mstar_list > 1e9) & (mstar_list < 1e12) 
     if mask == 'high_mass':
         halo_mask = (mstar_list >= 1e10) & (mstar_list <= 1e12)
