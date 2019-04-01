@@ -46,7 +46,7 @@ def column_plot_ylims(ion):
         if ion == 'HI':
                 ylims = (3e12, 1e15)
         elif ion == 'OVI':
-                ylims = (1e12, 7e14)
+                ylims = (3e11, 7e14)
         elif ion == 'MgII':
                 ylims = (1e2, 1e15)
         elif ion == 'CII':
@@ -54,7 +54,7 @@ def column_plot_ylims(ion):
         elif ion == 'CIII':
                 ylims = (9e7, 1e12)
         elif ion == 'CIV':
-                ylims = (2e10, 1e13)
+                ylims = (2e9, 1e13)
         elif ion == 'SiII':
                 ylims = (1e2, 9e6)
         elif ion == 'SiIII':

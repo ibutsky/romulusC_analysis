@@ -61,12 +61,17 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
         linestyles = ['solid', 'dashed', 'dashdot']
     elif bin_type == 'dist':
         plot_bins = ['dist_1', 'dist_2', 'dist_3', 'dist_4']
+#        plot_bins = ['dist_5', 'dist_3', 'dist_4']
         plot_labels = ['$\mathrm{r} < 0.5 \mathrm{R}_{\mathrm{vir}}$', \
                        '$ 0.5 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < \mathrm{R}_{\mathrm{vir}}$', \
                        '$ \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 2 \mathrm{R}_{\mathrm{vir}}$' ,\
                        '$ 2 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 3 \mathrm{R}_{\mathrm{vir}}$']
+ #       plot_labels = ['$\mathrm{r} < \mathrm{R}_{200}$', \
+  #                     '$\mathrm{R}_{200} < \mathrm{r} < 2 \mathrm{R}_{200}$', \
+   #                    '$\mathrm{r} > 2 \mathrm{R}_{200}$']
+
         linestyles = ['solid', 'dashed', 'dashdot', 'dotted']
-        
+    #    linestyles = ['solid', 'dashed', 'dotted']
     fig, figax = plt.subplots(nrows = nrows, ncols = ncols, figsize=(3.5*ncols, 3.2*nrows), sharex = True, sharey = sharey)
     
     for i, ion_name in enumerate(ion_list):
@@ -97,10 +102,10 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
                 counts += ion_counts
                 ion_counts = ion_counts.reshape(799, 799)
                 ion_counts = load_combined_counts(ion, np.append(combined_output_list, output), pbin)
-                if pbin == 'dist_4':
-                    bin_max = 250
-                else: 
-                    bin_max = 300
+#                if pbin == 'dist_4':
+ #                   bin_max = 250
+  #              else: 
+                bin_max = 300
                 ipd.append_median_profile(ax, xbins[:-1], ybins[:-1], ion_counts.T, color = color, linestyle = pline, \
                                           label = plabel, alpha = 0.3, xmin = 0, xmax = bin_max, centered = True)
 
@@ -130,7 +135,6 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
 
         elif plot_type == 'cfrac':
             ax.set_ylim(0, 1.05)
-            sns.set_style('ticks', {'axes.grid': True})
             if row == 0 and col == 0:
                 ax.legend()
 
@@ -146,8 +150,8 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
         
 
 
-sim = sys.argv[1]
-output = int(sys.argv[2])
+#sim = sys.argv[1]
+#output = int(sys.argv[2])
 
 plot_type_list = ['cfrac', 'column']
 #plot_type_list = ['column']
@@ -158,9 +162,16 @@ ion_list = ['H I', 'C IV', 'O VI']
 ion_list = ['H I', 'C IV', 'O VI']
 
 
-for plot_type in plot_type_list:
-    multipanel_ion_plot(sim, output, ion_list, plot_type, 'mass')
-    if sim == 'romulusC':
-        multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = True, combined_output_list = [3697])
+#for plot_type in plot_type_list:
+ #   multipanel_ion_plot(sim, output, ion_list, plot_type, 'mass')
+  #  if sim == 'romulusC':
+   #     multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False, combined_output_list = [3360, 3697])
 
-        
+sim = 'romulusC'
+output = 3035
+plot_type = 'cfrac'
+multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False)
+
+output = 3360
+plot_type = 'column'
+multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = True, combined_output_list = [3697])

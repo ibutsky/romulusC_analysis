@@ -1,6 +1,7 @@
 import matplotlib
 matplotlib.use('Agg')
 import tangos 
+import tangos_properties_tremmel
 import numpy as np
 import pylab as plt
 import h5py as h5
@@ -34,6 +35,7 @@ def find_halos_with_stars(timestep, output):
     MColdGas = []
     MHIGas = []
     Rvir = []
+    R200 = []
     center = []
 
     cluster_center = halos[0]['shrink_center']
@@ -49,6 +51,8 @@ def find_halos_with_stars(timestep, output):
             print(i, mstar/1e12)
             halo_id.append(i)
             Rvir.append(halo['max_radius'])
+            r200 = halo.calculate('radius(200)')
+            R200.append(r200)
             center.append(halo['shrink_center'])
             dist_to_cluster.append(np.linalg.norm(np.subtract(halo['shrink_center'], cluster_center)))
             Mvir.append(halo['Mvir'])
@@ -61,6 +65,7 @@ def find_halos_with_stars(timestep, output):
     h5file = h5.File('/nobackup/ibutsky/data/romulusC_halo_data_%i'%(output), 'w')
     
 
+    h5file.create_dataset('r200', data = np.array(R200))
     h5file.create_dataset('halo_id', data = np.array(halo_id))
     h5file.create_dataset('rvir', data = np.array(Rvir))
     h5file.create_dataset('mvir', data = np.array(Mvir))
@@ -75,6 +80,9 @@ def find_halos_with_stars(timestep, output):
 
 timestep_list = [12, 13, 14, 15, 16]
 output_list = [636, 672, 768, 864, 960]
+
+timestep_list = [49, 56, 61]
+output_list = [3035, 3360, 3697]
                                
 for timestep, output in zip(timestep_list, output_list):
     find_halos_with_stars(timestep, output)

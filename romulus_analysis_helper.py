@@ -18,3 +18,12 @@ def get_romulus_rvir(sim, output):
     halo_props = load_romulus_halo_props(sim, output)
     rvirs = halo_props['rvir'].value
     return rvirs[0]
+
+
+def get_romulusC_r200(output):
+    if output == 3035:
+        return 810.0
+    elif output == 3360:
+        return 955.3
+    elif output == 3697:
+        return 1014.7 

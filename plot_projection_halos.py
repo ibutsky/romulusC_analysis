@@ -17,7 +17,7 @@ trident.add_ion_fields(ds, ions=['O VI'])
 # load and initialize halo properties
 halo_data = h5.File('/nobackup/ibutsky/data/romulusC_halo_data_%i'%(output), 'r')
 centers = halo_data['center'].value
-rvirs = halo_data['rvir'].value
+rvirs = halo_data['r200'].value
 mvirs = halo_data['mvir'].value
 mstars = halo_data['mstar'].value
 cluster_center = (centers[0]/ds.length_unit).d
@@ -36,7 +36,7 @@ print(dx, dz)
 
 zfield = ('gas', 'O_p5_number_density')
 p = yt.ProjectionPlot(ds, 'y', zfield, weight_field = None, \
-                      width = (6000, 'kpc'), center = cluster_center, fontsize = 18)
+                      width = (6000, 'kpc'), center = cluster_center, fontsize = 22)
 
 
 

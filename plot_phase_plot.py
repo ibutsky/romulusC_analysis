@@ -36,7 +36,8 @@ def plot_metallicity_radius(append_profiles = False, output = 3035, append_obser
                                        cbar_label = cbar_label, xscale = xscale, cmap = cmap, data_cut = data_cut)
 
     if append_observations:
-        rvir = rom.get_romulus_rvir('romulusC', output)
+        #rvir = rom.get_romulus_rvir('romulusC', output)
+        rvir = rom.get_romulusC_r200(output)
         ipd.add_cluster_metallicity_observations(ax, color = 'firebrick', rvir = rvir)
 
     if append_profiles:

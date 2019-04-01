@@ -4,7 +4,7 @@ import sys
 import os
 
 import ion_plot_definitions as ipd
-
+import romulus_analysis_helper as rom
 
 def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None):
 
@@ -18,14 +18,14 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
     halo_list = halo_props['halo_id'].value
     mstar_list = halo_props['mstar'].value
     dist_list = halo_props['dist_to_cluster'].value
-    cluster_rvir = halo_props['rvir'].value[0]
-
-
-    halo_mask = (mstar_list > 1e9) & (mstar_list < 1e12) 
+#    cluster_rvir = halo_props['rvir'].value[0]
+    cluster_rvir = rom.get_romulusC_r200(output)
+    print(cluster_rvir)
+    halo_mask = (mstar_list >= 1e9) & (mstar_list < 1e12) 
     if mask == 'high_mass':
         halo_mask = (mstar_list >= 1e10) & (mstar_list <= 1e12)
     if sim == 'romulusC':
-        halo_mask = halo_mask & (dist_list < 3.0 * cluster_rvir)
+        halo_mask = halo_mask & (dist_list < 4.0 * cluster_rvir)
     halo_list = halo_list[halo_mask]
     mstar_list = mstar_list[halo_mask]
     dist_list = dist_list[halo_mask]
@@ -41,6 +41,7 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
         d2_r = np.array([])
         d3_r = np.array([])
         d4_r = np.array([])
+        d5_r = np.array([])
 
         lowm_c = np.array([])
         midm_c = np.array([])
@@ -50,6 +51,7 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
         d2_c = np.array([])
         d3_c = np.array([])
         d4_c = np.array([])
+        d5_c = np.array([])
         
         num_low = 0
         num_med = 0
@@ -93,9 +95,13 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
                     d3_r = np.concatenate((d3_r, r_arr))
                     d3_c = np.concatenate((d3_c, cdens_arr))
 
-                elif dtc >= 2*cluster_rvir:
+                elif dtc >= 2*cluster_rvir: 
                     d4_r = np.concatenate((d4_r, r_arr))
                     d4_c = np.concatenate((d4_c, cdens_arr))
+
+                if dtc < cluster_rvir:
+                    d5_r = np.concatenate((d5_r, r_arr))
+                    d5_c = np.concatenate((d5_c, cdens_arr))
         print('analyzed %i low-mass, %i med-mass, and %i high-mass galaxies'%(num_low, num_med, num_high))
 
         name_list = ['low_mass', 'med_mass', 'high_mass']
@@ -104,9 +110,9 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
         col_list = [lowm_c, midm_c, highm_c]
         
         if sim == 'romulusC':
-            name_list = np.append(name_list, ['dist_1', 'dist_2', 'dist_3', 'dist_4'])
-            radius_list = np.append(radius_list, [d1_r, d2_r, d3_r, d4_r])
-            col_list = np.append(col_list, [d1_c, d2_c, d3_c, d4_c])
+            name_list = np.append(name_list, ['dist_1', 'dist_2', 'dist_3', 'dist_4', 'dist_5'])
+            radius_list = np.append(radius_list, [d1_r, d2_r, d3_r, d4_r, d5_r])
+            col_list = np.append(col_list, [d1_c, d2_c, d3_c, d4_c, d5_c])
 
         ion_out = ion.replace(" ", "")
         for dcol, drad, dname in zip(col_list, radius_list, name_list):
