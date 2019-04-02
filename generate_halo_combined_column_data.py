@@ -18,10 +18,12 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
     halo_list = halo_props['halo_id'].value
     mstar_list = halo_props['mstar'].value
     dist_list = halo_props['dist_to_cluster'].value
+    contamination = halo_props['contamination'].value
 #    cluster_rvir = halo_props['rvir'].value[0]
     cluster_rvir = rom.get_romulusC_r200(output)
+
     print(cluster_rvir)
-    halo_mask = (mstar_list >= 1e9) & (mstar_list < 1e12) 
+    halo_mask = (contamination < 0.05) & (mstar_list >= 1e9) & (mstar_list < 1e12) 
     if mask == 'high_mass':
         halo_mask = (mstar_list >= 1e10) & (mstar_list <= 1e12)
     if sim == 'romulusC':

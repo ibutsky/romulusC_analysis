@@ -144,8 +144,8 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
         y_factor = 0.85
         if plot_type == 'cfrac' and ion == 'HI':
             y_factor = 0.15
-#        elif plot_type == 'column' and ion == 'HI':
- #           x_factor = 
+        elif plot_type == 'column' and (ion == 'CIV' or ion == 'OVI'):
+            x_factor = 0.8
         ipd.annotate_ion_name(ax, ion_name, x_factor = x_factor, y_factor = y_factor)
         fig.tight_layout()
         plt.savefig('%s_%06d_multipanel_%s_halo_%s.png'%(sim, output, plot_type, bin_type), dpi = 300)
@@ -177,7 +177,8 @@ multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False)
 
 
 plot_type = 'column'
-multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False, do_colormesh = True)
+multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False)
+#multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False, do_colormesh = True)
 
 output = 3360
 multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = True, combined_output_list = [3697])

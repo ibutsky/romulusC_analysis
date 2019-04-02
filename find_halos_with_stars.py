@@ -37,6 +37,7 @@ def find_halos_with_stars(timestep, output):
     Rvir = []
     R200 = []
     center = []
+    Contam = []
 
     cluster_center = halos[0]['shrink_center']
 
@@ -50,6 +51,7 @@ def find_halos_with_stars(timestep, output):
         if mstar > 1e8:
             print(i, mstar/1e12)
             halo_id.append(i)
+            Contam.append(halo['contamination_fraction'])
             Rvir.append(halo['max_radius'])
             r200 = halo.calculate('radius(200)')
             R200.append(r200)
@@ -64,7 +66,7 @@ def find_halos_with_stars(timestep, output):
 
     h5file = h5.File('/nobackup/ibutsky/data/romulusC_halo_data_%i'%(output), 'w')
     
-
+    h5file.create_dataset('contamination', data = np.array(Contam))
     h5file.create_dataset('r200', data = np.array(R200))
     h5file.create_dataset('halo_id', data = np.array(halo_id))
     h5file.create_dataset('rvir', data = np.array(Rvir))
