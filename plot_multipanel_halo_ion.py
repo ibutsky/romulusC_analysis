@@ -61,17 +61,18 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
         linestyles = ['solid', 'dashed', 'dashdot']
     elif bin_type == 'dist':
         plot_bins = ['dist_1', 'dist_2', 'dist_3', 'dist_4']
-#        plot_bins = ['dist_5', 'dist_3', 'dist_4']
         plot_labels = ['$\mathrm{r} < 0.5 \mathrm{R}_{\mathrm{vir}}$', \
                        '$ 0.5 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < \mathrm{R}_{\mathrm{vir}}$', \
                        '$ \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 2 \mathrm{R}_{\mathrm{vir}}$' ,\
                        '$ 2 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 3 \mathrm{R}_{\mathrm{vir}}$']
- #       plot_labels = ['$\mathrm{r} < \mathrm{R}_{200}$', \
-  #                     '$\mathrm{R}_{200} < \mathrm{r} < 2 \mathrm{R}_{200}$', \
-   #                    '$\mathrm{r} > 2 \mathrm{R}_{200}$']
+        plot_labels = ['$\mathrm{r}\ <\ 0.5 \mathrm{Mpc}$', \
+                       '$0.5\mathrm{Mpc}\ <\ \mathrm{r}\ <\ 1 \mathrm{Mpc}$',
+                       '$1 \mathrm{Mpc}\ <\ \mathrm{r}\ <\ 2 \mathrm{Mpc}$',
+                       '$2 \mathrm{Mpc}\ <\ \mathrm{r}\ <\ 3 \mathrm{Mpc}$']
+
 
         linestyles = ['solid', 'dashed', 'dashdot', 'dotted']
-    #    linestyles = ['solid', 'dashed', 'dotted']
+
     fig, figax = plt.subplots(nrows = nrows, ncols = ncols, figsize=(3.5*ncols, 3.2*nrows), sharex = True, sharey = sharey)
     
     for i, ion_name in enumerate(ion_list):
@@ -143,6 +144,8 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
         y_factor = 0.85
         if plot_type == 'cfrac' and ion == 'HI':
             y_factor = 0.15
+#        elif plot_type == 'column' and ion == 'HI':
+ #           x_factor = 
         ipd.annotate_ion_name(ax, ion_name, x_factor = x_factor, y_factor = y_factor)
         fig.tight_layout()
         plt.savefig('%s_%06d_multipanel_%s_halo_%s.png'%(sim, output, plot_type, bin_type), dpi = 300)
@@ -172,6 +175,9 @@ output = 3035
 plot_type = 'cfrac'
 multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False)
 
-output = 3360
+
 plot_type = 'column'
+multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False, do_colormesh = True)
+
+output = 3360
 multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = True, combined_output_list = [3697])

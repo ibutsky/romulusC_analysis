@@ -83,23 +83,23 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
                 num_high += 1
                 
             if sim == 'romulusC':
-                if dtc < 0.5*cluster_rvir:
+                if dtc < 500:
                     d1_r = np.concatenate((d1_r, r_arr))
                     d1_c = np.concatenate((d1_c, cdens_arr))
 
-                elif dtc >= 0.5*cluster_rvir and dtc < cluster_rvir:
+                elif dtc >= 500 and dtc < 1000:
                     d2_r = np.concatenate((d2_r, r_arr))
                     d2_c = np.concatenate((d2_c, cdens_arr))
 
-                elif dtc >= cluster_rvir and dtc < 2*cluster_rvir:
+                elif dtc >= 1000 and dtc < 2000:
                     d3_r = np.concatenate((d3_r, r_arr))
                     d3_c = np.concatenate((d3_c, cdens_arr))
 
-                elif dtc >= 2*cluster_rvir: 
+                elif dtc >= 2000 and dtc < 3000: 
                     d4_r = np.concatenate((d4_r, r_arr))
                     d4_c = np.concatenate((d4_c, cdens_arr))
 
-                if dtc < cluster_rvir:
+                if dtc > 3000:
                     d5_r = np.concatenate((d5_r, r_arr))
                     d5_c = np.concatenate((d5_c, cdens_arr))
         print('analyzed %i low-mass, %i med-mass, and %i high-mass galaxies'%(num_low, num_med, num_high))
