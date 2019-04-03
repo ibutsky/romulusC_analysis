@@ -15,7 +15,7 @@ sns.set_style("ticks",{'axes.grid': True, 'grid.linestyle': '--'})
 
 import ion_plot_definitions as ipd
 
-def load_combined_counts(ion, output_list, plot_bin, sim = 'romulusC', suffix = '_300'):
+def load_combined_counts(ion, output_list, plot_bin, sim = 'romulusC', suffix = '_600'):
     counts = np.zeros(799*799)
     for output in output_list:
         plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_histogram_data%s.h5'%(sim, output, suffix), 'r')
@@ -24,7 +24,7 @@ def load_combined_counts(ion, output_list, plot_bin, sim = 'romulusC', suffix = 
 
 
 def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh = False, \
-                        combine = False, combined_output_list = [], suffix = '_300'):
+                        combine = False, combined_output_list = [], suffix = '_600'):
 
     plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_histogram_data%s.h5'%(sim, output, suffix), 'r')
     profile_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_profile_data%s.h5'%(sim, output, suffix), 'r')
@@ -69,8 +69,8 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
         linestyles = ['solid', 'dashed', 'dashdot', 'dotted']
 
     elif bin_type == 'r200':
-        plot_bins = ['r1', 'r2', 'r3', 'r4']
-        plot_bins = ['r2', 'r2', 'r2', 'r2']
+        plot_bins = ['r1', 'r2', 'r3']
+#        plot_bins = ['r4', 'r4', 'r4', 'r4']
 #        plot_labels = ['$\mathrm{r} < 0.5 \mathrm{R}_{\mathrm{vir}}$', \
 #                       '$ 0.5 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < \mathrm{R}_{\mathrm{vir}}$', \
 #                       '$ \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 2 \mathrm{R}_{\mathrm{vir}}$' ,\
@@ -80,11 +80,14 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
                        '$ 2 \mathrm{R}_{200} < \mathrm{r} < 3 \mathrm{R}_{200}$']               
 
         plot_labels = ['$\mathrm{r} < \mathrm{R}_{200}$', '$\mathrm{R}_{200} < \mathrm{r} < 2\mathrm{R}_{200}$',\
-                       '$ 2\mathrm{R}_{200} < \mathrm{r} < 3 \mathrm{R}_{200}$', \
-                       '$ 3 \mathrm{R}_{200} < \mathrm{r} < 4 \mathrm{R}_{200}$']
+                       '$ 2\mathrm{R}_{200} < \mathrm{r} < 3 \mathrm{R}_{200}$']
 
 
         linestyles = ['solid', 'dashed', 'dashdot', 'dotted']
+        linestyles = ['solid', 'dashed', 'dotted']
+        palette = sns.cubehelix_palette(3, start=.5, rot=-.75, reverse = True)
+        colors = [palette[0], palette[1], palette[2]]
+
 
     fig, figax = plt.subplots(nrows = nrows, ncols = ncols, figsize=(3.5*ncols, 3.2*nrows), sharex = True, sharey = sharey)
     
@@ -186,13 +189,13 @@ ion_list = ['H I', 'C IV', 'O VI']
 sim = 'romulusC'
 output = 3035
 plot_type = 'cfrac'
-#multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False)
-#multipanel_ion_plot(sim, output, ion_list, plot_type, 'r200', combine = False)
+multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False)
+multipanel_ion_plot(sim, output, ion_list, plot_type, 'r200', combine = False)
 
 
 plot_type = 'column'
-#multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False)
-multipanel_ion_plot(sim, output, ion_list, plot_type, 'r200', combine = False, do_colormesh= True)
+multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False)
+multipanel_ion_plot(sim, output, ion_list, plot_type, 'r200', combine = False)# do_colormesh= True)
 
 
 
