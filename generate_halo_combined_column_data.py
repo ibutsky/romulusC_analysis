@@ -13,7 +13,7 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
     else:
         out_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data%s.h5'%(sim, output, suffix), 'w')
     
-    halo_props = h5.File('/nobackup/ibutsky/data/%s_halo_data_%i%s'%(sim, output, suffix), 'r')
+    halo_props = h5.File('/nobackup/ibutsky/data/%s_halo_data_%i'%(sim, output), 'r')
     # ignoring the 0th entry, which is the main cluster halo
     halo_list = halo_props['halo_id'].value
     mstar_list = halo_props['mstar'].value
@@ -154,9 +154,9 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
         col_list = [lowm_c, midm_c, highm_c]
         
         if sim == 'romulusC':
-            name_list = np.append(name_list, ['dist_1', 'dist_2', 'dist_3', 'dist_4', 'dist_5', 'r1', 'r2', 'r3', 'r4'])
-            radius_list = np.append(radius_list, [d1_r, d2_r, d3_r, d4_r, d5_r, r1_r, r2_r, r3_r, r4_r])
-            col_list = np.append(col_list, [d1_c, d2_c, d3_c, d4_c, d5_c, r1_c, r2_c, r3_c, r4_c])
+            name_list = np.append(name_list, ['dist_1', 'dist_2', 'dist_3', 'dist_4', 'r1', 'r2', 'r3', 'r4'])
+            radius_list = np.append(radius_list, [d1_r, d2_r, d3_r, d4_r, r1_r, r2_r, r3_r, r4_r])
+            col_list = np.append(col_list, [d1_c, d2_c, d3_c, d4_c, r1_c, r2_c, r3_c, r4_c])
 
         ion_out = ion.replace(" ", "")
         for dcol, drad, dname in zip(col_list, radius_list, name_list):

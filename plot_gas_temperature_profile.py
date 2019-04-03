@@ -15,9 +15,9 @@ output = int(sys.argv[1])
 rvir = rom_help.get_romulus_rvir('romulusC', output)
 rvir = rom_help.get_romulusC_r200(output)
 #rvir = 1.0
-#xmax = 3000
-xmax = 3
-
+xmax = 3000
+xmax /= rvir
+xmax = 4.
 dset_list = ['rbins_cold', 'rbins_warm', 'rbins_hot', 'mass_cold', 'mass_warm', 'mass_hot']
 plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_gas_temperature_profile_data'%(output), 'r')
 

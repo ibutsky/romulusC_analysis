@@ -29,7 +29,12 @@ def generate_halo_column_data(sim, output, ion_list, res = 800, start_index = 0,
 
     mask = (mstars >= 1e9) & (halo_ids > 0) & (contamination < 0.05)
     
-    for i in range(start_index, end_index):
+    if start_index > end_index:
+        counter = -1
+    else:
+        counter = 1
+
+    for i in np.arange(start_index, end_index, counter):
         halo_id = halo_ids[mask][i]
         mstar = mstars[mask][i]
         halo_center = centers[mask][i]
@@ -52,8 +57,9 @@ def generate_halo_column_data(sim, output, ion_list, res = 800, start_index = 0,
                 dset = "%s_%s" % (ion, axis)
                 if dset not in cdens_file.keys():
                     frb = ion_help.make_projection(ds, axis, field_list, center, width, res = res)
-                    cdens_file.create_dataset(dset, data=frb[field_list[j]].ravel())
-                    cdens_file.flush()
+                    if dset not in cdens_file.keys():
+                        cdens_file.create_dataset(dset, data=frb[field_list[j]].ravel())
+                        cdens_file.flush()
 
         cdens_file.close()
 
@@ -64,7 +70,7 @@ start_index = int(sys.argv[1])
 end_index = int(sys.argv[2])
 ion_list = ['H I', 'O VI', 'Si II', 'Si III', 'Si IV', 'C II', 'C III', 'C IV']
 ion_list = ['H I', 'O VI', 'C IV']
-
+ion_list = ['C IV', 'O VI', 'H I']
 
 generate_halo_column_data(sim, output, ion_list, start_index = start_index, end_index = end_index)
 
