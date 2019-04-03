@@ -29,6 +29,7 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
     plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_histogram_data%s.h5'%(sim, output, suffix), 'r')
     profile_data = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_profile_data%s.h5'%(sim, output, suffix), 'r')
     
+
     if len(ion_list) < 4:
         nrows = 1
         ncols = len(ion_list)
@@ -69,13 +70,19 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
 
     elif bin_type == 'r200':
         plot_bins = ['r1', 'r2', 'r3', 'r4']
+        plot_bins = ['r2', 'r2', 'r2', 'r2']
 #        plot_labels = ['$\mathrm{r} < 0.5 \mathrm{R}_{\mathrm{vir}}$', \
 #                       '$ 0.5 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < \mathrm{R}_{\mathrm{vir}}$', \
 #                       '$ \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 2 \mathrm{R}_{\mathrm{vir}}$' ,\
 #                       '$ 2 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 3 \mathrm{R}_{\mathrm{vir}}$']
-        plot_labels = ['$\mathrm{r} < 0.5 \mathrm{R}_{200}$', '$ 0.5 \mathrm{R}_{200} < \mathrm{r} < \mathrm{R}_{200}$', \      
-                       '$ \mathrm{R}_{200} < \mathrm{r} < 2 \mathrm{R}_{200}$',\  
-                       '$ 2 \mathrm{R}_{200} < \mathrm{r} < 3 \mathrm{R}_{200}$']                                             
+        plot_labels = ['$\mathrm{r} < 0.5 \mathrm{R}_{200}$', '$ 0.5 \mathrm{R}_{200} < \mathrm{r} < \mathrm{R}_{200}$',\
+                       '$ \mathrm{R}_{200} < \mathrm{r} < 2 \mathrm{R}_{200}$', \
+                       '$ 2 \mathrm{R}_{200} < \mathrm{r} < 3 \mathrm{R}_{200}$']               
+
+        plot_labels = ['$\mathrm{r} < \mathrm{R}_{200}$', '$\mathrm{R}_{200} < \mathrm{r} < 2\mathrm{R}_{200}$',\
+                       '$ 2\mathrm{R}_{200} < \mathrm{r} < 3 \mathrm{R}_{200}$', \
+                       '$ 3 \mathrm{R}_{200} < \mathrm{r} < 4 \mathrm{R}_{200}$']
+
 
         linestyles = ['solid', 'dashed', 'dashdot', 'dotted']
 
@@ -179,13 +186,13 @@ ion_list = ['H I', 'C IV', 'O VI']
 sim = 'romulusC'
 output = 3035
 plot_type = 'cfrac'
-multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False)
-multipanel_ion_plot(sim, output, ion_list, plot_type, 'r200', combine = False)
+#multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False)
+#multipanel_ion_plot(sim, output, ion_list, plot_type, 'r200', combine = False)
 
 
 plot_type = 'column'
-multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False)
-multipanel_ion_plot(sim, output, ion_list, plot_type, 'r200', combine = False)
+#multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False)
+multipanel_ion_plot(sim, output, ion_list, plot_type, 'r200', combine = False, do_colormesh= True)
 
 
 

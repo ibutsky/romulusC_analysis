@@ -43,9 +43,9 @@ def generate_halo_column_data(sim, output, ion_list, res = 800, start_index = 0,
         print(i, halo_id, mstar)
         sys.stdout.flush()
 
-        cdens_file = h5.File('/nobackupp2/ibutsky/data/%s/column_%i_halo%i_300'%(sim, output, halo_id), 'a') 
+        cdens_file = h5.File('/nobackupp2/ibutsky/data/%s/column_%i_halo%i_600'%(sim, output, halo_id), 'a') 
     
-        width = yt.YTQuantity(300, 'kpc')
+        width = yt.YTQuantity(600, 'kpc')
         px, py = np.mgrid[-width/2:width/2:res*1j, -width/2:width/2:res*1j]
         radius = (px**2.0 + py**2.0)**0.5
 
@@ -70,7 +70,7 @@ start_index = int(sys.argv[1])
 end_index = int(sys.argv[2])
 ion_list = ['H I', 'O VI', 'Si II', 'Si III', 'Si IV', 'C II', 'C III', 'C IV']
 ion_list = ['H I', 'O VI', 'C IV']
-ion_list = ['C IV', 'O VI', 'H I']
+#ion_list = ['C IV', 'O VI', 'H I']
 
 generate_halo_column_data(sim, output, ion_list, start_index = start_index, end_index = end_index)
 

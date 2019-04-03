@@ -6,7 +6,7 @@ import os
 import ion_plot_definitions as ipd
 import romulus_analysis_helper as rom
 
-def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None, suffix = '_300'):
+def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None, suffix = '_600'):
 
     if mask == 'high_mass':
         out_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data_high_mass%s.h5'%(sim, output, suffix), 'w')
@@ -123,25 +123,26 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
                     d4_c = np.concatenate((d4_c, cdens_arr))
                     num_d4 += 1
 
-                if dtc < 0.5 * cluster_rvir:
+                if dtc <  cluster_rvir:
                     r1_r = np.concatenate((r1_r, r_arr))
                     r1_c = np.concatenate((r1_c, cdens_arr))
                     num_r1 += 1
 
-                elif dtc >= 0.5* cluster_rvir and dtc < cluster_rvir:
+                elif dtc >= cluster_rvir and dtc < 2* cluster_rvir:
                     r2_r = np.concatenate((r2_r, r_arr))
                     r2_c = np.concatenate((r2_c, cdens_arr))
                     num_r2 += 1
 
-                elif dtc >= cluster_rvir and dtc < 2 * cluster_rvir:
+                elif dtc >= 2*cluster_rvir and dtc < 3 * cluster_rvir:
                     r3_r = np.concatenate((r3_r, r_arr))
                     r3_c = np.concatenate((r3_c, cdens_arr))
                     num_r3 += 1
 
-                elif dtc >= 2* cluster_rvir and dtc < 3* cluster_rvir:
+                elif dtc >= 3* cluster_rvir and dtc < 4* cluster_rvir:
                     r4_r = np.concatenate((r4_r, r_arr))
                     r4_c = np.concatenate((r4_c, cdens_arr))
                     num_r4 += 1
+            
 
 
         print('analyzed %i low-mass, %i med-mass, and %i high-mass galaxies'%(num_low, num_med, num_high))

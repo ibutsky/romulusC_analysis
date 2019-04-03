@@ -18,7 +18,7 @@ def return_histogram_data(r_arr, cdens_arr, nbins = 800, rmax = 300, ylims=(1e3,
     
     return xbins, ybins, counts.T.ravel()
 
-def generate_ion_histograms(sim, output, ion_list, nbins = 800, rmax = 300, suffix = '_300'):
+def generate_ion_histograms(sim, output, ion_list, nbins = 800, rmax = 300, suffix = '_600'):
     ''' Uses stored combined column density and impact parameter arrays to generate 
     histogram data'''
     frb = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data%s.h5'%(sim, output, suffix), 'r')

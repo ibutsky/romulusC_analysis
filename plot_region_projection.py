@@ -22,10 +22,11 @@ params = {"text.color" : "white",
           "ytick.color" : "white"}                                                                                   
 plt.rcParams.update(params) 
 
-ray_list = [0, 3, 6, 8, 10, 11, 12, 13, 14, 15] #original
-ray_list = [0, 6, 8, 15]
 ray_list = [5, 6, 7]
 
+ray_list = [2, 7, 12]
+ray_list = [14, 1, 12]
+ray_list = [2, 7, 12]
 
 data_width = 1200. #hardcoded; the width of the projection that was generated
 data_res  = 1599. #hardcode 
@@ -49,11 +50,11 @@ cmap = 'dusk'
 
 cbar_title = r'$\mathrm{O\ VI\ Column\ Density}\ (\mathrm{cm^{-2}})$'
 zlims = (1e10, 5e14) #original
-zlims = (1e12, 1e15)
+zlims = (7e12, 1e16)
 
 # load in simulation data and add ion fields
 
-frb = h5.File('/nobackup/ibutsky/data/YalePaper/multipanel_romulusC_%i_sightline_plot_data'%(output), 'r')
+frb = h5.File('/nobackup/ibutsky/data/YalePaper/multipanel_romulusC_%i_sightline_plot_data_fixed'%(output), 'r')
 orient = 'horizontal'
 
 if len(ray_list) <= 4:
@@ -72,6 +73,7 @@ for i, ray_id in enumerate(ray_list):
 #    img_data = ipd.crop_imshow(img_data, data_min, data_max, data_min, data_max)
     ax = axes[row][col]
     # note: the extent call makes the units of the plot 0 to 1200 (physical) instead of 0 to 1600 (number of pixels)
+    print(img_data.min(), img_data.max())
     im = ax.imshow(img_data, origin = 'lower', norm = LogNorm(),vmin = zlims[0], vmax = zlims[1], \
                    extent = [rmin, rmax, rmin, rmax], zorder = 1)
     ax.scatter(600, 600, marker = '+', s = 200, c = 'white', zorder = 10)

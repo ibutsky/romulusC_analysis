@@ -59,7 +59,7 @@ ax.set_xlim(0.05, xmax)
 ax.set_yscale('log')
 ax.set_ylim(1e-2, 2)
 fs = 16
-ax.set_xlabel('$\mathrm{R\ /\ R}_{200}$', fontsize = fs)
+ax.set_xlabel('$\mathrm{R\ /\ R}_{200}$')#, fontsize = fs)
 #ax.set_xlabel('$\mathrm{Radius\ (kpc)}$')#, fontsize = fs)
 ax.set_ylabel('$\mathrm{Gas\ Mass\ Fraction}$')#, fontsize = fs)
 fig.tight_layout()

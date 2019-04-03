@@ -26,7 +26,7 @@ def generate_column_data(output, ion_list, res = 800, axis = 'y'):
     rom_center = rom_help.get_romulus_center(sim, output)
 
     id_list, center_x_list, center_z_list, width_list = \
-                np.loadtxt('%s.%06d_gas_rich_%s_coordinate_list.dat'%(sim, output, axis), skiprows=3, unpack = True)
+                np.loadtxt('data/temp_coordinate_list.dat'%(sim, output, axis), skiprows=3, unpack = True)
 
     for region_id, center_x, center_z, width in zip(id_list, center_x_list, center_z_list, width_list):
         cdens_file = h5.File('/nobackupp2/ibutsky/data/%s/%s.%06d_column_data_region_%i.h5'%(sim, sim, output, region_id), 'a')
@@ -59,7 +59,7 @@ def generate_column_data(output, ion_list, res = 800, axis = 'y'):
 
 output = int(sys.argv[1])
 ion_list = ['H I', 'O VI', 'Si II', 'Si III', 'Si IV', 'C II', 'C III', 'C IV']
-
+ion_list = ['O VI']
 
 #output_list = [3035, 3360, 3697]
 #for output in output_list:

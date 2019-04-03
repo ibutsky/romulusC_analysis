@@ -5,7 +5,7 @@ import sys
 #sys.path.append("/nobackup/ibutsky/scripts/plot_help/")
 import ion_plot_definitions as ipd
 
-def generate_ion_profiles(sim, output, ion_list, nbins = 100, rmax = 300, mask = 'all', suffix  = '_300'):
+def generate_ion_profiles(sim, output, ion_list, nbins = 100, rmax = 300, mask = 'all', suffix  = '_600'):
     ''' Needs ion column data to be preprocessed by generate_halo_column_data.py. 
         Takes the number output of romulusC and the list of ions and generates an h5 file
         with  the radial bins, median, median error, and covering fraction of that ion'''
