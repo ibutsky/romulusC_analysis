@@ -85,7 +85,7 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
 
         linestyles = ['solid', 'dashed', 'dashdot', 'dotted']
         linestyles = ['solid', 'dashed', 'dotted']
-        palette = sns.cubehelix_palette(3, start=.5, rot=-.75, reverse = True)
+        palette = sns.cubehelix_palette(4, start=.5, rot=-.75, reverse = True)
         colors = [palette[0], palette[1], palette[2]]
 
 
