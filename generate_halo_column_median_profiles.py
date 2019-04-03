@@ -5,7 +5,7 @@ import sys
 #sys.path.append("/nobackup/ibutsky/scripts/plot_help/")
 import ion_plot_definitions as ipd
 
-def generate_ion_profiles(sim, output, ion_list, nbins = 100, rmax = 300, mask = 'all'):
+def generate_ion_profiles(sim, output, ion_list, nbins = 100, rmax = 300, mask = 'all', suffix  = '_300'):
     ''' Needs ion column data to be preprocessed by generate_halo_column_data.py. 
         Takes the number output of romulusC and the list of ions and generates an h5 file
         with  the radial bins, median, median error, and covering fraction of that ion'''
@@ -14,12 +14,12 @@ def generate_ion_profiles(sim, output, ion_list, nbins = 100, rmax = 300, mask =
         frb = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data_high_mass.h5'%(sim, output), 'r')
         plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_profile_data_high_mass.h5'%(sim, output), 'w')
     else:
-        frb = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data.h5'%(sim, output), 'r')
-        plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_profile_data.h5'%(sim, output), 'w')
+        frb = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data%s.h5'%(sim, output, suffix), 'r')
+        plot_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_profile_data%s.h5'%(sim, output, suffix), 'w')
 
     bin_name_list = ['low_mass', 'med_mass', 'high_mass']
     if sim == 'romulusC':
-        bin_name_list = np.append(bin_name_list, ['dist_1', 'dist_2', 'dist_3', 'dist_4', 'dist_5'])
+        bin_name_list = np.append(bin_name_list, ['dist_1', 'dist_2', 'dist_3', 'dist_4', 'r1', 'r2','r3', 'r4'])
     
     for i, ion in enumerate(ion_list):
         ion_out = ion.replace(" ", "")

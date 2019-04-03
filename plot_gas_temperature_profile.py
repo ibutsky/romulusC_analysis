@@ -13,8 +13,10 @@ sns.set_style("ticks",{'axes.grid': True, 'grid.linestyle': '--'})
 
 output = int(sys.argv[1])
 rvir = rom_help.get_romulus_rvir('romulusC', output)
-rvir = 1.0
-xmax = 3000
+rvir = rom_help.get_romulusC_r200(output)
+#rvir = 1.0
+#xmax = 3000
+xmax = 3
 
 dset_list = ['rbins_cold', 'rbins_warm', 'rbins_hot', 'mass_cold', 'mass_warm', 'mass_hot']
 plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_gas_temperature_profile_data'%(output), 'r')
@@ -57,8 +59,8 @@ ax.set_xlim(0.05, xmax)
 ax.set_yscale('log')
 ax.set_ylim(1e-2, 2)
 fs = 16
-#ax.set_xlabel('$\mathrm{R\ /\ R}_{200}$', fontsize = fs)
-ax.set_xlabel('$\mathrm{Radius\ (kpc)}$')#, fontsize = fs)
+ax.set_xlabel('$\mathrm{R\ /\ R}_{200}$', fontsize = fs)
+#ax.set_xlabel('$\mathrm{Radius\ (kpc)}$')#, fontsize = fs)
 ax.set_ylabel('$\mathrm{Gas\ Mass\ Fraction}$')#, fontsize = fs)
 fig.tight_layout()
 plt.savefig('temperature_mass_profile_%i.png'%(output), dpi = 300)

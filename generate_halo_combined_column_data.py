@@ -6,14 +6,14 @@ import os
 import ion_plot_definitions as ipd
 import romulus_analysis_helper as rom
 
-def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None):
+def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None, suffix = '_300'):
 
     if mask == 'high_mass':
-        out_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data_high_mass.h5'%(sim, output), 'w')
+        out_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data_high_mass%s.h5'%(sim, output, suffix), 'w')
     else:
-        out_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data.h5'%(sim, output), 'w')
+        out_file = h5.File('/nobackup/ibutsky/data/YalePaper/%s.%06d_combined_halo_ion_data%s.h5'%(sim, output, suffix), 'w')
     
-    halo_props = h5.File('/nobackup/ibutsky/data/%s_halo_data_%i'%(sim, output), 'r')
+    halo_props = h5.File('/nobackup/ibutsky/data/%s_halo_data_%i%s'%(sim, output, suffix), 'r')
     # ignoring the 0th entry, which is the main cluster halo
     halo_list = halo_props['halo_id'].value
     mstar_list = halo_props['mstar'].value
@@ -26,8 +26,8 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
     halo_mask = (contamination < 0.05) & (mstar_list >= 1e9) & (mstar_list < 1e12) 
     if mask == 'high_mass':
         halo_mask = (mstar_list >= 1e10) & (mstar_list <= 1e12)
-    if sim == 'romulusC':
-        halo_mask = halo_mask & (dist_list < 4.0 * cluster_rvir)
+#    if sim == 'romulusC':
+#        halo_mask = halo_mask & (dist_list < 4.0 * cluster_rvir)
     halo_list = halo_list[halo_mask]
     mstar_list = mstar_list[halo_mask]
     dist_list = dist_list[halo_mask]
@@ -43,7 +43,11 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
         d2_r = np.array([])
         d3_r = np.array([])
         d4_r = np.array([])
-        d5_r = np.array([])
+
+        r1_r = np.array([])
+        r2_r = np.array([])
+        r3_r = np.array([])
+        r4_r = np.array([])
 
         lowm_c = np.array([])
         midm_c = np.array([])
@@ -53,11 +57,25 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
         d2_c = np.array([])
         d3_c = np.array([])
         d4_c = np.array([])
-        d5_c = np.array([])
+
+        r1_c = np.array([])
+        r2_c = np.array([])
+        r3_c = np.array([])
+        r4_c = np.array([])
         
         num_low = 0
         num_med = 0
         num_high = 0
+
+        num_d1 = 0
+        num_d2 = 0
+        num_d3 = 0
+        num_d4 = 0
+
+        num_r1 = 0
+        num_r2 = 0 
+        num_r3 = 0
+        num_r4 = 0
 
         for j, halo in enumerate(halo_list):
             print(ion, halo)
@@ -88,23 +106,47 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
                 if dtc < 500:
                     d1_r = np.concatenate((d1_r, r_arr))
                     d1_c = np.concatenate((d1_c, cdens_arr))
+                    num_d1 += 1
 
                 elif dtc >= 500 and dtc < 1000:
                     d2_r = np.concatenate((d2_r, r_arr))
                     d2_c = np.concatenate((d2_c, cdens_arr))
+                    num_d2 += 1
 
                 elif dtc >= 1000 and dtc < 2000:
                     d3_r = np.concatenate((d3_r, r_arr))
                     d3_c = np.concatenate((d3_c, cdens_arr))
+                    num_d3 += 1
 
                 elif dtc >= 2000 and dtc < 3000: 
                     d4_r = np.concatenate((d4_r, r_arr))
                     d4_c = np.concatenate((d4_c, cdens_arr))
+                    num_d4 += 1
 
-                if dtc > 3000:
-                    d5_r = np.concatenate((d5_r, r_arr))
-                    d5_c = np.concatenate((d5_c, cdens_arr))
+                if dtc < 0.5 * cluster_rvir:
+                    r1_r = np.concatenate((r1_r, r_arr))
+                    r1_c = np.concatenate((r1_c, cdens_arr))
+                    num_r1 += 1
+
+                elif dtc >= 0.5* cluster_rvir and dtc < cluster_rvir:
+                    r2_r = np.concatenate((r2_r, r_arr))
+                    r2_c = np.concatenate((r2_c, cdens_arr))
+                    num_r2 += 1
+
+                elif dtc >= cluster_rvir and dtc < 2 * cluster_rvir:
+                    r3_r = np.concatenate((r3_r, r_arr))
+                    r3_c = np.concatenate((r3_c, cdens_arr))
+                    num_r3 += 1
+
+                elif dtc >= 2* cluster_rvir and dtc < 3* cluster_rvir:
+                    r4_r = np.concatenate((r4_r, r_arr))
+                    r4_c = np.concatenate((r4_c, cdens_arr))
+                    num_r4 += 1
+
+
         print('analyzed %i low-mass, %i med-mass, and %i high-mass galaxies'%(num_low, num_med, num_high))
+        print('Galaxies in [d1, d2, d3, d4] = [%i, %i, %i, %i]'%(num_d1, num_d2, num_d3, num_d4))
+        print('Galaxies in [r1, r2, r3, r4] = [%i, %i, %i, %i]'%(num_r1, num_r2, num_r3, num_r4))
 
         name_list = ['low_mass', 'med_mass', 'high_mass']
 
@@ -112,9 +154,9 @@ def combine_halo_column_densities(sim, output, ion_list, rmax = 300, mask = None
         col_list = [lowm_c, midm_c, highm_c]
         
         if sim == 'romulusC':
-            name_list = np.append(name_list, ['dist_1', 'dist_2', 'dist_3', 'dist_4', 'dist_5'])
-            radius_list = np.append(radius_list, [d1_r, d2_r, d3_r, d4_r, d5_r])
-            col_list = np.append(col_list, [d1_c, d2_c, d3_c, d4_c, d5_c])
+            name_list = np.append(name_list, ['dist_1', 'dist_2', 'dist_3', 'dist_4', 'dist_5', 'r1', 'r2', 'r3', 'r4'])
+            radius_list = np.append(radius_list, [d1_r, d2_r, d3_r, d4_r, d5_r, r1_r, r2_r, r3_r, r4_r])
+            col_list = np.append(col_list, [d1_c, d2_c, d3_c, d4_c, d5_c, r1_c, r2_c, r3_c, r4_c])
 
         ion_out = ion.replace(" ", "")
         for dcol, drad, dname in zip(col_list, radius_list, name_list):

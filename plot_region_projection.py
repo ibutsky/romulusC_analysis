@@ -15,8 +15,8 @@ import sys
 
 import ion_plot_definitions as ipd
 
-output = int(sys.argv[1])
-
+#output = int(sys.argv[1])
+output = 3035
 params = {"text.color" : "white",                                                                                    
           "xtick.color" : "white",                                                                                   
           "ytick.color" : "white"}                                                                                   
@@ -49,7 +49,7 @@ cmap = 'dusk'
 
 cbar_title = r'$\mathrm{O\ VI\ Column\ Density}\ (\mathrm{cm^{-2}})$'
 zlims = (1e10, 5e14) #original
-zlims = (1e11, 7e14)
+zlims = (1e12, 1e15)
 
 # load in simulation data and add ion fields
 

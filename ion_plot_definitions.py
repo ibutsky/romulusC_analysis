@@ -3,6 +3,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 
+import romulus_analysis_helper as rom
+
 import numpy as np
 import h5py as h5
 import sys
@@ -294,7 +296,7 @@ def add_cluster_observations(ax, ion, color = 'black', zorder = 10):
 def add_cluster_metallicity_observations(ax, color = 'black', zorder = 10, rvir = 1):
     datafile = 'data/urban_metallicity.dat'
     r_ratio, r_200, r_err, z, zerr = np.loadtxt(datafile, unpack=True, skiprows = 4, usecols = (1, 2, 3, 4, 5))
-    if rvir == 1:
+    if rvir == 0:
         r = r_ratio * r_200 * 1000.
         r_err *= r_200 * 1000.
     else:
@@ -446,10 +448,12 @@ def plot_phase(xfield, yfield, zfield, do_pcolormesh = True, profile = False, pr
                profile_label = None, profile_linestyle = 'dashed', weight_field = None, use_average_profile = False, \
                xlabel = None, ylabel = None, xlim = None, ylim = None, zlim = None, nbins = 50,\
                cmap = 'viridis', xscale = 'log', yscale = 'log', show_cbar = True, cbar_label = None, \
-               fig = None, ax = None, output = 3035, data_cut = ''):
+               fig = None, ax = None, output = 3035, data_cut = '', use_rvir = False):
 
 
     x, y, z = load_phase_data(xfield, yfield, zfield, output = output, weight_field = weight_field, data_cut =  data_cut)
+    if(use_rvir):
+        x /= rom.get_romulusC_r200(output)
 
     print(z.min(), z.max())
 
