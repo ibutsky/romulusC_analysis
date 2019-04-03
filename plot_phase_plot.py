@@ -17,6 +17,8 @@ def plot_metallicity_radius(append_profiles = False, output = 3035, append_obser
     zfield = 'mass'
 #    zfield = 'xray_emissivity'
     xlabel = '$\mathrm{Radius\ (kpc)}$'
+    if use_rvir:
+        xlabel = '$\mathrm{R\ /\ R}_{200}$'
     ylabel = '$\mathrm{Metallicity}\ (Z_{\odot})$'
     cbar_label = '$\mathrm{Relative\ Frequency}$'
     xlim = (0, 3000)
