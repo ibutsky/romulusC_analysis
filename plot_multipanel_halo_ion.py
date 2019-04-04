@@ -81,8 +81,9 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
  #                      '$ 3 \mathrm{R}_{200} < \mathrm{r} < 4 \mathrm{R}_{200}$']               
 
         plot_labels = ['$ 0.5 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < \mathrm{R}_{\mathrm{vir}}$',\
-                       '$\mathrm{R}_{vir} < \mathrm{r} < 2\mathrm{R}_{vir}$',\
-                       '$ 2\mathrm{R}_{vir} < \mathrm{r} < 3 \mathrm{R}_{vir}$', '$ 3 \mathrm{R}_{vir} < \mathrm{r} < 4 \mathrm{R}_{vir}$']
+                       '$\mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 2\mathrm{R}_{\mathrm{vir}}$',\
+                       '$ 2\mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 3 \mathrm{R}_{\mathrm{vir}}$', \
+                       '$ 3 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 4 \mathrm{R}_{\mathrm{vir}}$']
 
 
         linestyles = ['solid', 'dashed', 'dashdot', 'dotted']
