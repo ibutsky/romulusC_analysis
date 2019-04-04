@@ -75,15 +75,15 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
 #                       '$ 0.5 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < \mathrm{R}_{\mathrm{vir}}$', \
 #                       '$ \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 2 \mathrm{R}_{\mathrm{vir}}$' ,\
 #                       '$ 2 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 3 \mathrm{R}_{\mathrm{vir}}$']
-#        plot_labels = ['$\mathrm{r} < 0.5 \mathrm{R}_{200}$', '$ 0.5 \mathrm{R}_{200} < \mathrm{r} < \mathrm{R}_{200}$',\
- #                      '$ \mathrm{R}_{200} < \mathrm{r} < 2 \mathrm{R}_{200}$',\
- #                      '$ 2 \mathrm{R}_{200} < \mathrm{r} < 3 \mathrm{R}_{200}$', \
- #                      '$ 3 \mathrm{R}_{200} < \mathrm{r} < 4 \mathrm{R}_{200}$']               
+        plot_labels = ['$ 0.5 \mathrm{R}_{200} < \mathrm{r} < \mathrm{R}_{200}$',\
+                       '$ \mathrm{R}_{200} < \mathrm{r} < 2 \mathrm{R}_{200}$',\
+                       '$ 2 \mathrm{R}_{200} < \mathrm{r} < 3 \mathrm{R}_{200}$', \
+                       '$ 3 \mathrm{R}_{200} < \mathrm{r} < 4 \mathrm{R}_{200}$']               
 
-        plot_labels = ['$ 0.5 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < \mathrm{R}_{\mathrm{vir}}$',\
-                       '$\mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 2\mathrm{R}_{\mathrm{vir}}$',\
-                       '$ 2\mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 3 \mathrm{R}_{\mathrm{vir}}$', \
-                       '$ 3 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 4 \mathrm{R}_{\mathrm{vir}}$']
+#        plot_labels = ['$ 0.5 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < \mathrm{R}_{\mathrm{vir}}$',\
+#                       '$\mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 2\mathrm{R}_{\mathrm{vir}}$',\
+#                       '$ 2\mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 3 \mathrm{R}_{\mathrm{vir}}$', \
+#                       '$ 3 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 4 \mathrm{R}_{\mathrm{vir}}$']
 
 
         linestyles = ['solid', 'dashed', 'dashdot', 'dotted']
