@@ -26,13 +26,14 @@ def generate_ion_histograms(sim, output, ion_list, nbins = 800, rmax = 300, suff
 
     bin_name_list = ['low_mass', 'med_mass', 'high_mass']
     if sim == 'romulusC':
-        bin_name_list = np.append(bin_name_list, ['dist_1', 'dist_2', 'dist_3', 'dist_4', 'r1', 'r2', 'r3', 'r4'])
+        bin_name_list = np.append(bin_name_list, ['dist_1', 'dist_2', 'dist_3', 'dist_4', 'r1', 'r2', 'r3', 'r4', 'r5', 'r6'])
     plot_names = ['xbins', 'ybins', 'counts']
 
     for i, ion in enumerate(ion_list):
         ion_out = ion.replace(" ", "")
         for bin_name in bin_name_list:
             print(ion, bin_name)
+            sys.stdout.flush()
             r_arr = frb[('%s_%s_rbin'%(ion_out, bin_name))][:]
             col_arr = frb[('%s_%s_col'%(ion_out, bin_name))][:]
             

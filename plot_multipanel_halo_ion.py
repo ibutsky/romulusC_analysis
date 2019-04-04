@@ -69,24 +69,27 @@ def multipanel_ion_plot(sim, output, ion_list, plot_type, bin_type, do_colormesh
         linestyles = ['solid', 'dashed', 'dashdot', 'dotted']
 
     elif bin_type == 'r200':
-        plot_bins = ['r1', 'r2', 'r3']
-#        plot_bins = ['r4', 'r4', 'r4', 'r4']
+        plot_bins = ['r2', 'r3', 'r4', 'r5']
+#        plot_bins = ['r3', 'r3', 'r3', 'r3']
 #        plot_labels = ['$\mathrm{r} < 0.5 \mathrm{R}_{\mathrm{vir}}$', \
 #                       '$ 0.5 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < \mathrm{R}_{\mathrm{vir}}$', \
 #                       '$ \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 2 \mathrm{R}_{\mathrm{vir}}$' ,\
 #                       '$ 2 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < 3 \mathrm{R}_{\mathrm{vir}}$']
-        plot_labels = ['$\mathrm{r} < 0.5 \mathrm{R}_{200}$', '$ 0.5 \mathrm{R}_{200} < \mathrm{r} < \mathrm{R}_{200}$',\
-                       '$ \mathrm{R}_{200} < \mathrm{r} < 2 \mathrm{R}_{200}$', \
-                       '$ 2 \mathrm{R}_{200} < \mathrm{r} < 3 \mathrm{R}_{200}$']               
+#        plot_labels = ['$\mathrm{r} < 0.5 \mathrm{R}_{200}$', '$ 0.5 \mathrm{R}_{200} < \mathrm{r} < \mathrm{R}_{200}$',\
+ #                      '$ \mathrm{R}_{200} < \mathrm{r} < 2 \mathrm{R}_{200}$',\
+ #                      '$ 2 \mathrm{R}_{200} < \mathrm{r} < 3 \mathrm{R}_{200}$', \
+ #                      '$ 3 \mathrm{R}_{200} < \mathrm{r} < 4 \mathrm{R}_{200}$']               
 
-        plot_labels = ['$\mathrm{r} < \mathrm{R}_{200}$', '$\mathrm{R}_{200} < \mathrm{r} < 2\mathrm{R}_{200}$',\
-                       '$ 2\mathrm{R}_{200} < \mathrm{r} < 3 \mathrm{R}_{200}$']
+        plot_labels = ['$ 0.5 \mathrm{R}_{\mathrm{vir}} < \mathrm{r} < \mathrm{R}_{\mathrm{vir}}$',\
+                       '$\mathrm{R}_{vir} < \mathrm{r} < 2\mathrm{R}_{vir}$',\
+                       '$ 2\mathrm{R}_{vir} < \mathrm{r} < 3 \mathrm{R}_{vir}$', '$ 3 \mathrm{R}_{vir} < \mathrm{r} < 4 \mathrm{R}_{vir}$']
 
 
         linestyles = ['solid', 'dashed', 'dashdot', 'dotted']
-        linestyles = ['solid', 'dashed', 'dotted']
-        palette = sns.cubehelix_palette(4, start=.5, rot=-.75, reverse = True)
-        colors = [palette[0], palette[1], palette[2]]
+       # linestyles = ['solid', 'dashed', 'dotted']
+       # linestyles = ['solid', 'dashed', 'dashdot', 'dotted', 'dotted']
+#        palette = sns.cubehelix_palette(len(linestyles)+2, start=.5, rot=-.75, reverse = True)
+#        colors = [palette[0], palette[1], palette[2], palette[3], palette[4]]
 
 
     fig, figax = plt.subplots(nrows = nrows, ncols = ncols, figsize=(3.5*ncols, 3.2*nrows), sharex = True, sharey = sharey)
@@ -195,7 +198,7 @@ multipanel_ion_plot(sim, output, ion_list, plot_type, 'r200', combine = False)
 
 plot_type = 'column'
 multipanel_ion_plot(sim, output, ion_list, plot_type, 'dist', combine = False)
-multipanel_ion_plot(sim, output, ion_list, plot_type, 'r200', combine = False)# do_colormesh= True)
+multipanel_ion_plot(sim, output, ion_list, plot_type, 'r200', combine = False)#, do_colormesh= True)
 
 
 

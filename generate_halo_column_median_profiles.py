@@ -20,7 +20,7 @@ def generate_ion_profiles(sim, output, ion_list, nbins = 100, rmax = 300, mask =
     print(list(frb.keys()))
     bin_name_list = ['low_mass', 'med_mass', 'high_mass']
     if sim == 'romulusC':
-        bin_name_list = np.append(bin_name_list, ['dist_1', 'dist_2', 'dist_3', 'dist_4', 'r1', 'r2','r3', 'r4'])
+        bin_name_list = np.append(bin_name_list, ['dist_1', 'dist_2', 'dist_3', 'dist_4', 'r1', 'r2','r3', 'r4', 'r5', 'r6'])
     
     for i, ion in enumerate(ion_list):
         ion_out = ion.replace(" ", "")
