@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
+from matplotlib.patches import Circle
 
 import yt
 yt.enable_parallelism()
@@ -68,7 +69,14 @@ for i in range(nrows*ncols):
     im = axes[row][col].imshow(img_data, origin = 'lower', norm = LogNorm(),\
                                vmin = zlim_list[i][0], vmax = zlim_list[i][1])
     im.set_cmap(cmap_list[i])
-
+    print(axes[row][col].get_xlim())
+    csize = (831. / 5000.)*1600
+    circ = Circle((800,800), csize, edgecolor = 'white', fill = False, \
+                  linestyle = (0,(5, 10)),  linewidth = 2)
+    axes[row][col].add_patch(circ)
+    circ = Circle((800,800), 2*csize, edgecolor = 'white', fill = False, \
+                  linestyle = (0,(5, 10)),  linewidth = 2)
+    axes[row][col].add_patch(circ)
     axes[row][col].xaxis.set_visible(False)
     axes[row][col].yaxis.set_visible(False)
 

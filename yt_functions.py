@@ -130,6 +130,8 @@ def preferred_unit(field):
             unit = 'cm**-3'
     elif fname.__contains__('metallicity'):
         unit = 'Zsun'
+    elif fname.__contains__('elocity'):
+        unit = 'km/s'
     return unit
 
 
@@ -140,6 +142,8 @@ def preferred_log(field):
         fname = field
 
     if fname.__contains__('radius') or fname.__contains__('position'):
+        return False
+    elif fname in ['velocity_x', 'velocity_y', 'velocity_z']:
         return False
     else: 
         return True

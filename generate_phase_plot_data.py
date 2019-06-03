@@ -28,6 +28,7 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
     ds = yt.load('/nobackup/ibutsky/simulations/romulusC/romulusC.%06d'%(output))
     ds.add_field(("gas", "particle_H_nuclei_density"), function = _H_nuc, \
              particle_type = True, force_override = True, units = "cm**(-3)")
+    trident.add_ion_fields(ds, ions = ['H I'])
 
     redshift = ds.current_redshift
     if output == 4096:
@@ -85,11 +86,11 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
     ph = yt.PhasePlot(icm, xfield, yfield, zfield, weight_field = weight_field, \
                       fractional = fractional, x_bins = xbins, y_bins = ybins)
     
-    for field in [xfield, yfield, zfield]:
-        print(field)
-        if field[1] != 'xray_emissivity':
-            ph.set_log(field, ytf.preferred_log(field))
-            ph.set_unit(field, ytf.preferred_unit(field))
+#    for field in [xfield, yfield, zfield]:
+ #       print(field)
+  #      if field[1] != 'xray_emissivity':
+   #         ph.set_log(field, ytf.preferred_log(field))
+    #        ph.set_unit(field, ytf.preferred_unit(field))
 
     if ylim:
         ph.set_ylim(ylim[0], ylim[1])
@@ -146,6 +147,16 @@ ylim = (1e-5, 15)
 #xlim = (5e-9, 5e2)
 #ylim = (5e2, 1e10)
 #icm_cut = None
+
+
+xfield = ('gas', 'spherical_position_radius')
+yfield = ('gas', 'velocity_z')
+zfield = ('gas', 'H_p0_mass')
+
+weight_field = ('Gas', 'Mass')
+fractional = True
+xlim = (0, 3100)
+ylim = (-1000, 1000)
 
 nbins = 256
 generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = icm_cut, weight_field = weight_field, \

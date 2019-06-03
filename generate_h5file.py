@@ -15,7 +15,7 @@ import os, sys
 import romulus_analysis_helper as rom_help
 import ion_plot_definitions as ion_help
 
-def generate_column_data(sim, output, ion_list, width, res = 800, cluster_center = True):
+def generate_column_data(sim, output, ion_list, width, res = 800, cluster_center = True, ionization_table = 'hm2012'):
 
     field_list = ion_help.generate_ion_field_list(ion_list, 'number_density')
     ds = yt.load('/nobackupp2/ibutsky/simulations/%s/%s.%06d'%(sim, sim, output))
@@ -24,7 +24,10 @@ def generate_column_data(sim, output, ion_list, width, res = 800, cluster_center
 
     # "regular" column density measured as impact parameter from cluster center
     if cluster_center:
-        cdens_file = h5.File('/nobackupp2/ibutsky/data/%s/%s.%06d_column_data.h5'%(sim, sim, output), 'a')
+        fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data.h5'%(sim, sim, output)
+        if ionization_table == 'fg2009':
+            fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_fg2009_column_data.h5'%(sim, sim, output)
+        cdens_file = h5.File(fn)
         print(list(cdens_file.keys()))
         center = rom_help.get_romulus_yt_center(sim, output, ds)
         axis_list = ['x', 'y', 'z']
@@ -69,8 +72,7 @@ ion_list = ['H I', 'O VI', 'Si II', 'Si III', 'Si IV', 'C II', 'C III', 'C IV']
 ion_list = ['H I', 'O VI', 'C IV']
 width = 6000
 
-#output_list = [3035, 3360, 3697]
-#for output in output_list:
-generate_column_data(sim, output, ion_list, width, res = 1600)
+
+generate_column_data(sim, output, ion_list, width, res = 1600, ionization_table = 'fg2009')
 
 
