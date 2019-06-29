@@ -19,9 +19,8 @@ xmax = 3000
 xmax /= rvir
 xmax = 4.
 dset_list = ['rbins_cold', 'rbins_warm', 'rbins_hot', 'mass_cold', 'mass_warm', 'mass_hot']
-plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_gas_temperature_profile_data'%(output), 'r')
-
-
+#plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_gas_temperature_profile_data'%(output), 'r')
+plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_metal_temperature_profile_data'%(output), 'r')    
 
 x_cold = np.array(plot_data['rbins_cold'][:]) / rvir
 x_cool = np.array(plot_data['rbins_cool'][:]) / rvir
@@ -51,7 +50,7 @@ ax.plot(ipd.interleave(x_cool_bins, 1), ipd.interleave(y_cool_bins, 0), color = 
         linewidth = lw, linestyle = 'dashdot', label = 'Cool Gas')
 ax.plot(ipd.interleave(x_cold_bins, 1), ipd.interleave(y_cold_bins, 0), color = 'steelblue',\
         linewidth = lw, linestyle = 'dotted',  label = 'Cold Gas') 
-ax.legend(loc = 6)
+#ax.legend(loc = 6)
 
 #plt.xlabel('Spherical Radius (kpc)')
 ax.set_xlim(0.05, xmax)
@@ -61,6 +60,8 @@ ax.set_ylim(1e-2, 2)
 fs = 16
 ax.set_xlabel('$\mathrm{R\ /\ R}_{200}$')#, fontsize = fs)
 #ax.set_xlabel('$\mathrm{Radius\ (kpc)}$')#, fontsize = fs)
-ax.set_ylabel('$\mathrm{Gas\ Mass\ Fraction}$')#, fontsize = fs)
+#ax.set_ylabel('$\mathrm{Gas\ Mass\ Fraction}$')#, fontsize = fs)
+ax.set_ylabel('$\mathrm{Metal\ Mass\ Fraction}$')#, fontsize = fs)                                                                                  
 fig.tight_layout()
-plt.savefig('temperature_mass_profile_%i.png'%(output), dpi = 300)
+#plt.savefig('temperature_mass_profile_%i.png'%(output), dpi = 300)
+plt.savefig('temperature_metal_mass_profile_%i.png'%(output), dpi = 300)

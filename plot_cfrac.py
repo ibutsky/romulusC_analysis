@@ -14,13 +14,16 @@ sns.set_style("white",{'font.family':'serif', 'axes.grid': True, "ytick.major.si
 
 import ion_plot_definitions as ipd
     
-def plot_multipanel(ion_list, output, region, rmax = 3000):
+def plot_multipanel(ion_list, output, region, rmax = 3000, ionization_table = 'hm2012'):
 
     fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (6, 5))
     #    fn = '/nobackup/ibutsky/data/romulusC/column_%i.h5'%(output)
     sim = 'romulusC'
     if region == 'romulusC':
         fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data.h5'%(sim, sim, output)
+        if ionization_table == 'fg2009':
+            fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_fg2009_column_data.h5'%(sim, sim, output)
+
     else:
         fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data_region_%s.h5'%(sim, sim, output, region)
 #        rmax = 1200 # TEMPORARY HARD-CODE
@@ -41,7 +44,11 @@ def plot_multipanel(ion_list, output, region, rmax = 3000):
 
         fig.tight_layout()
         if region == 'romulusC':
-            plt.savefig('romulusC.%06d_ion_covering_fraction.png'%(output))
+            if ionization_table == 'fg2009':
+                plt.savefig('romulusC.%06d_ion_covering_fraction_fg2009.png'%(output))
+            else:
+                plt.savefig('romulusC.%06d_ion_covering_fraction.png'%(output))
+
         else:
             plt.savefig('romulusC.%06d_ion_covering_fraction_region_%s.png'%(output, region))
 
@@ -53,4 +60,4 @@ ion_list = ['H I', 'C IV', 'O VI']
 region = sys.argv[1]
 output = int(sys.argv[2])
 
-plot_multipanel(ion_list, output, region)
+plot_multipanel(ion_list, output, region, ionization_table = 'fg2009')

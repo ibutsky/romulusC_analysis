@@ -2,7 +2,6 @@ import yt
 import trident
 import h5py as h5
 import sys 
-
 def _H_nuc(field, data):
     return data["H_nuclei_density"]
 
@@ -25,20 +24,21 @@ import yt_functions as ytf
 def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, weight_field = ('Gas', 'Mass'), \
                              xbins = 128, ybins = 128, fractional = False, xlim = None, ylim = None):
     sim = 'romulusC'
-    ds = yt.load('/nobackup/ibutsky/simulations/romulusC/romulusC.%06d'%(output))
-    ds.add_field(("gas", "particle_H_nuclei_density"), function = _H_nuc, \
-             particle_type = True, force_override = True, units = "cm**(-3)")
-    trident.add_ion_fields(ds, ions = ['H I'])
+    ds = ytf.load_romulusC(output)
+   # ds = yt.load('/nobackup/ibutsky/simulations/romulusC/romulusC.%06d'%(output))
+#    ds.add_field(("gas", "particle_H_nuclei_density"), function = _H_nuc, \
+ #            particle_type = True, force_override = True, units = "cm**(-3)")
+  #  trident.add_ion_fields(ds, ions = ['H I'])
 
     redshift = ds.current_redshift
     if output == 4096:
         redshift = 0.01
-    ds.add_field(('Gas', 'metallicity2'), function = _metallicity2, units = 'Zsun', particle_type = True)
-    xray_fields = yt.add_xray_emissivity_field(ds, 0.5, 7.0, redshift=redshift, \
-                    cosmology=ds.cosmology, metallicity=("Gas", "metallicity2"), table_type='cloudy')
+  #  ds.add_field(('Gas', 'metallicity2'), function = _metallicity2, units = 'Zsun', particle_type = True)
+    #xray_fields = yt.add_xray_emissivity_field(ds, 0.5, 7.0, redshift=redshift, \
+     #               cosmology=ds.cosmology, metallicity=("Gas", "metallicity2"), table_type='cloudy')
 
-    ds.add_field(('gas', 'xray_luminosity'), function = _xray_luminosity2, particle_type = True)
-    ds.add_field(('gas', 'xray_intensity'), function = _xray_intensity2, units = 'erg/(arcsec**2*cm**3*s)', particle_type = True)
+   # ds.add_field(('gas', 'xray_luminosity'), function = _xray_luminosity2, particle_type = True)
+   # ds.add_field(('gas', 'xray_intensity'), function = _xray_intensity2, units = 'erg/(arcsec**2*cm**3*s)', particle_type = True)
 
 
     cen = rom.get_romulus_yt_center(sim, output, ds)
@@ -51,7 +51,7 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
     if icm_cut == 'xray':
         icm_mask = "(obj[('gas', 'xray_intensity')] > 1e-44)"
     elif icm_cut == 'uv':
-        icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] > 1e-6) & (obj[('gas', 'particle_H_nuclei_density')] > 1e-2)"
+        icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] > 1e-6) & (obj[('gas', 'particle_H_nuclei_density')] < 1e-2)"
         icm_mask = "& (obj[('gas', 'temperature')] > 1e4) & (obj[('gas', 'temperature')] < 1e6)"
 
     elif icm_cut == 'cold':
@@ -64,8 +64,15 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
         icm_mask = "(obj[('gas', 'temperature')]  >= 1e5) & (obj[('gas', 'temperature')] < 1e6)"
     elif icm_cut == 'hot':
         icm_mask = "(obj[('gas', 'temperature')] >= 1e6)"
+
     elif icm_cut == 'hot_icm':
         icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')] >= 1e6)"
+    elif icm_cut == 'warm_icm':
+        icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')]  >= 1e5) & (obj[('gas', 'temperature')] < 1e6)"
+    elif icm_cut == 'cool_icm':
+        icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')]  >= 1e4) & (obj[('gas', 'temperature')] < 1e5)"
+    elif icm_cut == 'cold_icm':
+        icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] < 0.1) & (obj[('gas', 'temperature')] <= 1e4)"
     elif icm_cut == 'hot_icm2':
         icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] < 0.01) & (obj[('gas', 'temperature')] >= 1e6)"
 
@@ -86,11 +93,11 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
     ph = yt.PhasePlot(icm, xfield, yfield, zfield, weight_field = weight_field, \
                       fractional = fractional, x_bins = xbins, y_bins = ybins)
     
-#    for field in [xfield, yfield, zfield]:
- #       print(field)
-  #      if field[1] != 'xray_emissivity':
-   #         ph.set_log(field, ytf.preferred_log(field))
-    #        ph.set_unit(field, ytf.preferred_unit(field))
+    for field in [xfield, yfield, zfield]:
+        print(field)
+        if field[1] != 'xray_emissivity':
+            ph.set_log(field, ytf.preferred_log(field))
+            ph.set_unit(field, ytf.preferred_unit(field))
 
     if ylim:
         ph.set_ylim(ylim[0], ylim[1])
@@ -123,8 +130,6 @@ if icm_cut == 'None':
     icm_cut = None
 #icm_cut = None
 #icm_cut = 'hot_icm2'
-
-
 xfield = ('gas', 'spherical_position_radius')
 yfield = ('gas', 'metallicity')
 zfield = ('gas', 'mass')
@@ -133,31 +138,40 @@ weight_field = None
 fractional = True
 xlim = (0, 3100)
 ylim = (1e-5, 15)
-
+nbins = 256
+#generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = icm_cut, weight_field = weight_field, \
+ #                        fractional = fractional, xbins = nbins, ybins = nbins, ylim = ylim, xlim = xlim) 
 
 #weight_field = ('gas', 'xray_emissivity_0.5_7.0_keV')
 
-#xfield = ('gas', 'particle_H_nuclei_density')
-#yfield = ('gas', 'temperature')
+xfield = ('gas', 'particle_H_nuclei_density')
+yfield = ('gas', 'temperature')
 #zfield = ('gas', 'metallicity')
 #zfield = ('gas', 'xray_luminosity_0.5_7.0_keV')
 #zfield = ('gas', 'xray_intensity')
-#weight_field = ('Gas', 'Mass')
-#fractional = False
-#xlim = (5e-9, 5e2)
-#ylim = (5e2, 1e10)
-#icm_cut = None
-
-
-xfield = ('gas', 'spherical_position_radius')
-yfield = ('gas', 'velocity_z')
-zfield = ('gas', 'H_p0_mass')
-
+zfield = ('gas', 'metal_primordial_cooling_time_ratio')
 weight_field = ('Gas', 'Mass')
-fractional = True
-xlim = (0, 3100)
-ylim = (-1000, 1000)
-
-nbins = 256
+fractional = False
+xlim = (5e-9, 5e2)
+ylim = (5e2, 1e10)
+#icm_cut = None
 generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = icm_cut, weight_field = weight_field, \
-                         fractional = fractional, xbins = nbins, ybins = nbins, ylim = ylim, xlim = xlim)
+                         fractional = fractional, xbins = nbins, ybins = nbins, ylim = ylim, xlim = xlim)                              
+
+#
+
+#xfield = ('gas', 'spherical_position_radius')
+#yfield = ('gas', 'velocity_z')
+#zfield = ('gas', 'H_p0_mass')
+
+#weight_field = ('Gas', 'Mass')
+#fractional = True
+#xlim = (0, 3100)
+#ylim = (-1000, 1000)
+
+#nbins = 256
+#generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = icm_cut, weight_field = weight_field, \
+ #                        fractional = fractional, xbins = nbins, ybins = nbins, ylim = ylim, xlim = xlim)
+
+
+#cold_icm_mask = "(obj[('gas', 'particle_H_nuclei_density')] < 0.01) & (obj[('gas', 'temperature')]  <= 1e4)"

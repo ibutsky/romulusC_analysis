@@ -46,7 +46,7 @@ def _primordial_cooling_time(field, data):
     mu = 0.6
     mH = YTQuantity(1.6726219e-24, 'g')
     fm = 0.03
-    T = data[('Gas', 'Temperature')]
+    T = data[('gas', 'temperature')]
     num = C1 * mu * mH * T**(1./2.)
     denom = data[('gas', 'density')]* (1 + C2*fm/T)
     return num / denom
@@ -57,7 +57,7 @@ def _solar_cooling_time(field, data):
     mu = 0.6
     mH = YTQuantity(1.6726219e-24, 'g')
     fm = 1.0
-    T = data[('Gas', 'Temperature')]
+    T = data[('gas', 'temperature')]
     num = C1 * mu * mH * T**(1./2.)
     denom = data[('gas', 'density')]* (1 + C2*fm/T)
     return num / denom
@@ -68,12 +68,17 @@ def _metal_cooling_time(field, data):
     C2 = YTQuantity(5e7, 'K')
     mu = 0.6
     mH = YTQuantity(1.6726219e-24, 'g')
-    T = data[('Gas', 'Temperature')]
-    Z = data[('Gas', 'metallicity')].in_units('Zsun')
+    T = data[('gas', 'temperature')]
+    Z = data[('gas', 'metallicity')].in_units('Zsun')
     fm = 1 + 0.14*np.log(Z.d)
+#    fm = np.array(fm)
+#    fm[fm < 0.03] = 0.03
     num = C1 * mu * mH * T**(1./2.)
     denom = data[('gas', 'density')]* (1 + C2*fm/T)
     return num / denom
+
+def _metal_primordial_ratio(field, data):
+    return data[('gas', 'metal_cooling_time')] / data[('gas', 'primordial_cooling_time')]
 
 def _cooling_freefall_ratio(field, data):
     return data[('gas', 'primordial_cooling_time')] / data[('gas', 'dynamical_time')]
@@ -103,10 +108,12 @@ def add_thermal_fields(ds):
  's')
     ds.add_field(('gas', 'metal_cooling_time'),function = _metal_cooling_time, \
              display_name = 'Metal Cooling Time', particle_type = True, units = 's')
-    ds.add_field(('gas', 'cooling_freefall_ratio'), function = _cooling_freefall_ratio, \
-                 display_name = '$t_{cool} / t_{ff}$', particle_type = True, units = '')
+#    ds.add_field(('gas', 'cooling_freefall_ratio'), function = _cooling_freefall_ratio, \
+ #                display_name = '$t_{cool} / t_{ff}$', particle_type = True, units = '')
     ds.add_field(('gas', 'metal_mass'), function = _metal_mass, \
                  display_name = 'Metal Mass', particle_type = True, units =  'Msun')
+    ds.add_field(('gas', 'metal_primordial_cooling_time_ratio'), function = _metal_primordial_ratio, \
+                 particle_type = True)
 #    ds.add_field(('gas', 'pressure'), function=_Pressure)
 
 
@@ -124,6 +131,8 @@ def preferred_unit(field):
         unit = 'K'
     elif fname.__contains__('time'):
         unit = 'yr'
+        if fname.__contains__('ratio'):
+            unit = ''
     elif fname.__contains__('ensity'):
         unit = 'g/cm**3'
         if fname.__contains__('nuclei'):

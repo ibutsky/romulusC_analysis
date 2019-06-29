@@ -15,7 +15,7 @@ sns.set_style("white",{'font.family':'serif', 'axes.grid': True, "ytick.major.si
 sys.path.append("/nobackup/ibutsky/scripts/plot_help/")
 import ion_plot_definitions as ipd
     
-def plot_multipanel(ion_list, output, region, rmax = 3000):
+def plot_multipanel(ion_list, output, region, rmax = 3000, ionization_table = 'hm2012'):
     
     if len(ion_list) <= 4:
         nrows = 1
@@ -30,6 +30,8 @@ def plot_multipanel(ion_list, output, region, rmax = 3000):
     sim = 'romulusC'
     if region == 'romulusC':
         fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data.h5'%(sim, sim, output)
+        if ionization_table == 'fg2009':
+            fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_fg2009_column_data.h5'%(sim, sim, output)
         test = h5.File(fn, 'r')
         print(list(test.keys()))
         rmin = 0
@@ -70,9 +72,12 @@ def plot_multipanel(ion_list, output, region, rmax = 3000):
             ax.set_ylabel('Ion Column Density ($\mathrm{cm}^{-2}$)')
         fig.tight_layout()
         if region == 'romulusC':
-            plt.savefig('/nobackupp2/ibutsky/plots/YalePaper/romulusC.%06d_ion_column_density.png'%(output))
+            if ionization_table == 'fg2009':
+                plt.savefig('romulusC.%06d_ion_column_density_fg2009.png'%(output))
+            else:
+                plt.savefig('romulusC.%06d_ion_column_density.png'%(output))
         else:
-            plt.savefig('/nobackupp2/ibutsky/plots/YalePaper/romulusC.%06d_ion_column_density_region_%s.png'%(output, region))
+            plt.savefig('romulusC.%06d_ion_column_density_region_%s.png'%(output, region))
 
 
 ion_list = ['H I', 'C II', 'C III', 'C IV', 'Si II', 'Si III', 'Si IV', 'O VI']
@@ -82,4 +87,4 @@ plot_type = 'cdens'
 region = sys.argv[1]
 output = int(sys.argv[2])
 print(output)
-plot_multipanel(ion_list, output, region)
+plot_multipanel(ion_list, output, region)#, ionization_table = 'fg2009')

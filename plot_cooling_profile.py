@@ -11,17 +11,21 @@ import yt_functions as ytf
 import ion_plot_definitions as ipd
 import romulus_analysis_helper as rom_help
 
-output = int(sys.argv[1])
-#output = 3035
+#output = int(sys.argv[1])
+output = 3035
 
 ds = ytf.load_romulusC(output)
 cen = rom_help.get_romulus_yt_center('romulusC', output, ds)
-sp = ds.sphere(cen, (500, 'kpc'))
+ad = ds.sphere(cen, (3300, 'kpc'))
+#sp = ad.cut_region(["(obj[('gas', 'metal_cooling_time')]>0) & (obj[('gas', 'metal_primordial_cooling_time_ratio')] > 0) & (obj[('gas', 'temperature')] >= 1e4)  & (obj[('gas', 'temperature')] <= 1e6) & (obj[('gas', 'particle_H_nuclei_density')] > 1e-6) & (obj[('gas', 'particle_H_nuclei_density')] < 1e-2)"])
 
+sp = ad.cut_region(["(obj[('gas', 'temperature')] >= 1e4)  & (obj[('gas', 'temperature')] <= 1e6) & (obj[('gas', 'particle_H_nuclei_density')] > 1e-6) & (obj[('gas', 'particle_H_nuclei_density')] < 1e-2)"])
+#sp = ad
 
 xfield = ('gas', 'spherical_position_radius')
 yfield = ('Gas', 'Mass')
-pm = yt.ProfilePlot(sp, xfield, yfield, weight_field = None, accumulation = True, n_bins = 128)
+#mass enclosed needs to have all mass, not just CGM mass
+pm = yt.ProfilePlot(ad, xfield, yfield, weight_field = None, accumulation = True, n_bins = 128)
 pm.set_unit(xfield, 'cm')
 pm.set_unit(yfield, 'g')
 pm.set_log(xfield, False)
@@ -41,23 +45,28 @@ tff = np.sqrt(2.*rbins / g)
 
 
 yfield = ('gas', 'primordial_cooling_time')
-pc = yt.ProfilePlot(sp, xfield, yfield, weight_field = ('Gas', 'Mass'), n_bins = 128)
+yfield2 = ('gas', 'metal_cooling_time')
+pc = yt.ProfilePlot(sp, xfield, [yfield, yfield2], weight_field = ('gas', 'ones'), n_bins = 128)
 pc.set_unit(xfield, 'cm')
 pc.set_unit(yfield, 's')
 pc.set_log(xfield, False)
 print(pc.profiles[0].x)
 
 tcool = pc.profiles[0][yfield]
-y = tcool / tff
+tcool_metal = pc.profiles[0][yfield2]
 
-#pc.profiles[0][yfield] = y
-
-plt.plot(rbins.in_units('kpc'), y)
+plt.plot(rbins.in_units('kpc'), tcool/tff)
 plt.yscale('log')
 plt.xlabel('Spherical Radius (kpc)')
-plt.ylabel('$ t_{cool} / t_{ff}$')
-#plot = yt.ProfilePlot.from_profiles(pc.profiles[0])
-plt.savefig('cooling_profile_%i.png'%(output), dpi = 300)
+plt.ylabel('$ t_{cool, primordial} / t_{ff}$')
+plt.savefig('primordial_cooling_ff_profile_cgm_%i.png'%(output), dpi = 300)
+plt.clf()
+
+plt.plot(rbins.in_units('kpc'), tcool_metal/tff)
+plt.yscale('log')
+plt.xlabel('Spherical Radius (kpc)')
+plt.ylabel('$ t_{cool, metal} / t_{ff}$')
+plt.savefig('metal_cooling_ff_profile_cgm_%i.png'%(output), dpi = 300)
 plt.clf()
 
 plt.plot(rbins.in_units('kpc'), tff.in_units('yr'), label = 'tff = sqrt(2r/g)')
@@ -66,7 +75,7 @@ plt.legend()
 plt.yscale('log')
 plt.xlabel('Spherical Radius (kpc)')
 plt.ylabel('Free Fall Time (yr)')
-plt.savefig('freefall_time_profile_%i.png'%(output), dpi = 300)
+plt.savefig('freefall_time_profile_cgm_%i.png'%(output), dpi = 300)
 plt.clf()
 
 
@@ -74,4 +83,11 @@ plt.plot(rbins.in_units('kpc'), tcool.in_units('yr'))
 plt.yscale('log')
 plt.xlabel('Spherical Radius (kpc)')
 plt.ylabel('Primordial Cooling Time (yr)')
-plt.savefig('cooling_time_profile_%i.png'%(output), dpi = 300)
+plt.savefig('primordial_cooling_time_profile_cgm_%i.png'%(output), dpi = 300)
+
+
+plt.plot(rbins.in_units('kpc'), tcool_metal.in_units('yr'))
+plt.yscale('log')
+plt.xlabel('Spherical Radius (kpc)')
+plt.ylabel('Metal Cooling Time (yr)')
+plt.savefig('metal_cooling_time_profile_cgm_%i.png'%(output), dpi = 300)

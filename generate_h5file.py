@@ -73,6 +73,6 @@ ion_list = ['H I', 'O VI', 'C IV']
 width = 6000
 
 
-generate_column_data(sim, output, ion_list, width, res = 1600, ionization_table = 'fg2009')
+generate_column_data(sim, output, ion_list, width, res = 1600)#, ionization_table = 'fg2009')
 
 

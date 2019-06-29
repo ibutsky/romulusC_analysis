@@ -12,13 +12,15 @@ sns.set_style("ticks",{'axes.grid': True, 'grid.linestyle': '--'})
 
 import ion_plot_definitions as ipd
     
-def plot_multipanel(output, ion_list, threshold_list, label_list = None, rmax = 3000):
+def plot_multipanel(output, ion_list, threshold_list, label_list = None, rmax = 3000, ionization_table = 'hm2012'):
     ncols = len(ion_list)
-    fig, figax = plt.subplots(nrows = 1, ncols = ncols, figsize = (4*ncols, 3.8), sharex=True, sharey=True)
+    fig, figax = plt.subplots(nrows = 1, ncols = ncols, figsize = (3.5*ncols, 3.2), sharex=True, sharey=True)
     #    fn = '/nobackup/ibutsky/data/romulusC/column_%i.h5'%(output)
     sim = 'romulusC'
     fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_column_data.h5'%(sim, sim, output)
-    
+    if ionization_table == 'fg2009':
+        fn = '/nobackupp2/ibutsky/data/%s/%s.%06d_fg2009_column_data.h5'%(sim, sim, output)
+
     palette = sns.cubehelix_palette(len(threshold_list)+2, start=.5, rot=-.75, reverse=True)
     palette = sns.cubehelix_palette(len(threshold_list)+2, reverse=True) #pink
     palette = sns.cubehelix_palette(len(threshold_list)+2, start=2, rot=0, dark=0, light = 0.95) #green
@@ -49,7 +51,10 @@ def plot_multipanel(output, ion_list, threshold_list, label_list = None, rmax = 
             ax.legend(loc = 2, ncol = 2, title = "N$_{\mathrm{thres}}$ ($\mathrm{cm}^{-2}$)", fontsize = 10)
 
     fig.tight_layout()
-    plt.savefig('romulusC_%06d_covering_fraction_threshold.png'%(output), dpi = 300)
+    if ionization_table == 'fg2009':
+        plt.savefig('romulusC_%06d_covering_fraction_threshold_fg2009.png'%(output), dpi = 300)
+    else:
+        plt.savefig('romulusC_%06d_covering_fraction_threshold.png'%(output), dpi = 300)
       
 
 
@@ -61,4 +66,4 @@ ion = 'O VI'
 ion = 'H I'
 
 ion_list = ['H I', 'C IV', 'O VI']
-plot_multipanel(output, ion_list, threshold_list, label_list = label_list)
+plot_multipanel(output, ion_list, threshold_list, label_list = label_list)#, ionization_table = 'fg2009')

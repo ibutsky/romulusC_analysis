@@ -33,6 +33,10 @@ field_list = [('gas', 'density'), ('Gas', 'Temperature'), ('Gas', 'metallicity2'
 weight_field = [('gas', 'density'), ('gas', 'density'), ('gas', 'density'), \
                 None, None, None]
 
+field_list = [('gas', 'O_p5_number_density'), ('gas', 'H_p0_number_density')]
+weight_field = [None, None]
+name_list = ['O_p5_number_density_fg2009', 'H_p0_number_density_fg2009']
+
 # load in simulation data and add ion fields
 halo_props = h5.File('/nobackup/ibutsky/data/romulusC_halo_data_%i'%(output), 'r')
 plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/multipanel_romulusC_%i_plot_data'%(output), 'a')
@@ -44,7 +48,7 @@ ds.add_field(('Gas', 'metallicity2'), function = _metallicity2, units = 'Zsun', 
 if output == 4096:
     redshift = 0.01
 else:
-    ds.current_redshift
+    redshift = ds.current_redshift
 xray_fields = yt.add_xray_emissivity_field(ds, 0.5, 7.0, redshift=redshift, \
             cosmology=ds.cosmology, metallicity=("Gas", "metallicity2"), table_type='cloudy')
 cen = (centers[0] / ds.length_unit).d
@@ -52,6 +56,7 @@ cen = (centers[0] / ds.length_unit).d
 # set up projection plots for fields that are weighted and unweighted
 for i in range(len(field_list)):
     dset = field_list[i][1]
+    dset = name_list[i]
     if dset not in plot_data.keys():
         proj = yt.ProjectionPlot(ds, 'y', field_list[i], weight_field = weight_field[i], center = cen)
         proj_frb =  proj.data_source.to_frb((5, 'Mpc'), 1600)

@@ -65,7 +65,7 @@ for i in range(nrows*ncols):
     col = i - ncols*row 
     print(row,col)
     img_data = np.array(frb[field_list[i][1]])
-
+    print(field_list[i], img_data)
     im = axes[row][col].imshow(img_data, origin = 'lower', norm = LogNorm(),\
                                vmin = zlim_list[i][0], vmax = zlim_list[i][1])
     im.set_cmap(cmap_list[i])
@@ -91,5 +91,5 @@ axes[1][0].annotate('', xy = (1200, 100),xycoords = 'data',  xytext=(1200+w, 100
                     edgecolor = "white", facecolor = "white"))
 axes[1][0].annotate('500 kpc', xy=(1170, 150))
 # And now we're done!
-fig.savefig("multipanel_plot_romulusC_%i.png"%(output))
+fig.savefig("multipanel_plot_romulusC_%i_fg2009.png"%(output))
 #fig.savefig("romulusC_HI.png", dpi = 300)
