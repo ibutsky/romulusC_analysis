@@ -457,7 +457,7 @@ def plot_phase(xfield, yfield, zfield, do_pcolormesh = True, profile = False, pr
     print(z.min(), z.max())
 
     if fig == None:
-        fig, ax = plt.subplots(ncols = 1, nrows = 1, figsize = (4, 3.2)) #figsize=(6, 5))
+        fig, ax = plt.subplots(ncols = 1, nrows = 1, figsize = (5, 4.1)) #figsize=(6, 5))
 
     if xlabel == None:
         ax.set_xlabel(xfield)

@@ -2,3 +2,6 @@
 *~
 *.e*
 *.o*
+
+tmp_plots/
+*png

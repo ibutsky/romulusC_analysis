@@ -1,8 +1,11 @@
 import yt
 from yt.units.yt_array import YTQuantity
+from yt import YTArray
 from yt.units import *
 import trident
 import numpy as np
+
+import romulus_analysis_helper as rom
 
 def _H_nuc(field, data):
     return data["H_nuclei_density"]
@@ -13,10 +16,31 @@ def _metallicity2(field, data):
 def _metal_mass(field, data):
     return data[('Gas', 'metallicity')] * data[('Gas', 'Mass')].in_units('Msun')
 
+def _velocity_direction(field, data):
+    bv = data.get_field_parameter('bulk_velocity')
+    cen = data.get_field_parameter('center')
+    print(bv, cen)
+
+    x = data[('gas', 'x')] - cen[0]
+    y = data[('gas', 'y')] - cen[1]
+    z = data[('gas', 'z')] - cen[2]
+
+    pos_mag = np.sqrt(x**2 + y**2 + z**2)
+
+    vx = data[('gas', 'velocity_x')] - bv[0] 
+    vy = data[('gas', 'velocity_y')] - bv[1] 
+    vz = data[('gas', 'velocity_z')] - bv[2] 
+
+    v_mag = np.sqrt(vx**2 + vy**2 + vz**2)
+    
+    sign = (vx*x + vy*y + vz*z)
+    mask = sign < 0
+    v_mag[mask] *= -1
+    return v_mag
+
 def _CRPressure(field, data):
     crgamma = 4./3.
     return (crgamma - 1.) * data[('Gas', 'CREnergy')].d * data[('Gas', 'density')].in_units('g/cm**3').d
-
 
 def _Pressure(field, data):
     gamma = 5./3.
@@ -86,6 +110,11 @@ def _cooling_freefall_ratio(field, data):
 
 def load_romulusC(output, ions = []): 
     ds = yt.load('/nobackup/ibutsky/simulations/romulusC/romulusC.%06d'%output)
+    ad = ds.all_data()
+    cen = YTArray(rom.get_romulus_center('romulusC', output), 'kpc')
+    bv = rom.get_romulusC_bulk_velocity(output)
+    ad.set_field_parameter('center', cen)
+    ad.set_field_parameter('bulk_velocity', bv)
     add_thermal_fields(ds)
     if len(ions) > 0:
         trident.add_ion_fields(ds, ions = ions)
@@ -114,6 +143,7 @@ def add_thermal_fields(ds):
                  display_name = 'Metal Mass', particle_type = True, units =  'Msun')
     ds.add_field(('gas', 'metal_primordial_cooling_time_ratio'), function = _metal_primordial_ratio, \
                  particle_type = True)
+    ds.add_field(('gas', 'velocity_direction'), function = _velocity_direction, particle_type = True, units = 'km/s')
 #    ds.add_field(('gas', 'pressure'), function=_Pressure)
 
 
@@ -156,3 +186,18 @@ def preferred_log(field):
         return False
     else: 
         return True
+
+def setup_phase_axes(ph, field_list, unit_list = [None, None, None], \
+                     log_list = [None, None, None]):
+
+    for field, unit, log in zip(field_list, unit_list, log_list):
+        if unit:
+            ph.set_unit(field, unit)
+        else:
+            ph.set_unit(field, preferred_unit(field))
+     #   if log:
+      #      ph.set_log(field, log)
+      #  else:
+       #     ph.set_log(field, preferred_log(field))
+
+    

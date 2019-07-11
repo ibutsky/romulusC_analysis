@@ -123,8 +123,9 @@ def plot_cooling_time_ratio(output = 3035):
 
 
 
-#output = int(sys.argv[1])
-output = 3035
+
+output = int(sys.argv[1])
+#output = 3035
 weight_field = None
 data_cut = None
 #plot_cooling_time_ratio()
@@ -134,4 +135,4 @@ plot_metallicity_radius(append_profiles = True, output = output, append_observat
 #plot_metallicity_radius(append_profiles = False, output = output, append_observations = True, \
  #                       data_cut = 'hot_icm2', profile = True)
 
-#plot_metallicity_density(output = output)
+plot_metallicity_density(output = output)
