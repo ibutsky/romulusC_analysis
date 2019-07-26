@@ -59,8 +59,9 @@ def plot_multipanel(output, ion_list, threshold_list, label_list = None, rmax = 
 
 
 
-threshold_list = [1e10, 1e11, 1e12, 3e12, 1e13, 3e13] 
-label_list = ['1e10', '1e11', '1e12', '3e12', '1e13', '3e13']
+threshold_list = [1e12, 3e12, 1e13, 3e13] 
+label_list = ['1e12', '3e12', '1e13', '3e13']
+
 output = int(sys.argv[1])
 ion = 'O VI'
 ion = 'H I'

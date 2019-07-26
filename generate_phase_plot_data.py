@@ -133,7 +133,7 @@ if icm_cut == 'None':
 xfield = ('gas', 'spherical_position_radius')
 xunit = 'kpc'
 xlog = False
-yfield = ('gas', 'velocity_direction')
+yfield = ('gas', 'radial_velocity')
 yunit = 'km/s'
 ylog = False
 zfield = ('gas', 'mass')

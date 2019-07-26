@@ -16,27 +16,27 @@ def _metallicity2(field, data):
 def _metal_mass(field, data):
     return data[('Gas', 'metallicity')] * data[('Gas', 'Mass')].in_units('Msun')
 
-def _velocity_direction(field, data):
+def _radial_velocity(field, data):
     bv = data.get_field_parameter('bulk_velocity')
     cen = data.get_field_parameter('center')
     print(bv, cen)
 
-    x = data[('gas', 'x')] - cen[0]
-    y = data[('gas', 'y')] - cen[1]
-    z = data[('gas', 'z')] - cen[2]
+    x = (data[('gas', 'x')] - cen[0].in_units('kpc')).d
+    y = (data[('gas', 'y')] - cen[1].in_units('kpc')).d
+    z = (data[('gas', 'z')] - cen[2].in_units('kpc')).d
+    pos = np.column_stack((x,y,z))
+    pos_mag = np.linalg.norm(pos, axis = 1)
 
-    pos_mag = np.sqrt(x**2 + y**2 + z**2)
+    vx = (data[('gas', 'velocity_x')] - bv[0]).in_units('km/s').d
+    vy = (data[('gas', 'velocity_y')] - bv[1]).in_units('km/s').d
+    vz = (data[('gas', 'velocity_z')] - bv[2]).in_units('km/s').d
+    vel = np.column_stack((vx, vy, vz))
+    vel_mag = np.linalg.norm(vel, axis = 1)
 
-    vx = data[('gas', 'velocity_x')] - bv[0] 
-    vy = data[('gas', 'velocity_y')] - bv[1] 
-    vz = data[('gas', 'velocity_z')] - bv[2] 
-
-    v_mag = np.sqrt(vx**2 + vy**2 + vz**2)
+    cos_theta = np.sum(pos * vel, axis = 1) / (pos_mag * vel_mag)
     
-    sign = (vx*x + vy*y + vz*z)
-    mask = sign < 0
-    v_mag[mask] *= -1
-    return v_mag
+    return YTArray(vel_mag * cos_theta, 'km/s')
+
 
 def _CRPressure(field, data):
     crgamma = 4./3.
@@ -143,7 +143,7 @@ def add_thermal_fields(ds):
                  display_name = 'Metal Mass', particle_type = True, units =  'Msun')
     ds.add_field(('gas', 'metal_primordial_cooling_time_ratio'), function = _metal_primordial_ratio, \
                  particle_type = True)
-    ds.add_field(('gas', 'velocity_direction'), function = _velocity_direction, particle_type = True, units = 'km/s')
+    ds.add_field(('gas', 'radial_velocity'), function = _radial_velocity, particle_type = True, units = 'km/s', display_name = 'Radial Velocity')
 #    ds.add_field(('gas', 'pressure'), function=_Pressure)
 
 

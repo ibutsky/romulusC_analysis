@@ -270,8 +270,31 @@ def load_r_cdens(fname, ion, underscore = False, space = True, rname = 'radius')
     return r_arr, cdens_arr
 
 
+def load_combined_cdens(fname, ion, underscore = False, space = True, rname = 'radius', res = 800):
+    counts = np.zeros(res*res)
+    if os.path.isfile(fname):
+        frb = h5.File(fname, 'r')
+    else:
+        print("WARNING: %s is not a file"%(fname))
+        sys.stdout.flush()
+        return counts
+    if space == False:
+        ion = ion.replace(" ", "")
+    for axis in ['x', 'y', 'z']:
+            if underscore:
+                cname = "%s_%s"%(ion, axis)
+            else:
+                cname = "%s %s" % (ion, axis)
+            if cname in frb.keys():
+                counts += frb[cname]
+            else:
+                print("WARNING: %s not in %s"%(cname, fname))
+                sys.stdout.flush()
+    return counts.reshape(res, res)
+
 def make_projection(ds, axis, ion_fields, center, width, res = 800):
     p = ds.proj(ion_fields, axis, weight_field=None, center=center, method='integrate')
+    print("WARNING: NO WEIGHT_FIELD")
     return p.to_frb(width, res, center=center)
 
 

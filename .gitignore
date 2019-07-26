@@ -4,4 +4,7 @@
 *.o*
 
 tmp_plots/
-*png
+*.png
+*.jpg
+*.py#
+__*
