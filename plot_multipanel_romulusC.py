@@ -71,11 +71,11 @@ for i in range(nrows*ncols):
     im.set_cmap(cmap_list[i])
     print(axes[row][col].get_xlim())
     csize = (831. / 5000.)*1600
-    circ = Circle((800,800), csize, edgecolor = 'white', fill = False, \
-                  linestyle = (0,(5, 10)),  linewidth = 2)
-    axes[row][col].add_patch(circ)
+#    circ = Circle((800,800), csize, edgecolor = 'white', fill = False, \
+ #                 linestyle = (0,(5, 10)),  linewidth = 2)
+  #  axes[row][col].add_patch(circ)
     circ = Circle((800,800), 2*csize, edgecolor = 'white', fill = False, \
-                  linestyle = (0,(5, 10)),  linewidth = 2)
+                  linestyle = 'dotted',  linewidth = 1.5)
     axes[row][col].add_patch(circ)
     axes[row][col].xaxis.set_visible(False)
     axes[row][col].yaxis.set_visible(False)
@@ -91,5 +91,5 @@ axes[1][0].annotate('', xy = (1200, 100),xycoords = 'data',  xytext=(1200+w, 100
                     edgecolor = "white", facecolor = "white"))
 axes[1][0].annotate('500 kpc', xy=(1170, 150))
 # And now we're done!
-fig.savefig("multipanel_plot_romulusC_%i_fg2009.png"%(output))
+fig.savefig("multipanel_plot_romulusC_%i.png"%(output))
 #fig.savefig("romulusC_HI.png", dpi = 300)

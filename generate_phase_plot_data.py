@@ -1,4 +1,5 @@
 import yt
+yt.enable_parallelism()
 import trident
 import h5py as h5
 import sys 
@@ -25,8 +26,8 @@ def generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = None, wei
                              xbins = 128, ybins = 128, fractional = False, xlim = None, ylim = None, xunit = None, \
                              yunit = None, zunit = None, xlog = None, ylog = None, zlog = None, radius = None):
     sim = 'romulusC'
-    ds = ytf.load_romulusC(output)
-
+    ds = ytf.load_romulusC(output, ions = ['H I', 'C IV', 'O VI'])
+    
     redshift = ds.current_redshift
     if output == 4096:
         redshift = 0.01
@@ -129,21 +130,29 @@ icm_cut = sys.argv[2]
 if icm_cut == 'None':
     icm_cut = None
 
-#xfield = ('gas', 'particle_H_nuclei_density')
-xfield = ('gas', 'spherical_position_radius')
-xunit = 'kpc'
-xlog = False
-yfield = ('gas', 'radial_velocity')
-yunit = 'km/s'
-ylog = False
-zfield = ('gas', 'mass')
+xfield = ('gas', 'particle_H_nuclei_density')
+#xfield = ('gas', 'spherical_position_radius')
+
+#xunit = 'kpc'
+xunit = 'cm**-3'
+#xlog = False
+xlog = True
+#yfield = ('gas', 'radial_velocity')
+yfield = ('gas', 'temperature')
+#yunit = 'km/s'
+yunit = 'K'
+#ylog = False
+ylog = True
+zfield = ('gas', 'O_p5_mass')
 zunit = 'Msun'
 zlog = True
 weight_field = None
-fractional = False
+fractional = True
 radius = 3000
-xlim = (0, 3100)
-ylim = (-1100, 1100)
+#xlim = (0, 3100)
+xlim = (1e-7, 1e2)
+#ylim = (-1100, 1100)
+ylim = (5e3, 2e7)
 nbins = 256
 generate_phase_plot_data(output, xfield, yfield, zfield, icm_cut = icm_cut, weight_field = weight_field, \
                          fractional = fractional, xbins = nbins, ybins = nbins, ylim = ylim, xlim = xlim, \

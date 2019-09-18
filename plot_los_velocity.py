@@ -2,6 +2,8 @@ import yt
 yt.enable_parallelism()
 import sys
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pylab as plt
 import romulus_analysis_helper as rom
 import seaborn as sns
@@ -12,9 +14,10 @@ ds = yt.load('/nobackup/ibutsky/simulations/romulusC/romulusC.%06d'%(output))
 
 cen = rom.get_romulus_yt_center('romulusC', output, ds)
 
-ad = ds.sphere(cen, (3, 'Mpc'))
+sp = ds.sphere(cen, (3, 'Mpc'))
+bv = sp.quantities.bulk_velocity().in_units('km/s')
 
-bv = ad.quantities.bulk_velocity().in_units('km/s')
+ad = sp.cut_region("(obj[('gas', 'temperature')]  >= 1e4) & (obj[('gas', 'temperature')] <= 1e6)")
 
 
 vx = ad['velocity_x'].in_units('km/s') - bv[0]
@@ -34,4 +37,4 @@ ax.set_ylabel('Relative Frequency')
 ax.set_xlim(-900, 900)
 fig.tight_layout()
 
-plt.savefig('romulusC_%06d_los_velocity.png'%(output), dpi = 300)
+plt.savefig('romulusC_%06d_los_velocity_coolwarm.png'%(output), dpi = 300)

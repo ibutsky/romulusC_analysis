@@ -21,15 +21,15 @@ def _radial_velocity(field, data):
     cen = data.get_field_parameter('center')
     print(bv, cen)
 
-    x = (data[('gas', 'x')] - cen[0].in_units('kpc')).d
-    y = (data[('gas', 'y')] - cen[1].in_units('kpc')).d
-    z = (data[('gas', 'z')] - cen[2].in_units('kpc')).d
+    x = (data[('gas', 'x')].in_units('kpc') - cen[0].in_units('kpc')).d
+    y = (data[('gas', 'y')].in_units('kpc') - cen[1].in_units('kpc')).d
+    z = (data[('gas', 'z')].in_units('kpc') - cen[2].in_units('kpc')).d
     pos = np.column_stack((x,y,z))
     pos_mag = np.linalg.norm(pos, axis = 1)
 
-    vx = (data[('gas', 'velocity_x')] - bv[0]).in_units('km/s').d
-    vy = (data[('gas', 'velocity_y')] - bv[1]).in_units('km/s').d
-    vz = (data[('gas', 'velocity_z')] - bv[2]).in_units('km/s').d
+    vx = (data[('gas', 'velocity_x')].in_units('km/s') - bv[0]).in_units('km/s').d
+    vy = (data[('gas', 'velocity_y')].in_units('km/s') - bv[1]).in_units('km/s').d
+    vz = (data[('gas', 'velocity_z')].in_units('km/s') - bv[2]).in_units('km/s').d
     vel = np.column_stack((vx, vy, vz))
     vel_mag = np.linalg.norm(vel, axis = 1)
 
@@ -70,9 +70,9 @@ def _primordial_cooling_time(field, data):
     mu = 0.6
     mH = YTQuantity(1.6726219e-24, 'g')
     fm = 0.03
-    T = data[('gas', 'temperature')]
+    T = data[('gas', 'temperature')].in_units('K')
     num = C1 * mu * mH * T**(1./2.)
-    denom = data[('gas', 'density')]* (1 + C2*fm/T)
+    denom = data[('gas', 'density')].in_units('g/cm**3') * (1 + C2*fm/T)
     return num / denom
 
 def _solar_cooling_time(field, data):
@@ -81,9 +81,9 @@ def _solar_cooling_time(field, data):
     mu = 0.6
     mH = YTQuantity(1.6726219e-24, 'g')
     fm = 1.0
-    T = data[('gas', 'temperature')]
+    T = data[('gas', 'temperature')].in_units('K')
     num = C1 * mu * mH * T**(1./2.)
-    denom = data[('gas', 'density')]* (1 + C2*fm/T)
+    denom = data[('gas', 'density')].in_units('g/cm**3')* (1 + C2*fm/T)
     return num / denom
 
 
@@ -92,13 +92,13 @@ def _metal_cooling_time(field, data):
     C2 = YTQuantity(5e7, 'K')
     mu = 0.6
     mH = YTQuantity(1.6726219e-24, 'g')
-    T = data[('gas', 'temperature')]
+    T = data[('gas', 'temperature')].in_units('K')
     Z = data[('gas', 'metallicity')].in_units('Zsun')
     fm = 1 + 0.14*np.log(Z.d)
 #    fm = np.array(fm)
 #    fm[fm < 0.03] = 0.03
     num = C1 * mu * mH * T**(1./2.)
-    denom = data[('gas', 'density')]* (1 + C2*fm/T)
+    denom = data[('gas', 'density')].in_units('g/cm**3')* (1 + C2*fm/T)
     return num / denom
 
 def _metal_primordial_ratio(field, data):
@@ -195,9 +195,9 @@ def setup_phase_axes(ph, field_list, unit_list = [None, None, None], \
             ph.set_unit(field, unit)
         else:
             ph.set_unit(field, preferred_unit(field))
-     #   if log:
-      #      ph.set_log(field, log)
-      #  else:
-       #     ph.set_log(field, preferred_log(field))
+        if log:
+            ph.set_log(field, log)
+        else:
+            ph.set_log(field, preferred_log(field))
 
     

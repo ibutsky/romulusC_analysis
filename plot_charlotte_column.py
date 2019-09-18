@@ -30,7 +30,7 @@ def return_histogram_data(r_arr, cdens_arr, nbins = 800, rmax = 200, ylims=(1e10
 def plot_multipanel(ion_list, rmin = 0, rmax = 200, res = 1600, \
                     nrows = 1, ncols = 3, plot_type = 'cdens', rname = 'radius', ionization_table = 'hm2012'):
 
-    fig, figax = plt.subplots(nrows = nrows, ncols =ncols , figsize = (4.2*ncols, 4*nrows),sharex = True, sharey = False)
+    fig, figax = plt.subplots(nrows = nrows, ncols =ncols , figsize = (4*ncols, 3.8*nrows),sharex = True, sharey = False)
     for col, ion in enumerate(ion_list):
         ax = figax[col]
         ylims = ylim_list[col]
@@ -39,8 +39,10 @@ def plot_multipanel(ion_list, rmin = 0, rmax = 200, res = 1600, \
         for model, color, linestyle in zip(model_list, color_list, linestyle_list):
             fn = '/nobackupp2/ibutsky/data/charlotte/%s_column_data.h5'%(model)
             r_arr, cdens_arr = ipd.load_r_cdens(fn, ion, underscore = True, space = False, rname = rname)
-
-            #im =  ipd.plot_hist2d(ax, r_arr, cdens_arr, rmax,  ylims, vmin = 1e-4, vmax_factor = 0.9,  nbins = 800, rmin = rmin)
+            
+            if len(model_list) == 1:
+                im =  ipd.plot_hist2d(ax, r_arr, cdens_arr, rmax,  ylims, vmin = 1e-4, \
+                                      vmax_factor = 0.9,  nbins = 800, rmin = rmin)
 
             res = 400
             xbins, ybins, ion_counts = return_histogram_data(r_arr, cdens_arr, nbins=res, rmax=rmax, ylims = ylims)
@@ -56,21 +58,28 @@ def plot_multipanel(ion_list, rmin = 0, rmax = 200, res = 1600, \
 
         ax.set_xlabel('Impact Parameter (kpc)')
         if col == 0:
-            ax.legend(loc = 'center right')
+            if len(model_list) > 1:
+                ax.legend(loc = 'center right')
             ax.set_ylabel('Ion Column Density ($\mathrm{cm}^{-2}$)')
         fig.tight_layout()
 
-        plt.savefig('charlotte_column_density.png', dpi = 300)
+        if len(model_list) == 1:
+            plt.savefig('charlotte_column_density_%s.png'%(model_list[0]), dpi = 300)
+        else:
+            plt.savefig('charlotte_column_density_compare.png', dpi = 300)
 
 
 
 ion_list = ['H I', 'C IV', 'O VI']
-ylim_list = [(1e13, 1e21), (1e10, 3e15), (3e11, 3e15)]
+ylim_list = [(1e13, 1e21), (3e10, 1e15), (1e12, 1e15)]
 
-model_list = ['cosmo', 'H2']
-linestyle_list = ['dashed', 'dotted']
-palette = sns.cubehelix_palette(5, start=.5, rot=-.75, reverse = True)
-color_list = [palette[0], palette[2]]
+model_list = ['cosmo', 'metal', 'H2']
+linestyle_list = ['dashed', 'dashdot', 'dotted']
+palette = sns.cubehelix_palette(4, start=.5, rot=-.75, reverse = True)
+color_list = [palette[0], palette[1], palette[2]]
 
-#sim = sys.argv[1]
+#model_list = ['H2']
+#linestyle_list = ['dashed']
+#color_list = ['black']
+
 plot_multipanel(ion_list)

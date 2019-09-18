@@ -1,5 +1,5 @@
-import matplotlib
-matplotlib.use('Agg')
+#import matplotlib
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 
@@ -473,7 +473,12 @@ def plot_phase(xfield, yfield, zfield, do_pcolormesh = True, profile = False, pr
                fig = None, ax = None, output = 3035, data_cut = '', use_rvir = False):
 
 
-    x, y, z = load_phase_data(xfield, yfield, zfield, output = output, weight_field = weight_field, data_cut =  data_cut)
+    if isinstance(xfield, str):
+        x, y, z = load_phase_data(xfield, yfield, zfield, output = output, weight_field = weight_field, data_cut =  data_cut)
+    else:
+        x = xfield
+        y = yfield
+        z = zfield
     if(use_rvir):
         x /= rom.get_romulusC_r200(output)
 
@@ -511,6 +516,8 @@ def plot_phase(xfield, yfield, zfield, do_pcolormesh = True, profile = False, pr
                 cbar.set_label(zfield)
             else:
                 cbar.set_label(cbar_label)
+        else:
+            cbar = None
     else:
         im = None
         cbar = None

@@ -47,7 +47,7 @@ def generate_column_data(sim, ion_list, width=400, res = 800):
                 sys.stdout.flush()
                 #frb = ion_help.make_projection(ds, axis, field_list[i], center, width, res = res) 
                 p = yt.ProjectionPlot(ds, axis, field_list[i], width = width, weight_field=None, center=center)
-                p.set_zlim(field_list[i], 1e13, 1e5)
+                p.set_zlim(field_list[i], 1e13, 1e15)
                 p.save()
                 frb = p.data_source.to_frb(width, res)
                 print(frb)
