@@ -26,6 +26,7 @@ def make_mass_profile(ad, yfield = ('Gas', 'Mass')):
 
 
 output = int(sys.argv[1])
+plot_type = sys.argv[2]
 
 ds = ytf.load_romulusC(output)
 ds.add_field(('gas', 'metal_mass'), function = _metal_mass, units = 'Msun', particle_type = True)
@@ -41,8 +42,10 @@ warm = sp.cut_region([icm + "& (obj[('gas', 'temperature')]  >= 1e5) & (obj[('ga
 hot  = sp.cut_region([icm + "& (obj[('gas', 'temperature')]  >= 1e6)"])
 
 xfield = ('gas', 'spherical_position_radius')
-yfield = ('Gas', 'Mass')
-#yfield = ('gas', 'metal_mass')
+if plot_type == 'gas':
+    yfield = ('Gas', 'Mass')
+elif plot_type == 'metal':
+    yfield = ('gas', 'metal_mass')
 
 x_cold, y_cold = make_mass_profile(cold, yfield = yfield)
 x_cool, y_cool = make_mass_profile(cool, yfield = yfield)  
@@ -62,8 +65,10 @@ y_hot  = hot[yfield].in_units('Msun')
 
 dset_list = ['rbins_cold', 'rbins_cool',  'rbins_warm', 'rbins_hot', 'mass_cold', 'mass_cool', 'mass_warm', 'mass_hot']
 data_list = [x_cold, x_cool, x_warm, x_hot, y_cold, y_cool, y_warm, y_hot]
-outfile = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_gas_temperature_profile_data_icm'%(output), 'w')
-#outfile = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_metal_temperature_profile_data_icm'%(output), 'w')
+if plot_type == 'gas':
+    outfile = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_gas_temperature_profile_data_icm'%(output), 'w')
+elif plot_type == 'metal':
+    outfile = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_metal_temperature_profile_data_icm'%(output), 'w')
 for dset, data in zip(dset_list, data_list):
     if dset not in outfile.keys():
         outfile.create_dataset(dset, data=data)

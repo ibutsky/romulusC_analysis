@@ -4,12 +4,14 @@ import tangos
 import tangos_properties_tremmel
 import numpy as np
 import pylab as plt
+import sys
 import h5py as h5
 
 
 #in romulusC
 #12 = 636, z = 3.0, t = 2.15 Gyr
 #16 = 960, z = 2.03, t = 3.24 Gyr
+#23 = 1536, z = 1.19, t = 5.18 Gyr
 #49 - = 3035, z = 0.3
 #56 = 3360, z = 0.2
 #61 = 3697, z = 0.1
@@ -21,9 +23,11 @@ import h5py as h5
 #110 = 6656, z = 0.21
 #116 = 7394, z = 0.1
 
+#note: if tangos doesn't load use miniconda python
 
 def find_halos_with_stars(timestep, output):
-    halos = tangos.get_simulation("h1.cosmo50").timesteps[timestep].halos
+
+    halos = tangos.get_simulation("h1.cosmo50").timesteps[timestep].halos    
     #halos = tangos.get_simulation("cosmo25").timesteps[110].halos
 
     halo_id = []
@@ -83,8 +87,9 @@ def find_halos_with_stars(timestep, output):
 timestep_list = [12, 13, 14, 15, 16]
 output_list = [636, 672, 768, 864, 960]
 
-timestep_list = [49, 56, 61]
-output_list = [3035, 3360, 3697]
+timestep_list = [23]#, 56, 61]
+output_list = [1536]#, 3360, 3697]
+
                                
 for timestep, output in zip(timestep_list, output_list):
     find_halos_with_stars(timestep, output)

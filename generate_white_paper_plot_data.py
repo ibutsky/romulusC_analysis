@@ -28,11 +28,13 @@ def get_redshift(output):
 def generate_projection_data(output, field_list, weight_list, width):
     sim = 'romulusC'
     rvir = rom.get_romulus_rvir(sim, output)
-    z = get_redshift(output)
-    width = width / (1. + z)
+#    z = get_redshift(output)
+#    width = width / (1. + z)
 #    plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/white_paper_plot_data', 'a')
     plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/multipanel_romulusC_%i_plot_data'%(output), 'a')
     ds = yt.load('/nobackup/ibutsky/simulations/romulusC/romulusC.%06d'%(output))
+    z = ds.current_redshift
+    width = width / (1. + z)
     trident.add_ion_fields(ds, ions = ['H I'])
     cen = rom.get_romulus_yt_center(sim, output, ds)
 
@@ -47,11 +49,8 @@ def generate_projection_data(output, field_list, weight_list, width):
             plot_data.flush()
             
             
-output_list = [636, 672, 768, 864, 960]
-output_list = [864, 960]
-output_list = [768]
 
-output = int(sys.argv[1])
+output = 1536
 #for output in output_list:
 #output_list = [768, 960]
 #for output in output_list:

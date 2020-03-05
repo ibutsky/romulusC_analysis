@@ -12,15 +12,19 @@ import seaborn as sns
 sns.set_style("ticks",{'axes.grid': True, 'grid.linestyle': '--'})
 
 output = int(sys.argv[1])
+plot_type = sys.argv[2]
+
 rvir = rom_help.get_romulus_rvir('romulusC', output)
-rvir = rom_help.get_romulusC_r200(output)
+#rvir = rom_help.get_romulusC_r200(output)
 #rvir = 1.0
 xmax = 3000
 xmax /= rvir
-xmax = 4.
+xmax = 3.
 dset_list = ['rbins_cold', 'rbins_warm', 'rbins_hot', 'mass_cold', 'mass_warm', 'mass_hot']
-#plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_gas_temperature_profile_data'%(output), 'r')
-plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_metal_temperature_profile_data'%(output), 'r')    
+if plot_type == 'gas':
+    plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_gas_temperature_profile_data_icm'%(output), 'r')
+elif plot_type == 'metal':
+    plot_data = h5.File('/nobackup/ibutsky/data/YalePaper/romulusC_%i_metal_temperature_profile_data_icm'%(output), 'r')
 
 x_cold = np.array(plot_data['rbins_cold'][:]) / rvir
 x_cool = np.array(plot_data['rbins_cool'][:]) / rvir
@@ -51,6 +55,7 @@ ax.plot(ipd.interleave(x_cool_bins, 1), ipd.interleave(y_cool_bins, 0), color = 
 ax.plot(ipd.interleave(x_cold_bins, 1), ipd.interleave(y_cold_bins, 0), color = 'steelblue',\
         linewidth = lw, linestyle = 'dotted',  label = 'Cold Gas') 
 #ax.legend(loc = 6)
+ax.legend()
 
 #plt.xlabel('Spherical Radius (kpc)')
 ax.set_xlim(0.05, xmax)
@@ -58,10 +63,17 @@ ax.set_xlim(0.05, xmax)
 ax.set_yscale('log')
 ax.set_ylim(1e-2, 2)
 fs = 16
-ax.set_xlabel('$\mathrm{R\ /\ R}_{200}$')#, fontsize = fs)
-#ax.set_xlabel('$\mathrm{Radius\ (kpc)}$')#, fontsize = fs)
-#ax.set_ylabel('$\mathrm{Gas\ Mass\ Fraction}$')#, fontsize = fs)
-ax.set_ylabel('$\mathrm{Metal\ Mass\ Fraction}$')#, fontsize = fs)                                                                                  
+ax.set_xlabel('$\mathrm{R\ /\ R}_{vir}$')#, fontsize = fs)
+if rvir == 1:
+    ax.set_xlabel('$\mathrm{Radius\ (kpc)}$')#, fontsize = fs)
+
+if plot_type == 'gas':
+    ax.set_ylabel('$\mathrm{Gas\ Mass\ Fraction}$')#, fontsize = fs)
+elif plot_type == 'metal':
+    ax.set_ylabel('$\mathrm{Metal\ Mass\ Fraction}$')#, fontsize = fs)                                                                                  
 fig.tight_layout()
-#plt.savefig('temperature_mass_profile_%i.png'%(output), dpi = 300)
-plt.savefig('temperature_metal_mass_profile_%i.png'%(output), dpi = 300)
+
+if plot_type == 'gas':
+    plt.savefig('temperature_mass_profile_%i.png'%(output), dpi = 300)
+elif plot_type == 'metal':
+    plt.savefig('temperature_metal_mass_profile_%i.png'%(output), dpi = 300)

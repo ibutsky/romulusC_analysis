@@ -28,7 +28,7 @@ output = int(sys.argv[1])
  
 field_list = [('gas', 'H_p0_number_density'), ('gas', 'temperature')]
 cmap_list = ['purple_mm', 'afmhot']
-zlim_list = [(1e14, 1e19), (5e4, 5e7)]
+zlim_list = [(1e14, 1e20), (1e4, 1e6)]
 cbar_title_list = [r'$\mathrm{H\ I\ Column\ Density}\ (\mathrm{cm^{-2}})$', r'$\mathrm{Temperature\ (K)}$']
 
 
